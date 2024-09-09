@@ -4,40 +4,42 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import events from "../data/mochup-shifts";
 
 
 function FullCalendarApp() {
+  const view = "timeGridWeek";
+
+  document.documentElement.style.setProperty('--title-font-size', "0.5em");
+  if (view === "timeGridWeek") {
+  }
+
   return (
     <div className="App">
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
-        // initialView="basicWeek"
+        initialView="timeGridWeek"
+        eventTimeFormat={{ hour: "2-digit", minute: "2-digit", meridiem: false, hour12: false }}
+        slotLabelFormat={{ hour: "2-digit", minute: "2-digit", meridiem: false, hour12: false }}
         headerToolbar={{
-          center: "dayGridMonth,timeGridWeek,timeGridDay new"
+          left: "timeGridWeek,timeGridDay",
+          right: "prev,next",
         }}
-        customButtons={{
-          new: {
-            text: "new",
-            click: () => console.log("new event")
-          }
-        }}
-        events={[
+        weekends={false}
+        displayEventEnd={false}
+        events={events}
+        eventColor="green"
+        height="90vh"
+        slotDuration={"01:00:00"}
+        expandRows={true}
+        validRange={
           {
-            id: "1",
-            title: "event 1",
-            start: "2024-09-14T10:00:00",
-            end: "2024-09-14T12:00:00"
-          },
-          {
-            id: "2",
-            title: "event 2",
-            start: "2024-09-14T13:00:00",
-            end: "2024-09-14T18:00:00"
+            start: new Date().toISOString().split('T')[0]
           }
-        ]}
-        eventColor="red"
-        nowIndicator
+        }
+        slotMinTime="08:00:00"
+        slotMaxTime="18:00:00"
+        allDaySlot={false}
         dateClick={(e) => console.log(e.dateStr)}
         eventClick={(e) => console.log(e.event.id)}
       />
