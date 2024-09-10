@@ -1,21 +1,23 @@
-import { EventApi } from '@fullcalendar/react';
-import { Shift } from '../lib/types';
+import { getShiftById } from "@/lib/pocketbase";
+import { Shift } from "@/lib/types";
 
 type Props = {
   eventId: string;
+  eventTime: string;
+  view: string;
 }
 
 const EventContent = (props: Props) => {
-  const shiftIsBooked = shift.organisation != "";
-  const assignedClassName = shiftIsBooked ? "booked-shift" : "free-shift";
-  const shiftIsEditable = !shiftIsBooked;
+  const shift: Shift | undefined = getShiftById(props.eventId);
 
-  console.log(shift.organisation);
+  if (!shift) {
+    throw new Error(`Shift ${props.eventId} not found`);
+  }
 
   return (
-    <div>
-      <h2>{props.timeText}</h2>
-      <>{props.event.title}</>
+    <div className='h-full py-1'>
+      <p className="text-xl font-bold">{props.eventTime}</p>
+      <p className="overflow-hidden">{shift.organisation}</p>
     </div>
   );
 };

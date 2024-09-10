@@ -1,16 +1,16 @@
 'use client'
 
-import FullCalendar, { EventSourceInput } from "@fullcalendar/react";
+import FullCalendar, { CalendarApi, EventSourceInput } from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import shifts from "../data/mochup-shifts";
-import generateEvents from "@/functions/generate-events";
 import EventContent from "@/components/eventContent";
+import { getCurrentShiftsAsEventSources } from "@/lib/pocketbase";
 
 
 function FullCalendarApp() {
-  const events: EventSourceInput = generateEvents(shifts);
+  const events: EventSourceInput = getCurrentShiftsAsEventSources();
+  const view = "day"
 
   return (
     <div className="App">
@@ -19,8 +19,16 @@ function FullCalendarApp() {
         initialView="timeGridWeek"
         eventTimeFormat={{ hour: "2-digit", minute: "2-digit", meridiem: false, hour12: false }}
         slotLabelFormat={{ hour: "2-digit", minute: "2-digit", meridiem: false, hour12: false }}
+        customButtons={{
+          myCustomButton: {
+            text: 'custom!',
+            click: function () {
+              alert('clicked the custom button!');
+            }
+          }
+        }}
         headerToolbar={{
-          left: "timeGridWeek,timeGridDay",
+          left: "timeGridWeek,timeGridDay, myCustomButton",
           right: "prev,next",
         }}
         weekends={false}
@@ -41,7 +49,7 @@ function FullCalendarApp() {
         dateClick={(e) => console.log(e.dateStr)}
         eventClick={(e) => console.log(e.event.id)}
         eventContent={(arg) => (
-          <EventContent eventId={arg.event.id} />
+          <EventContent eventId={arg.event.id} eventTime={arg.timeText} view={view} />
         )}
       />
     </div>

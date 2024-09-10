@@ -1,6 +1,6 @@
 import { Shift } from "../lib/types";
 
-const shifts: Shift[] = [
+const placeholderShifts: Shift[] = [
   {
     id: "1",
     organisation: "Skurkeriet",
@@ -203,4 +203,4 @@ const shifts: Shift[] = [
   }
 ];
 
-export default shifts;
+export default placeholderShifts;

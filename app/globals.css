@@ -40,6 +40,3 @@ body {
 .reserved-shift {
   @apply bg-yellow-500 !important;
 }
-.free-shift {
-  @apply font-bold;
-}
