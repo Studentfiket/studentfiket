@@ -1,4 +1,4 @@
-import CalendarView from "@/components/calendar-view";
+import CalendarView from "@/components/calendarView";
 
 export default function Home() {
   return (

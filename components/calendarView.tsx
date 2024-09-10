@@ -1,13 +1,17 @@
 'use client'
 
-import FullCalendar from "@fullcalendar/react";
+import FullCalendar, { EventSourceInput } from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import events from "../data/mochup-shifts";
+import shifts from "../data/mochup-shifts";
+import generateEvents from "@/functions/generate-events";
+import EventContent from "@/components/eventContent";
 
 
 function FullCalendarApp() {
+  const events: EventSourceInput = generateEvents(shifts);
+
   return (
     <div className="App">
       <FullCalendar
@@ -36,6 +40,9 @@ function FullCalendarApp() {
         allDaySlot={false}
         dateClick={(e) => console.log(e.dateStr)}
         eventClick={(e) => console.log(e.event.id)}
+        eventContent={(arg) => (
+          <EventContent eventId={arg.event.id} />
+        )}
       />
     </div>
   );

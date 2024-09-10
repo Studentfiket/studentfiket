@@ -21,6 +21,9 @@ body {
   }
 }
 
+.fc-timegrid-event {
+  @apply rounded-xl my-1 border-none !important;
+}
 .fc-timegrid-col-events { /* needs to be same precedence */
   @apply text-center;
 }
@@ -32,7 +35,10 @@ body {
 }
 
 .booked-shift {
-  @apply opacity-50;
+  @apply opacity-50 bg-black !important;
+}
+.reserved-shift {
+  @apply bg-yellow-500 !important;
 }
 .free-shift {
   @apply font-bold;
