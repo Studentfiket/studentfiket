@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { getShiftById } from "@/lib/pocketbase";
 import { Shift } from "@/lib/types";
 
@@ -8,6 +9,15 @@ type Props = {
 }
 
 const EventContent = (props: Props) => {
+  const refContainer = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (refContainer.current) {
+      const { width, height } = refContainer.current.getBoundingClientRect();
+      // console.log(width, height);
+
+    }
+  }, []);
+
   const shift: Shift | undefined = getShiftById(props.eventId);
 
   if (!shift) {
@@ -15,9 +25,11 @@ const EventContent = (props: Props) => {
   }
 
   return (
-    <div className='h-full py-1'>
+    <div className='h-full py-1' ref={refContainer}>
       <p className="text-xl font-bold">{props.eventTime}</p>
-      <p className="overflow-hidden">{shift.organisation}</p>
+      <p className="overflow-hidden mb-2">{shift.organisation}</p>
+      <p>{shift.person1}</p>
+      <p>{shift.person2}</p>
     </div>
   );
 };
