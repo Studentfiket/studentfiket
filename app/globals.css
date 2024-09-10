@@ -35,5 +35,5 @@ body {
   @apply opacity-50;
 }
 .free-shift {
-  @apply shadow-lg;
+  @apply font-bold;
 }

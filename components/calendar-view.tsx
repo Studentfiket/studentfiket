@@ -8,12 +8,6 @@ import events from "../data/mochup-shifts";
 
 
 function FullCalendarApp() {
-  const view = "timeGridWeek";
-
-  document.documentElement.style.setProperty('--title-font-size', "0.5em");
-  if (view === "timeGridWeek") {
-  }
-
   return (
     <div className="App">
       <FullCalendar
