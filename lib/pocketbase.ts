@@ -76,19 +76,22 @@ export async function getAvatar(userId: string, fileName: string) {
 
 /// Login a user
 /// Uses implementation from https://github.com/heloineto/nextjs-13-pocketbase-auth-example
-export async function login(user: { email: string; password: string; }) {
+export async function login(user: { username: string; password: string; }) {
   try {
     // Try to login the user with the provided credentials, if successful return true
-    const { token, record: model } = await client.collection('users').authWithPassword(user.email, user.password);
+    const { token, record: model } = await client.collection('users').authWithPassword(user.username, user.password);
+    console.log("Login successful: ", token, model);
 
     // Set the user's token and model in a cookie
     const cookie = JSON.stringify({ token, model });
+    console.log("Cookie: ", cookie);
     cookies().set('pb_auth', cookie, {
       secure: true,
       path: '/',
       sameSite: 'strict',
       httpOnly: true,
     });
+    console.log("Cookie set: ", cookies().get('pb_auth'));
 
     return true;
   } catch (error) {
@@ -100,16 +103,19 @@ export async function login(user: { email: string; password: string; }) {
 }
 
 /// Sign up a new user
-export async function signUp(user: { name: string; username: string; email: string; password: string; }) {
+export async function signUp(user: { name: string; email: string; password: string; }) {
+  // Get LiU id from email
+  const liuId = user.email.split('@')[0];
+
   try {
     // Generate an avatar for the user and convert it to a SVG file (Blob)
-    const svgString = await generateAvatar(user.username);
+    const svgString = await generateAvatar(liuId);
     const avatar = new Blob([svgString], { type: 'image/svg+xml' });
 
     // Try to create a new user with the provided data
     const data = {
       email: user.email,
-      username: user.username,
+      username: liuId,
       password: user.password,
       passwordConfirm: user.password,
       avatar: avatar,
@@ -119,7 +125,7 @@ export async function signUp(user: { name: string; username: string; email: stri
 
     if (createdUser) {
       // If user was created successfully, try to login the user
-      return await login({ email: user.email, password: user.password });
+      return await login({ username: user.email, password: user.password });
     }
 
   } catch (err) {
@@ -130,7 +136,7 @@ export async function signUp(user: { name: string; username: string; email: stri
 }
 
 /// Sign out the current user
-export function signOut() {
+export async function signOut() {
   const id = client.authStore.model?.id;
   client.collection('users').unsubscribe(id);
   client.authStore.clear();
