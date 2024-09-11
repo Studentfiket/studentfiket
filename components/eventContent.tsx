@@ -1,4 +1,3 @@
-import { useEffect, useRef } from "react";
 import { getShiftById } from "@/lib/pocketbase";
 import { Shift } from "@/lib/types";
 
@@ -9,27 +8,28 @@ type Props = {
 }
 
 const EventContent = (props: Props) => {
-  const refContainer = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (refContainer.current) {
-      const { width, height } = refContainer.current.getBoundingClientRect();
-      // console.log(width, height);
-
-    }
-  }, []);
+  console.log(props.eventTime);
 
   const shift: Shift | undefined = getShiftById(props.eventId);
-
   if (!shift) {
     throw new Error(`Shift ${props.eventId} not found`);
   }
 
+  const shiftIsBooked = shift.organisation !== "";
+
+
   return (
-    <div className='h-full py-1' ref={refContainer}>
-      <p className="text-xl font-bold">{props.eventTime}</p>
-      <p className="overflow-hidden mb-2">{shift.organisation}</p>
-      <p>{shift.person1}</p>
-      <p>{shift.person2}</p>
+    <div className='event-container w-full h-full py-1 overflow-hidden'>
+      <div className="grid">
+        <div>
+          <h2 className="text-sm">{props.eventTime}</h2>
+          {shiftIsBooked ? <h3>{shift.organisation}</h3> : <h3>BOKA</h3>}
+        </div>
+        <div>
+          <p>{shift.person1}</p>
+          <p>{shift.person2}</p>
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,45 +1,20 @@
 'use client'
 
-import { Calendar } from "fullcalendar";
 import FullCalendar, { EventSourceInput } from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import EventContent from "@/components/eventContent";
 import { getCurrentShiftsAsEventSources } from "@/lib/pocketbase";
-import { useEffect, useState, useRef } from "react";
 
 
 function FullCalendarApp() {
-  const calendarRef = useRef<FullCalendar | null>(null);
-
-  useEffect(() => {
-    // const weekButton = document.getElementsByClassName('fc-timeGridWeek-button')[0];
-    // weekButton.addEventListener('click', () => {
-    //   console.log('Week button clicked');
-    // });
-    // const dayButton = document.getElementsByClassName('fc-timeGridDay-button')[0];
-    // weekButton.addEventListener('click', () => {
-    //   console.log('Day button clicked');
-    // });
-    const calendarEl = document.getElementsByClassName('fc')[0];
-    if (!calendarEl) {
-      throw new Error('Calendar element not found');
-    }
-    const calendar = new Calendar(calendarEl as HTMLElement, {
-      initialView: 'dayGridMonth'
-    });
-    console.log(calendar);
-  }, []);
-
-
   const events: EventSourceInput = getCurrentShiftsAsEventSources();
   const view = "timeGridWeek";
 
   return (
     <div className="App">
       <FullCalendar
-        ref={calendarRef}
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="timeGridWeek"
         eventTimeFormat={{ hour: "2-digit", minute: "2-digit", meridiem: false, hour12: false }}
