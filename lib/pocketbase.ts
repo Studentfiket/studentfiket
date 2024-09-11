@@ -123,6 +123,8 @@ export async function signUp(user: { name: string; email: string; password: stri
     };
     const createdUser = await client.collection('users').create(data);
 
+    // TODO: Add user to user_data collection
+
     if (createdUser) {
       // If user was created successfully, try to login the user
       return await login({ username: user.email, password: user.password });
