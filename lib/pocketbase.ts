@@ -7,8 +7,9 @@ import { createAvatar } from '@dicebear/core';
 import { botttsNeutral } from '@dicebear/collection';
 import placeholderShifts from "@/data/mockup-shifts";
 import { Shift } from "./types";
+import { log } from 'console';
 
-const client = new PocketBase(process.env.POCKETBASE_URL);
+const pb = new PocketBase(process.env.POCKETBASE_URL);
 
 // Check if the shift is booked, reserved or free
 const checkAvailability = (shift: Shift) => {
@@ -21,6 +22,43 @@ const checkAvailability = (shift: Shift) => {
   } else {
     return "free";
   }
+}
+
+export const createShift = async (startTime: string) => {
+  const startTimeDate = new Date(startTime).toISOString();
+  const endTimeDate = new Date(new Date(startTime).getTime() + 2 * 60 * 60 * 1000).toISOString();
+  log("Creating shift at: ", startTimeDate + " and " + endTimeDate);
+
+  const shift = {
+    startTime: startTimeDate,
+    endTime: endTimeDate,
+    workers: [],
+    organisation: ""
+  }
+
+  // const createdShift = await pb.collection('shifts').create(shift);
+  // return createdShift;
+}
+
+/// Generate new shifts for one period to the database
+export const generateNewShifts = async (startDate: string, endDate: string) => {
+  // Check if dates matches the format "YYYY-MM-DD"
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
+    console.error("Invalid date format");
+    return;
+  }
+
+  // Make sure the period is empty before generating new shifts ()
+  const resultList = await pb.collection('shifts').getList(1, 5, {
+    filter: `startTime >= "${startDate} 00:00:00" && endTime <= "${endDate} 00:00:00"`,
+  });
+
+  if (resultList.items.length > 0) {
+    return "Period is not empty";
+  }
+
+  return "Done";
 }
 
 export const getCurrentShifts = () => {
@@ -55,15 +93,15 @@ async function generateAvatar(seed: string) {
 
 export async function getAvatar(userId: string, fileName: string) {
   if (fileName == "")
-    fileName = client.authStore.model?.avatar;
+    fileName = pb.authStore.model?.avatar;
 
   if (userId == "")
-    userId = client.authStore.model?.id;
+    userId = pb.authStore.model?.id;
 
   try {
     // Get the current user's record. Use requestKey: null to avoid autocancelling the request if many avatar requests are made in a short time
-    const record = await client.collection('users').getOne(userId, { requestKey: null });
-    const url = client.files.getUrl(record, fileName, { 'thumb': '100x250' });
+    const record = await pb.collection('users').getOne(userId, { requestKey: null });
+    const url = pb.files.getUrl(record, fileName, { 'thumb': '100x250' });
 
     return url;
   } catch (error) {
@@ -79,7 +117,7 @@ export async function getAvatar(userId: string, fileName: string) {
 export async function login(user: { username: string; password: string; }) {
   try {
     // Try to login the user with the provided credentials, if successful return true
-    const { token, record: model } = await client.collection('users').authWithPassword(user.username, user.password);
+    const { token, record: model } = await pb.collection('users').authWithPassword(user.username, user.password);
     console.log("Login successful: ", token, model);
 
     // Set the user's token and model in a cookie
@@ -121,7 +159,7 @@ export async function signUp(user: { name: string; email: string; password: stri
       avatar: avatar,
       name: user.name
     };
-    const createdUser = await client.collection('users').create(data);
+    const createdUser = await pb.collection('users').create(data);
 
     // TODO: Add user to user_data collection
 
@@ -139,9 +177,9 @@ export async function signUp(user: { name: string; email: string; password: stri
 
 /// Sign out the current user
 export async function signOut() {
-  const id = client.authStore.model?.id;
-  client.collection('users').unsubscribe(id);
-  client.authStore.clear();
+  const id = pb.authStore.model?.id;
+  pb.collection('users').unsubscribe(id);
+  pb.authStore.clear();
   cookies().delete('pb_auth');
   redirect('/login');
 }
