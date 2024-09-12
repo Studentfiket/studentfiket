@@ -8,7 +8,7 @@ type Props = {
 }
 
 const EventContent = (props: Props) => {
-  console.log(props.eventTime);
+  console.log(props.eventId);
 
   const shift: Shift | undefined = getShiftById(props.eventId);
   if (!shift) {
@@ -16,6 +16,8 @@ const EventContent = (props: Props) => {
   }
 
   const shiftIsBooked = shift.organisation !== "";
+
+  console.log(shift);
 
 
   return (

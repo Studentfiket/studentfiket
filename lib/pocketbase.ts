@@ -6,23 +6,10 @@ import PocketBase from 'pocketbase';
 import { createAvatar } from '@dicebear/core';
 import { botttsNeutral } from '@dicebear/collection';
 import placeholderShifts from "@/data/mockup-shifts";
-import { Shift } from "./types";
-import { log } from 'console';
+import { Shifts } from '@/lib/types';
 
 const pb = new PocketBase(process.env.POCKETBASE_URL);
-
-// Check if the shift is booked, reserved or free
-const checkAvailability = (shift: Shift) => {
-  if (shift.organisation !== "") {
-    if (shift.person1 !== "" && shift.person2 !== "") {
-      return "booked";
-    } else {
-      return "reserved";
-    }
-  } else {
-    return "free";
-  }
-}
+let loadedShifts: Shifts[] = [];
 
 export const createShift = async (startTime: string) => {
   const startTimeDate = new Date(startTime).toISOString();
@@ -61,20 +48,8 @@ export const generateNewShifts = async (startDate: string, endDate: string) => {
   return "Done";
 }
 
-export const getCurrentShifts = () => {
+export const getShifts = async () => {
   return placeholderShifts;
-}
-
-export const getCurrentShiftsAsEventSources = () => {
-
-  return placeholderShifts.map(shift => {
-    return {
-      id: shift.id,
-      start: shift.start,
-      end: shift.end,
-      classNames: [checkAvailability(shift) + "-shift"]
-    }
-  });
 }
 
 export const getShiftById = (id: string) => {
