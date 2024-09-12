@@ -6,6 +6,8 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import EventContent from "@/components/eventContent";
 import { getCurrentShiftsAsEventSources } from "@/lib/pocketbase";
+import { Button } from '@/components/ui/button';
+import { createShift } from '@/lib/pocketbase';
 
 
 function FullCalendarApp() {
@@ -14,6 +16,7 @@ function FullCalendarApp() {
 
   return (
     <div className="App">
+      <Button onClick={() => createShift("2024-09-13T12:00")}>Click me</Button>
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="timeGridWeek"

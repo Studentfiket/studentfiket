@@ -1,7 +1,6 @@
 import dynamic from 'next/dynamic';
 import { cookies } from 'next/headers';
-import { signOut } from '@/lib/pocketbase';
-import { Button } from '@/components/ui/button';
+import { createShift, signOut } from '@/lib/pocketbase';
 
 // Calendar dependencies will not work with SSR
 // https://stackoverflow.com/questions/72140065/warning-prop-id-did-not-match-server-fc-dom-171-client-fc-dom-2-when-u
@@ -23,8 +22,6 @@ export default function Home() {
       <form action={signOut}>
         <button type="submit">logout</button>
       </form>
-      {/* TODO: test generateShift */}
-      <Button>Click me</Button>
     </div>
   );
 }
