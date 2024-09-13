@@ -14,7 +14,7 @@ let loadedShifts: Shifts[] = [];
 export const createShift = async (startTime: string) => {
   const startTimeDate = new Date(startTime).toISOString();
   const endTimeDate = new Date(new Date(startTime).getTime() + 2 * 60 * 60 * 1000).toISOString();
-  log("Creating shift at: ", startTimeDate + " and " + endTimeDate);
+  console.log("Creating shift at: ", startTimeDate + " and " + endTimeDate);
 
   const shift = {
     startTime: startTimeDate,
@@ -23,8 +23,16 @@ export const createShift = async (startTime: string) => {
     organisation: ""
   }
 
-  // const createdShift = await pb.collection('shifts').create(shift);
-  // return createdShift;
+  console.log("Shift: ", shift);
+
+  try {
+    const createdShift = await pb.collection('shifts').create(shift);
+    return createdShift;
+  }
+  catch (error) {
+    console.error("Error creating shift: ", error);
+    return
+  }
 }
 
 /// Generate new shifts for one period to the database
@@ -49,11 +57,12 @@ export const generateNewShifts = async (startDate: string, endDate: string) => {
 }
 
 export const getShifts = async () => {
+  console.log(pb.authStore.model?.id);
   return placeholderShifts;
 }
 
 export const getShiftById = (id: string) => {
-  return placeholderShifts.find(shift => shift.id === id);
+  return loadedShifts.find(shift => shift.id === id);
 }
 
 /* #region Avatar */
@@ -87,24 +96,26 @@ export async function getAvatar(userId: string, fileName: string) {
 
 /* #region Local user handling */
 
+// TODO: Change to client?
+// https://github.com/tigawanna/next-pocketbase-demo#readme
 /// Login a user
 /// Uses implementation from https://github.com/heloineto/nextjs-13-pocketbase-auth-example
 export async function login(user: { username: string; password: string; }) {
   try {
+    console.log("Logging in user: ", user);
     // Try to login the user with the provided credentials, if successful return true
     const { token, record: model } = await pb.collection('users').authWithPassword(user.username, user.password);
-    console.log("Login successful: ", token, model);
+    console.log("model: " + pb.authStore.model?.id)
 
     // Set the user's token and model in a cookie
     const cookie = JSON.stringify({ token, model });
-    console.log("Cookie: ", cookie);
     cookies().set('pb_auth', cookie, {
       secure: true,
       path: '/',
       sameSite: 'strict',
       httpOnly: true,
     });
-    console.log("Cookie set: ", cookies().get('pb_auth'));
+    console.log("Cookie: ", cookie);
 
     return true;
   } catch (error) {
