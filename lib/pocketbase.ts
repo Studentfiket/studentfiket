@@ -6,15 +6,39 @@ import PocketBase from 'pocketbase';
 import { createAvatar } from '@dicebear/core';
 import { botttsNeutral } from '@dicebear/collection';
 import placeholderShifts from "@/data/mockup-shifts";
-import { Shifts } from '@/lib/types';
+// import { Shifts } from '@/lib/types';
 
 const pb = new PocketBase(process.env.POCKETBASE_URL);
 let loadedShifts: Shifts[] = [];
 
+export const getPb = async () => {
+  return pb;
+}
+
 export const createShift = async (startTime: string) => {
+  const cookieStore = cookies()
+  const pb_auth = cookieStore.get('pb_auth')?.value
+
+  if (!pb_auth) {
+    console.error("No auth cookie found");
+    return;
+  }
+
+  pb.authStore.loadFromCookie(JSON.parse(pb_auth));
+
+  try {
+    // get an up-to-date auth store state by veryfing and refreshing the loaded auth model (if any)
+    pb.authStore.isValid && await pb.collection('users').authRefresh();
+  } catch (_) {
+    // clear the auth store on failed refresh
+    pb.authStore.clear();
+  }
+
+  console.log(pb_auth);
+  console.log(pb.authStore);
   const startTimeDate = new Date(startTime).toISOString();
   const endTimeDate = new Date(new Date(startTime).getTime() + 2 * 60 * 60 * 1000).toISOString();
-  console.log("Creating shift at: ", startTimeDate + " and " + endTimeDate);
+  // console.log("Creating shift at: ", startTimeDate + " and " + endTimeDate);
 
   const shift = {
     startTime: startTimeDate,
@@ -23,16 +47,14 @@ export const createShift = async (startTime: string) => {
     organisation: ""
   }
 
-  console.log("Shift: ", shift);
-
-  try {
-    const createdShift = await pb.collection('shifts').create(shift);
-    return createdShift;
-  }
-  catch (error) {
-    console.error("Error creating shift: ", error);
-    return
-  }
+  // try {
+  //   const createdShift = await pb.collection('shifts').create(shift);
+  //   return createdShift;
+  // }
+  // catch (error) {
+  //   console.error("Error creating shift: ", error);
+  //   return
+  // }
 }
 
 /// Generate new shifts for one period to the database
@@ -57,7 +79,6 @@ export const generateNewShifts = async (startDate: string, endDate: string) => {
 }
 
 export const getShifts = async () => {
-  console.log(pb.authStore.model?.id);
   return placeholderShifts;
 }
 
@@ -107,13 +128,22 @@ export async function login(user: { username: string; password: string; }) {
     const { token, record: model } = await pb.collection('users').authWithPassword(user.username, user.password);
     console.log("model: " + pb.authStore.model?.id)
 
+    // pb.authStore.exportToCookie({ httpOnly: false });
+    // const pbAuth = cookies().get('pb_auth')?.value;
+    // if (typeof pbAuth === 'string') {
+    //   pb.authStore.loadFromCookie(pbAuth);
+    // } else {
+    //   console.error("No auth cookie found");
+    //   return;
+    // }
+
     // Set the user's token and model in a cookie
     const cookie = JSON.stringify({ token, model });
     cookies().set('pb_auth', cookie, {
       secure: true,
       path: '/',
       sameSite: 'strict',
-      httpOnly: true,
+      httpOnly: false,
     });
     console.log("Cookie: ", cookie);
 

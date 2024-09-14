@@ -6,80 +6,80 @@ const placeholderShifts: Shift[] = [
     organisation: "Skurkeriet",
     person1: "Person A",
     person2: "Person B",
-    start: "2024-09-10T08:00:00",
-    end: "2024-09-10T10:00:00"
+    start: "2024-09-16T08:00:00",
+    end: "2024-09-16T10:00:00"
   },
   {
     id: "2",
     organisation: "",
     person1: "",
     person2: "",
-    start: "2024-09-10T10:00:00",
-    end: "2024-09-10T12:00:00"
+    start: "2024-09-16T10:00:00",
+    end: "2024-09-16T12:00:00"
   },
   {
     id: "3",
     organisation: "3Cant",
     person1: "Person E",
     person2: "",
-    start: "2024-09-10T12:00:00",
-    end: "2024-09-10T13:00:00"
+    start: "2024-09-16T12:00:00",
+    end: "2024-09-16T13:00:00"
   },
   {
     id: "4",
     organisation: "Skurkeriet",
     person1: "Person G",
     person2: "Person H",
-    start: "2024-09-10T13:00:00",
-    end: "2024-09-10T15:00:00"
+    start: "2024-09-16T13:00:00",
+    end: "2024-09-16T15:00:00"
   },
   {
     id: "5",
     organisation: "Privatist",
     person1: "Person G",
     person2: "Person H",
-    start: "2024-09-10T15:00:00",
-    end: "2024-09-10T17:00:00"
+    start: "2024-09-16T15:00:00",
+    end: "2024-09-16T17:00:00"
   },
   {
     id: "6",
     organisation: "3Cant",
     person1: "Person I",
     person2: "Person J",
-    start: "2024-09-11T08:00:00",
-    end: "2024-09-11T10:00:00"
+    start: "2024-09-17T08:00:00",
+    end: "2024-09-17T10:00:00"
   },
   {
     id: "7",
     organisation: "",
     person1: "",
     person2: "",
-    start: "2024-09-11T10:00:00",
-    end: "2024-09-11T12:00:00"
+    start: "2024-09-17T10:00:00",
+    end: "2024-09-17T12:00:00"
   },
   {
     id: "8",
     organisation: "Privat",
     person1: "Person M",
     person2: "Person N",
-    start: "2024-09-11T12:00:00",
-    end: "2024-09-11T13:00:00"
+    start: "2024-09-17T12:00:00",
+    end: "2024-09-17T13:00:00"
   },
   {
     id: "9",
     organisation: "Privat",
     person1: "Person Q",
     person2: "Person R",
-    start: "2024-09-11T13:00:00",
-    end: "2024-09-11T15:00:00"
+    start: "2024-09-17T13:00:00",
+    end: "2024-09-17T15:00:00"
   },
   {
     id: "10",
     organisation: "",
     person1: "",
     person2: "",
-    start: "2024-09-11T15:00:00",
-    end: "2024-09-11T17:00:00"
+    start: "2024-09-17T15:00:00",
+    end: "2024-09-17T17:00:00"
   },
   {
     id: "11",
