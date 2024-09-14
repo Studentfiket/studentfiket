@@ -15,6 +15,7 @@ export const getPb = async () => {
   return pb;
 }
 
+// TODO: Get the loadFromCookie working
 export const createShift = async (startTime: string) => {
   const cookieStore = cookies()
   const pb_auth = cookieStore.get('pb_auth')?.value

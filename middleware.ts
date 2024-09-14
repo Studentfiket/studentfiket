@@ -15,27 +15,27 @@ export async function middleware(request: NextRequest) {
   if (cookie) {
     console.log("cookie === ", cookie)
     try {
-      // TODO: Fix stupid bug where my cookie is being deleted
       pb.authStore.loadFromCookie(cookie)
       console.log('Auth Model', pb.authStore.model) // Shows record
       console.log('Is Valid', pb.authStore.isValid) // True
-      pb.authStore.isValid && await pb.collection('users').authRefresh()
+      // pb.authStore.isValid && await pb.collection('users').authRefresh()
     } catch (error) {
 
     }
   }
 
-  try {
-    // get an up-to-date auth store state by verifying and refreshing the loaded auth model (if any)
-    pb.authStore.isValid && (await pb.collection('user').authRefresh());
-  } catch (err) {
-    // clear the auth store on failed refresh
-    pb.authStore.clear();
-    response.headers.set(
-      "set-cookie",
-      pb.authStore.exportToCookie({ httpOnly: false })
-    );
-  }
+  // TODO: Get this working?
+  // try {
+  //   // get an up-to-date auth store state by verifying and refreshing the loaded auth model (if any)
+  //   pb.authStore.isValid && (await pb.collection('user').authRefresh());
+  // } catch (err) {
+  //   // clear the auth store on failed refresh
+  //   pb.authStore.clear();
+  //   response.headers.set(
+  //     "set-cookie",
+  //     pb.authStore.exportToCookie({ httpOnly: false })
+  //   );
+  // }
 
   if (request.nextUrl.pathname.startsWith("/login") && request.nextUrl.pathname.startsWith("/register")) {
     if (pb.authStore.model) {
@@ -54,15 +54,12 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  if (pb.authStore.model && request.nextUrl.pathname.startsWith("/calendar")) {
-    const next_url = request.headers.get("next-url") as string
-    if (next_url) {
-      const redirect_to = new URL(next_url, request.url);
+  if (request.nextUrl.pathname.startsWith("/calendar")) {
+    if (!pb.authStore.model) {
+      console.log("calendar failed")
+      const redirect_to = new URL("/login", request.url);
       return NextResponse.redirect(redirect_to);
     }
-    const redirect_to = new URL(`/`, request.url);
-    return NextResponse.redirect(redirect_to);
-
   }
 
   return response;
