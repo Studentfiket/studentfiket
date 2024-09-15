@@ -15,7 +15,6 @@ export default async function Home() {
   // This never happens because of the middleware,
   // but we must make typescript happy
   if (!cookie) throw new Error('Not logged in');
-  const { model } = JSON.parse(cookie.value);
 
   // Get the shifts
   const shifts = await getShifts();
@@ -24,7 +23,7 @@ export default async function Home() {
     <div>
       <Header />
       <CalendarView loadedShifts={shifts} />
-      <pre>{JSON.stringify(model, null, 2)}</pre>
+      {/* <pre>{JSON.stringify(model, null, 2)}</pre> */}
       <form action={signOut}>
         <button type="submit">logout</button>
       </form>

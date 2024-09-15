@@ -5,7 +5,6 @@ import { redirect } from 'next/navigation';
 import PocketBase from 'pocketbase';
 import { createAvatar } from '@dicebear/core';
 import { botttsNeutral } from '@dicebear/collection';
-import placeholderShifts from "@/data/mockup-shifts";
 import { getNextjsCookie } from "@/utils/server-cookie";
 import { Shift } from '@/lib/types';
 
@@ -21,7 +20,6 @@ export const loadPocketBase = async () => {
   const pb_auth = cookieStore.get('pb_auth');
   const cookie = await getNextjsCookie(pb_auth)
   if (cookie) {
-    console.log("cookie === ", cookie)
     try {
       pb.authStore.loadFromCookie(cookie)
       // pb.authStore.isValid && await pb.collection('users').authRefresh()
@@ -32,8 +30,7 @@ export const loadPocketBase = async () => {
   }
 }
 
-// TODO: Get the loadFromCookie working
-export const createShift = async (startTime: string, canOvveride = false) => {
+export const createShift = async (startTime: string, canOverride = false, isCreatingInBatch: boolean = false) => {
   const pb = await loadPocketBase();
 
   if (!pb?.authStore.model) {
@@ -60,15 +57,22 @@ export const createShift = async (startTime: string, canOvveride = false) => {
     organisation: ""
   }
 
+  // Disable auto cancellation if creating shifts in batch
+  isCreatingInBatch ? pb.autoCancellation(false) : null;
+
   try {
     // Check if the shift already exists
+    console.log('startTimeDate: ', startTimeDate.split('T')[0], startTimeDate.split('T')[1].split('Z')[0]);
+    const startDate = new Date(startTimeDate.split('T')[0]).toISOString();
+    const startTime = startTimeDate.split('T')[1].split('.')[0];
+
     const resultList = await pb.collection('shifts').getList(1, 5, {
-      filter: `startTime = "${startTimeDate}"`,
+      filter: `startTime = "${startDate} ${startTime}" `,
     });
 
     if (resultList.items.length > 0) {
       // If the shift already exists, return an error message
-      if (!canOvveride) {
+      if (!canOverride) {
         console.error("Shift already exists");
         return;
       }
@@ -79,31 +83,62 @@ export const createShift = async (startTime: string, canOvveride = false) => {
     }
 
     const createdShift = await pb.collection('shifts').create(shift);
+
+    // Enable auto cancellation if creating shifts in batch
+    isCreatingInBatch ? pb.autoCancellation(true) : null;
+
     return createdShift;
   }
   catch (error) {
+    // Enable auto cancellation if creating shifts in batch
+    isCreatingInBatch ? pb.autoCancellation(true) : null;
     console.error("Error creating shift: ", error);
     return
   }
 }
 
+// TODO: fix the batch creation, without overloading the server
 /// Generate new shifts for one period to the database
-export const generateNewShifts = async (startDate: string, endDate: string) => {
-  // Check if dates matches the format "YYYY-MM-DD"
-  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-  if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
-    console.error("Invalid date format");
+export const generateNewPeriod = async (startDate: Date, endDate: Date, canOverride: boolean = false) => {
+  const generateNewDay = async (date: Date) => {
+    const day = date.getDay();
+    if (day !== 0 && day !== 6) {
+      for (let i = 8; i <= 15; i += 2) {
+        if (i === 14) {
+          i -= 1
+        }
+        const shiftStartTime = new Date(date.setHours(i, 0, 0, 0)).toISOString()
+        createShift(shiftStartTime, canOverride, true);
+      }
+    }
+  }
+
+  const pb = await loadPocketBase();
+  if (!pb?.authStore.model) {
+    console.error("No user logged in");
     return;
   }
 
-  // Make sure the period is empty before generating new shifts ()
-  const resultList = await pb.collection('shifts').getList(1, 5, {
-    filter: `startTime >= "${startDate} 00:00:00" && endTime <= "${endDate} 00:00:00"`,
-  });
+  // Parse the dates into "YYYY-MM-DD" format
+  // const startDateStr = startDate.toISOString().split('T')[0];
+  // const endDateStr = endDate.toISOString().split('T')[0];
 
-  if (resultList.items.length > 0) {
-    return "Period is not empty";
+  // // Check if theres already shifts for the period
+  // const resultList = await pb.collection('shifts').getList(1, 100, {
+  //   filter: `startTime >= "${startDateStr} 00:00:00" && endTime <= "${endDateStr} 00:00:00"`,
+  // });
+
+  // Generate new shifts for the period
+  for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+    console.log("Generating shifts for: ", d);
+    await generateNewDay(d);
   }
+
+  // // Compare the generated shifts with the existing shifts and remove duplicates
+  // const filteredShifts = shifts.filter(shift => !resultList.items.some(item => item.startTime === shift.startTime));
+
+  // // Post the new shifts to the database
+  // const createdShifts = await pb.collection('shifts').create(filteredShifts);
 
   return "Done";
 }
@@ -169,6 +204,26 @@ export async function getAvatar(userId: string, fileName: string) {
 
 /* #region Local user handling */
 
+export const getUser = async (id: string = "") => {
+  const pb = await loadPocketBase();
+  if (!pb?.authStore.model) {
+    console.error("No user logged in");
+    return;
+  }
+
+  if (id == "") {
+    id = pb.authStore.model?.id;
+  }
+
+  try {
+    const user = await pb.collection('users').getOne(id);
+    return user;
+  } catch (error) {
+    console.error("Error getting user: ", error);
+    return;
+  }
+}
+
 // TODO: Change to client?
 // https://github.com/tigawanna/next-pocketbase-demo#readme
 /// Login a user
@@ -199,12 +254,10 @@ export async function login(user: { username: string; password: string; }) {
     });
     console.log("Cookie: ", cookie);
 
-    return true;
+    return "Success";
   } catch (error) {
     console.error("Login error: ", error);
-
-    // If login fails, return false
-    return false;
+    return "bad credentials";
   }
 }
 

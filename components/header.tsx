@@ -1,12 +1,15 @@
 'use client'
 
 import { Button } from '@/components/ui/button';
-import { createShift } from '@/lib/pocketbase';
+import { generateNewPeriod } from '@/lib/pocketbase';
 
 function Header() {
+  const startDate = new Date("2024-09-16T08:00:00.000Z");
+  const endDate = new Date("2024-09-20T17:00:00.000Z");
+
   return (
     <header>
-      {/* <Button onClick={() => createShift("2024-09-19T13:00")}>Create shift</Button> */}
+      {/* <Button onClick={() => generateNewPeriod(startDate, endDate, false)}>Create shift</Button> */}
     </header>
   );
 }

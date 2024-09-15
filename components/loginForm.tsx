@@ -23,12 +23,12 @@ export const LoginForm = () => {
     e.preventDefault()
     try {
       console.log("Logging in user: ", { username, password });
-      const loginWasSuccess = await login({
+      const loginMessage = await login({
         username,
         password
       })
-      console.log(loginWasSuccess)
-      if (loginWasSuccess) {
+      console.log("Login: " + loginMessage)
+      if (loginMessage) {
         router.push(callbackUrl)
       } else {
         setIsLoading(false)
@@ -72,8 +72,8 @@ export const LoginForm = () => {
             Logga in
           </Button>
         ) : (
-          <Button className="w-full" size="lg" disabled>
-            <Lock className="mr-2 h-4 w-4 animate-pulse" />
+          <Button className="w-full animate-pulse" size="lg" disabled>
+            <Lock className="mr-2 h-4 w-4" />
             Loggar in
           </Button>)
         }

@@ -5,31 +5,24 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import EventContent from "@/components/eventContent";
-import { Shift } from "@/lib/types";
+import { Shift, Event } from "@/lib/types";
 import { Alert } from "@/components/ui/alert";
+import { getUser } from "@/lib/pocketbase";
+import { useState, useEffect } from 'react'
 
-const shiftsAsEventSources = (shifts: Shift[]) => {
-  return shifts.map(shift => {
+const shiftsAsEventSources = async (shifts: Shift[]): Promise<Event[]> => {
+  // Map the shifts to events, combining the organisation and workers information into the title
+  return Promise.all(shifts.map(async shift => {
+    const person1 = shift.person1 ? await getUser(shift.person1).then(user => user?.name) : "";
+    const person2 = shift.person2 ? await getUser(shift.person2).then(user => user?.name) : "";
+
     return {
       id: shift.id,
       start: shift.start,
       end: shift.end,
-      classNames: [checkAvailability(shift) + "-shift"]
+      title: shift.organisation + "/&" + person1 + "/&" + person2
     }
-  });
-}
-
-// Check if the shift is booked, reserved or free
-const checkAvailability = (shift: Shift) => {
-  if (shift.organisation !== "") {
-    if (shift.person1 !== "" && shift.person2 !== "") {
-      return "booked";
-    } else {
-      return "reserved";
-    }
-  } else {
-    return "free";
-  }
+  }));
 }
 
 type Props = {
@@ -37,12 +30,21 @@ type Props = {
 }
 
 function CalendarView(props: Props) {
-  if (!props.loadedShifts) {
-    return <Alert className="m-10 w-auto font-semibold" variant={"destructive"}>Error <br />No shifts found</Alert>;
-  }
-  const events = shiftsAsEventSources(props.loadedShifts);
-  const view = "timeGridWeek";
-  console.log(events);
+  const [events, setEvents] = useState<Event[]>([]);
+
+  useEffect(() => {
+    async function fetchPosts() {
+      if (props.loadedShifts) {
+        const events = await shiftsAsEventSources(props.loadedShifts);
+        setEvents(events);
+      }
+    }
+    fetchPosts()
+  }, [props.loadedShifts])
+
+  // if (!props.loadedShifts) {
+  //   return <Alert className="m-10 w-auto font-semibold" variant={"destructive"}>Error <br />No shifts found</Alert>;
+  // }
 
   return (
     <div className="App">
@@ -59,7 +61,6 @@ function CalendarView(props: Props) {
           weekends={false}
           displayEventEnd={false}
           events={events}
-          eventColor="green"
           height="90vh"
           slotDuration={"01:00:00"}
           expandRows={true}
@@ -72,10 +73,9 @@ function CalendarView(props: Props) {
           slotMaxTime="18:00:00"
           allDaySlot={false}
           navLinkDayClick={(e) => console.log(e)}
-          dateClick={(e) => console.log(e.dateStr)}
           eventClick={(e) => console.log(e.event.id)}
           eventContent={(arg) => (
-            <EventContent eventId={arg.event.id} eventTime={arg.timeText} view={view} />
+            <EventContent event={arg.event} eventTime={arg.timeText} />
           )}
         />
       ) : (
