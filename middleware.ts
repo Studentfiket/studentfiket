@@ -13,11 +13,8 @@ export async function middleware(request: NextRequest) {
   const cookie = await getNextjsCookie(request_cookie)
   const pb = new PocketBase(process.env.POCKETBASE_URL);
   if (cookie) {
-    console.log("cookie === ", cookie)
     try {
       pb.authStore.loadFromCookie(cookie)
-      console.log('Auth Model', pb.authStore.model) // Shows record
-      console.log('Is Valid', pb.authStore.isValid) // True
       // pb.authStore.isValid && await pb.collection('users').authRefresh()
     } catch (error) {
 

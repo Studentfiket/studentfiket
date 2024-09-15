@@ -6,7 +6,7 @@ import { createShift } from '@/lib/pocketbase';
 function Header() {
   return (
     <header>
-      <Button onClick={() => createShift("2024-09-13T12:00")}>Create shift</Button>
+      {/* <Button onClick={() => createShift("2024-09-19T13:00")}>Create shift</Button> */}
     </header>
   );
 }

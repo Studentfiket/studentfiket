@@ -6,6 +6,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import EventContent from "@/components/eventContent";
 import { Shift } from "@/lib/types";
+import { Alert } from "@/components/ui/alert";
 
 const shiftsAsEventSources = (shifts: Shift[]) => {
   return shifts.map(shift => {
@@ -32,10 +33,13 @@ const checkAvailability = (shift: Shift) => {
 }
 
 type Props = {
-  loadedShifts: Shift[];
+  loadedShifts: Shift[] | undefined;
 }
 
 function CalendarView(props: Props) {
+  if (!props.loadedShifts) {
+    return <Alert className="m-10 w-auto font-semibold" variant={"destructive"}>Error <br />No shifts found</Alert>;
+  }
   const events = shiftsAsEventSources(props.loadedShifts);
   const view = "timeGridWeek";
   console.log(events);
