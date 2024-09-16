@@ -153,12 +153,13 @@ export const getShifts = async (): Promise<Shift[] | undefined> => {
   try {
     const resultList = await pb.collection('shifts').getList(1, 50, {
       filter: 'startTime >= "2024-09-01 00:00:00" && startTime <= "2025-09-01 00:00:00"',
+      expand: 'workers'
     });
     loadedShifts = resultList.items.map(item => ({
       id: item.id,
       organisation: item.organisation,
-      person1: item.workers[0],
-      person2: item.workers[1],
+      person1: item.workers[0] === undefined ? "" : item.expand?.workers[0].name,
+      person2: item.workers[1] === undefined ? "" : item.expand?.workers[1].name,
       start: item.startTime,
       end: item.endTime
     }));
@@ -169,8 +170,22 @@ export const getShifts = async (): Promise<Shift[] | undefined> => {
   }
 }
 
-export const getShiftById = (id: string) => {
-  return loadedShifts.find(shift => shift.id === id);
+export const getShiftById = async (id: string) => {
+  const pb = await loadPocketBase();
+  if (!pb?.authStore.model) {
+    console.error("No user logged in");
+    return;
+  }
+
+  try {
+    const shift = await pb.collection('shifts').getOne(id);
+    return shift;
+  } catch (error) {
+    console.error("Error getting shift: ", error);
+    return;
+  }
+
+  // return loadedShifts.find(shift => shift.id === id);
 }
 
 /* #region Avatar */

@@ -48,7 +48,7 @@ const EventContent = (props: Props) => {
   }
 
   return (
-    <div className={'event-container w-full h-full py-1 overflow-hidden rounded-lg ' + checkAvailability(shift)}>
+    <div className={'event-container w-auto ml-1 mr-2 box-content h-full py-1 overflow-hidden rounded-lg ' + checkAvailability(shift)}>
       <div className="grid">
         <div>
           <h2 className="text-sm">{props.eventTime}</h2>

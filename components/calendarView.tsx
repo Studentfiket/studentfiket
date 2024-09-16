@@ -6,23 +6,20 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import EventContent from "@/components/eventContent";
 import { Shift, Event } from "@/lib/types";
-import { Alert } from "@/components/ui/alert";
-import { getUser } from "@/lib/pocketbase";
-import { useState, useEffect } from 'react'
+import BookShiftPopup from "@/components/bookShiftPopup";
+import { useState } from "react";
 
-const shiftsAsEventSources = async (shifts: Shift[]): Promise<Event[]> => {
+const shiftsAsEventSources = (shifts: Shift[]): Event[] => {
   // Map the shifts to events, combining the organisation and workers information into the title
-  return Promise.all(shifts.map(async shift => {
-    const person1 = shift.person1 ? await getUser(shift.person1).then(user => user?.name) : "";
-    const person2 = shift.person2 ? await getUser(shift.person2).then(user => user?.name) : "";
-
+  return shifts.map(shift => {
+    const title = `${shift.organisation}/&${shift.person1}/&${shift.person2}`;
     return {
       id: shift.id,
+      title: title,
       start: shift.start,
-      end: shift.end,
-      title: shift.organisation + "/&" + person1 + "/&" + person2
+      end: shift.end
     }
-  }));
+  })
 }
 
 type Props = {
@@ -30,24 +27,24 @@ type Props = {
 }
 
 function CalendarView(props: Props) {
-  const [events, setEvents] = useState<Event[]>([]);
-
-  useEffect(() => {
-    async function fetchPosts() {
-      if (props.loadedShifts) {
-        const events = await shiftsAsEventSources(props.loadedShifts);
-        setEvents(events);
-      }
+  const getShiftById = (id: string): Shift | null => {
+    const shift = props.loadedShifts?.find(shift => shift.id === id);
+    if (!shift) {
+      return null;
     }
-    fetchPosts()
-  }, [props.loadedShifts])
+    return shift;
+  }
 
-  // if (!props.loadedShifts) {
-  //   return <Alert className="m-10 w-auto font-semibold" variant={"destructive"}>Error <br />No shifts found</Alert>;
-  // }
+  const [selectedShift, setSelectedShift] = useState<Shift | null>(null);
+
+  if (!props.loadedShifts) {
+    return <p>Loading...</p>;
+  }
+  const events = shiftsAsEventSources(props.loadedShifts);
 
   return (
-    <div className="App">
+    <div className="w-screen">
+      <BookShiftPopup shift={selectedShift} />
       {events.length > 0 ? (
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -73,7 +70,7 @@ function CalendarView(props: Props) {
           slotMaxTime="18:00:00"
           allDaySlot={false}
           navLinkDayClick={(e) => console.log(e)}
-          eventClick={(e) => console.log(e.event.id)}
+          eventClick={(e) => setSelectedShift(getShiftById(e.event.id))}
           eventContent={(arg) => (
             <EventContent event={arg.event} eventTime={arg.timeText} />
           )}

@@ -28,11 +28,13 @@ export const LoginForm = () => {
         password
       })
       console.log("Login: " + loginMessage)
-      if (loginMessage) {
+      if (loginMessage === "success") {
         router.push(callbackUrl)
       } else {
-        setIsLoading(false)
-        setError('Invalid email or password')
+        if (loginMessage === "bad credentials") {
+          setIsLoading(false)
+          setError('Invalid email or password')
+        }
       }
     } catch (err: Error | unknown) {
       setIsLoading(false)
