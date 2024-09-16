@@ -22,10 +22,10 @@ body {
 }
 
 .fc-timegrid-event {
-  @apply rounded-xl my-1 border-none !important;
+  @apply bg-transparent my-1 border-none !important;
 }
 .fc-timegrid-col-events { /* needs to be same precedence */
-  @apply text-center;
+  @apply text-center w-full;
 }
 .fc-event-time{
   @apply text-xl pt-2 !important;
@@ -72,7 +72,7 @@ body {
   @apply opacity-50 bg-black !important;
 }
 .reserved-shift {
-  @apply bg-yellow-500 !important;
+  @apply bg-[#F2E74B] !important;
 }
 @layer base {
   :root {

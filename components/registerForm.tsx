@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label'
 import { signUp } from '@/lib/pocketbase'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
+import { LoaderCircle } from "lucide-react"
 
 export const RegisterForm = () => {
   const router = useRouter()
@@ -17,10 +18,10 @@ export const RegisterForm = () => {
   const [password, setPassword] = useState('')
   const [confirmedPassword, setConfirmedPassword] = useState('')
   const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
     if (!email.includes('@student.liu.se')) {
       setError('Använd din LiU mail')
       return
@@ -31,6 +32,7 @@ export const RegisterForm = () => {
       return
     }
 
+    setIsLoading(true)
     try {
       const res = await signUp({
         name,
@@ -40,9 +42,12 @@ export const RegisterForm = () => {
       if (res) {
         router.push(callbackUrl)
       } else {
+        setIsLoading(false)
         setError('Invalid email or password')
       }
-    } catch (err: Error | unknown) { }
+    } catch (err: Error | unknown) {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -95,10 +100,18 @@ export const RegisterForm = () => {
         />
       </div>
       {error && <Alert variant={'destructive'}>{error}</Alert>}
+      {/* Register button */}
       <div className="w-full">
-        <Button className="w-full" size="lg">
-          Skapa konto
-        </Button>
+        {!isLoading ? (
+          <Button className="w-full" size="lg">
+            Skapa konto
+          </Button>
+        ) : (
+          <Button className="w-full" size="lg" disabled>
+            <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+            Skapar
+          </Button>)
+        }
       </div>
     </form>
   )

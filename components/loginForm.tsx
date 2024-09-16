@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label'
 import { login } from '@/lib/pocketbase'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
+import { Lock } from "lucide-react"
 
 export const LoginForm = () => {
   const router = useRouter()
@@ -15,22 +16,29 @@ export const LoginForm = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
   const onSubmit = async (e: React.FormEvent) => {
+    setIsLoading(true)
     e.preventDefault()
     try {
       console.log("Logging in user: ", { username, password });
-      const loginWasSuccess = await login({
+      const loginMessage = await login({
         username,
         password
       })
-      console.log(loginWasSuccess)
-      if (loginWasSuccess) {
+      console.log("Login: " + loginMessage)
+      if (loginMessage === "success") {
         router.push(callbackUrl)
       } else {
-        setError('Invalid email or password')
+        if (loginMessage === "bad credentials") {
+          setIsLoading(false)
+          setError('Invalid email or password')
+        }
       }
-    } catch (err: Error | unknown) { }
+    } catch (err: Error | unknown) {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -58,10 +66,19 @@ export const LoginForm = () => {
         />
       </div>
       {error && <Alert>{error}</Alert>}
+
+      {/* Login button */}
       <div className="w-full">
-        <Button className="w-full" size="lg">
-          Logga in
-        </Button>
+        {!isLoading ? (
+          <Button className="w-full" size="lg">
+            Logga in
+          </Button>
+        ) : (
+          <Button className="w-full animate-pulse" size="lg" disabled>
+            <Lock className="mr-2 h-4 w-4" />
+            Loggar in
+          </Button>)
+        }
       </div>
     </form>
   )

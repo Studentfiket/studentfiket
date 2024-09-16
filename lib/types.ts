@@ -3,8 +3,6 @@ export interface Event {
   title: string;
   start: string;
   end: string;
-  className: string;
-  editable: boolean;
 }
 export interface Shift {
   id: string;
