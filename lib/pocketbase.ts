@@ -269,7 +269,7 @@ export async function login(user: { username: string; password: string; }) {
     });
     console.log("Cookie: ", cookie);
 
-    return "Success";
+    return "success";
   } catch (error) {
     console.error("Login error: ", error);
     return "bad credentials";
