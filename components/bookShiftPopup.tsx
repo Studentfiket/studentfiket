@@ -14,50 +14,33 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { getDateDay, getWeekday } from "@/functions/shiftFunctions"
 import { Shift } from "@/lib/types";
+import ShiftInformation from "./shiftInformation";
+import { CalendarHeart } from "lucide-react"
 
 type Props = {
   shift: Shift | null;
+  onCancel: () => void;
 }
 
 export default function bookShiftPopup(props: Props) {
-  console.log(props.shift);
   if (!props.shift) {
-    console.error("Shift not found");
     return
   }
-  const shiftDate = new Date(props.shift.start);
 
   return (
-    <div className="absolute top-0 left-0 w-screen h-screen z-20 grid grid-cols-1 content-center justify-center">
+    <div className="absolute top-0 left-0 w-screen h-screen z-20 grid grid-cols-1 content-center justify-center bg-[rgba(0,0,0,0.4)]">
       <Card className="w-4/5 sm:w-[400px] mx-auto">
-        <CardHeader>
-          <CardTitle>Boka pass {getWeekday(shiftDate)} den {getDateDay(shiftDate)}</CardTitle>
-          <CardDescription>Boka</CardDescription>
+        <CardHeader className="flex flex-row items-center text-2xl pb-2 mx-6 px-0 mb-2">
+          <CalendarHeart className="h-full mt-1 mr-2" />
+          <CardTitle className="font-normal">Boka Pass</CardTitle>
         </CardHeader>
         <CardContent>
-          <form>
-            <div className="grid w-full items-center gap-4">
-              <div className="flex flex-col space-y-1.5">
-                <Select>
-                  <SelectTrigger id="framework">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent position="popper">
-                    <SelectItem value="next">Next.js</SelectItem>
-                    <SelectItem value="sveltekit">SvelteKit</SelectItem>
-                    <SelectItem value="astro">Astro</SelectItem>
-                    <SelectItem value="nuxt">Nuxt.js</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </form>
+          <ShiftInformation shift={props.shift} />
         </CardContent>
         <CardFooter className="flex justify-between">
-          <Button variant="outline">Cancel</Button>
-          <Button>Deploy</Button>
+          <Button variant="outline" onClick={props.onCancel}>Avbryt</Button>
+          <Button>Boka</Button>
         </CardFooter>
       </Card>
     </div>

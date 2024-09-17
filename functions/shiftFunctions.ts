@@ -21,3 +21,12 @@ export const getDateDay = (date: Date) => {
       return `${day}e`;
   }
 }
+
+// Returns the month of the year
+export const getMonth = (date: Date, startOnUppercase: boolean = true) => {
+  const months = ['januari', 'februari', 'mars', 'april', 'maj', 'juni', 'juli', 'augusti', 'september', 'oktober', 'november', 'december'];
+  if (startOnUppercase) {
+    return months[date.getMonth()].charAt(0).toUpperCase() + months[date.getMonth()].slice(1);
+  }
+  return months[date.getMonth()];
+}
