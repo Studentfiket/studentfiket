@@ -35,16 +35,18 @@ body {
 }
 
 /* Dynamicly change the size of the font in the event container (day or week view) */
-.event-container {
+/* .event-container {
   container-name: event-container;
   container-type: size;
 }
 .event-container p {
   @apply hidden;
 } 
+ */
 .event-container h3 {
-  @apply font-bold mt-1 mb-3;
+  @apply font-bold text-lg leading-none;
 }
+/* 
 @container event-container (width > 100px) {
   .event-container h3 {
     @apply text-2xl;
@@ -65,7 +67,7 @@ body {
   .event-container h3 {
     @apply m-0;
   }
-}
+} */
 
 
 .booked-shift {

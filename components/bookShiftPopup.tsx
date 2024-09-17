@@ -40,26 +40,81 @@ export default function bookShiftPopup(props: Props) {
 
   const isBooked = (props.shift.person1 !== "" && props.shift.person2 !== "") ? true : false;
   const isReserved = (props.shift.person1 !== "" || props.shift.person2 !== "") ? true : false;
+  const isPrivate = (props.shift.organisation === "" && !isBooked) ? true : false;
+  const isUser = (props.shift.person1 === props.user.name || props.shift.person2 === props.user.name) ? true : false;
 
-  if (isBooked) {
-    return null;
+  // Check if the user is in the organisation of the shift
+  const isUserInOrganisation = (shift: Shift, user: User) => {
+    for (const organisation of user.organisations) {
+      if (shift.organisation === organisation.id) {
+        return true;
+      }
+    }
   }
 
+  const header = () => {
+    if (isUser) {
+      return <CardTitle className="font-normal">Du jobbar detta pass</CardTitle>;
+    }
+
+    if (!isPrivate && props.shift && !isUserInOrganisation(props.shift, props.user)) {
+      return <CardTitle className="font-normal">Detta pass kan inte bokas</CardTitle>;
+    }
+
+    if (isBooked) {
+      return <CardTitle className="font-normal">Detta pass är bokat</CardTitle>;
+    }
+
+    return (
+      <div className="flex items-center">
+        <CalendarHeart className="h-full mt-1 mr-2" />
+        <CardTitle className="font-normal">Boka Pass</CardTitle>
+      </div>
+    );
+  };
+
+  const footer = () => {
+    if (isUser) {
+      return (
+        <div className="flex flex-row justify-around w-full">
+          <Button variant="outline" onClick={props.onCancel}>
+            Avbryt
+          </Button>
+          <Button variant="destructive">Avboka</Button>
+        </div>
+      )
+    }
+
+    if (isBooked || (!isPrivate && props.shift && !isUserInOrganisation(props.shift, props.user))) {
+      return (
+        <Button variant="outline" onClick={props.onCancel}>
+          Avbryt
+        </Button>
+      )
+    }
+
+    return (
+      <div className="flex flex-row justify-around w-full">
+        <Button variant="outline" onClick={props.onCancel}>
+          Avbryt
+        </Button>
+        <Button>Boka</Button>
+      </div>
+    )
+  }
+
+  // TODO: Add the ability to select organisation
   return (
-    <div onClick={handleClick} className="absolute top-0 left-0 w-screen h-screen z-20 grid grid-cols-1 content-center justify-center bg-[rgba(0,0,0,0.4)]">
+    <div onClick={handleClick} className="absolute inset-0 w-screen h-screen z-20 grid place-items-center bg-[rgba(0,0,0,0.4)]">
       <Card className="w-4/5 sm:w-[400px] mx-auto">
-        <CardHeader className="flex flex-row items-center text-2xl pb-2 mx-6 px-0 mb-2">
-          <CalendarHeart className="h-full mt-1 mr-2" />
-          <CardTitle className="font-normal">Boka Pass</CardTitle>
+        <CardHeader className="flex items-center text-2xl pb-2 mx-6 px-0 mb-2">
+          {header()}
         </CardHeader>
         <CardContent>
-          <ShiftInformation shift={props.shift} />
-          {props.user.organisations[0].name}
-
+          <ShiftInformation shift={props.shift} isGrayedOut={isBooked || (!isUserInOrganisation(props.shift, props.user) && !isPrivate)} />
         </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button variant="outline" onClick={props.onCancel}>Avbryt</Button>
-          <Button>Boka</Button>
+        <CardFooter className="w-full">
+          {footer()}
         </CardFooter>
       </Card>
     </div>
