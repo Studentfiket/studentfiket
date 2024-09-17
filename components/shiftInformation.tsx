@@ -19,7 +19,7 @@ export default function ShiftInformation(props: Props) {
       <div className="flex flex-col space-y-2 w-full">
         <div className="flex flex-col w-full">
           <p className="text-md text-muted-foreground">{getWeekday(shiftDateStart)} {getDateDay(shiftDateStart)} {getMonth(shiftDateStart, false)}</p>
-          <p className="text-4xl font-light">{shiftDateStart.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {shiftDateEnd.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+          <p className="text-4xl font-light">{shiftDateStart.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })} - {shiftDateEnd.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
         </div>
         {!isFree &&
           <div className="border-t pt-2">
