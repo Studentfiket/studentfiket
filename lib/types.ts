@@ -1,3 +1,14 @@
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+  organisations: Organisation[];
+}
+export interface Organisation {
+  id: string;
+  name: string;
+}
 export interface Event {
   id: string;
   title: string;

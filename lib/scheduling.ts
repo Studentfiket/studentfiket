@@ -3,7 +3,7 @@
 // Handles the shift creation and retrieval
 
 import { loadPocketBase } from './pocketbase';
-import { Shift, Event } from './types';
+import { Shift } from './types';
 
 export const createShift = async (startTime: string, canOverride = false, isCreatingInBatch: boolean = false) => {
   const pb = await loadPocketBase();
@@ -128,11 +128,11 @@ export const getShifts = async (): Promise<Shift[] | undefined> => {
   try {
     const resultList = await pb.collection('shifts').getList(1, 50, {
       filter: 'startTime >= "2024-09-01 00:00:00" && startTime <= "2025-09-01 00:00:00"',
-      expand: 'workers'
+      expand: 'workers,organisation',
     });
     const loadedShifts = resultList.items.map(item => ({
       id: item.id,
-      organisation: item.organisation,
+      organisation: item.expand?.organisation === undefined ? "" : item.expand?.organisation.name,
       person1: item.workers[0] === undefined ? "" : item.expand?.workers[0].name,
       person2: item.workers[1] === undefined ? "" : item.expand?.workers[1].name,
       start: item.startTime,

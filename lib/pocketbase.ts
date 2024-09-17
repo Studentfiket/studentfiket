@@ -8,6 +8,7 @@ import { redirect } from 'next/navigation';
 import { createAvatar } from '@dicebear/core';
 import { botttsNeutral } from '@dicebear/collection';
 import { getNextjsCookie } from "@/utils/server-cookie";
+import { Organisation, User } from './types';
 
 const pb = new PocketBase(process.env.POCKETBASE_URL);
 
@@ -29,6 +30,17 @@ export const loadPocketBase = async () => {
     }
   }
 }
+
+export const getUserOrganisations = async (): Promise<Organisation[]> => {
+  const cookieStore = cookies();
+  const organisationsCookie = cookieStore.get('pb_organisations');
+  if (!organisationsCookie) {
+    return [];
+  }
+  const organisations = JSON.parse(organisationsCookie.value);
+  return organisations;
+}
+
 
 /* #region Avatar */
 async function generateAvatar(seed: string) {
@@ -61,11 +73,11 @@ export async function getAvatar(userId: string, fileName: string) {
 
 /* #region Local user handling */
 
-export const getUser = async (id: string = "") => {
+export const getUser = async (id: string = ""): Promise<User | null> => {
   const pb = await loadPocketBase();
   if (!pb?.authStore.model) {
     console.error("No user logged in");
-    return;
+    return null;
   }
 
   if (id == "") {
@@ -74,10 +86,19 @@ export const getUser = async (id: string = "") => {
 
   try {
     const user = await pb.collection('users').getOne(id);
-    return user;
+    const userOrganisations = await getUserOrganisations() || [];
+
+    const mappedUser: User = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+      organisations: userOrganisations
+    };
+    return mappedUser;
   } catch (error) {
     console.error("Error getting user: ", error);
-    return;
+    return null;
   }
 }
 
@@ -92,11 +113,28 @@ export async function login(user: { username: string; password: string; }) {
     const { token, record: model } = await pb.collection('users').authWithPassword(user.username, user.password);
     console.log("Model retrieved")
 
+    // Get the users organisations
+    const records = await pb.collection('organisations').getFullList({
+      filter: `members ~ "${model.id}"`
+    });
+
+    console.log(records);
+    const organisations = records.map((record) => ({
+      id: record.id,
+      name: record.name
+    }));
+
     // TODO: renew token?
 
     // Set the user's token and model in a cookie
     const cookie = JSON.stringify({ token, model });
     cookies().set('pb_auth', cookie, {
+      secure: true,
+      path: '/',
+      sameSite: 'strict',
+      httpOnly: false,
+    });
+    cookies().set('pb_organisations', JSON.stringify(organisations), {
       secure: true,
       path: '/',
       sameSite: 'strict',
@@ -128,7 +166,9 @@ export async function signUp(user: { name: string; email: string; password: stri
       password: user.password,
       passwordConfirm: user.password,
       avatar: avatar,
-      name: user.name
+      name: user.name,
+      orginisations: [],
+      isAdmin: false
     };
     const createdUser = await pb.collection('users').create(data);
 
@@ -152,6 +192,7 @@ export async function signOut() {
   pb.collection('users').unsubscribe(id);
   pb.authStore.clear();
   cookies().delete('pb_auth');
-  redirect('/login');
+  cookies().delete('pb_organisations');
+  redirect('/');
 }
 /* #endregion */
