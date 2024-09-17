@@ -2,18 +2,10 @@ import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { User, Shift } from "@/lib/types";
 import ShiftInformation from "./shiftInformation";
 import { CalendarHeart } from "lucide-react"
@@ -39,7 +31,6 @@ export default function bookShiftPopup(props: Props) {
   }
 
   const isBooked = (props.shift.person1 !== "" && props.shift.person2 !== "") ? true : false;
-  const isReserved = (props.shift.person1 !== "" || props.shift.person2 !== "") ? true : false;
   const isPrivate = (props.shift.organisation === "" && !isBooked) ? true : false;
   const isUser = (props.shift.person1 === props.user.name || props.shift.person2 === props.user.name) ? true : false;
 

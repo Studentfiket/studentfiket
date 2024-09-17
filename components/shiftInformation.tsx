@@ -12,7 +12,6 @@ export default function ShiftInformation(props: Props) {
   const shiftDateEnd = new Date(props.shift.end);
 
   const isFree = props.shift.organisation === "" && props.shift.person1 === "" && props.shift.person2 === "";
-  const isReserved = props.shift.organisation === "" && (props.shift.person1 !== "" || props.shift.person2 !== "");
   const isPrivate = props.shift.organisation === "" && !isFree;
 
   return (
