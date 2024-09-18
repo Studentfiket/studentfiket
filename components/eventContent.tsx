@@ -47,10 +47,14 @@ const EventContent = (props: Props) => {
     end: props.event.endStr
   }
 
+  const shortName1 = shift.person1 !== "" ? (shift.person1.split(" ")[0] + " " + shift.person1.split(" ")[1].charAt(0) + ".") : "";
+  const shortName2 = shift.person2 !== "" ? (shift.person2.split(" ")[0] + " " + shift.person2.split(" ")[1].charAt(0) + ".") : "";
+
   const startHour = new Date(props.event.startStr).getHours();
 
   return (
-    <div className={'event-container w-auto ml-1 mr-2 box-content h-full py-1 overflow-hidden rounded-lg cursor-pointer hover:scale-105 transition-transform ease-in-out ' + checkAvailability(shift)}>
+    <div className={'event-container w-auto box-content h-full py-1 overflow-hidden rounded-lg cursor-pointer ' +
+      'sm:ml-1 sm:mr-2 hover:scale-105 transition-transform ease-in-out ' + checkAvailability(shift)}>
       <div className="h-full grid grid-rows-2">
         <div>
           <div>
@@ -60,8 +64,10 @@ const EventContent = (props: Props) => {
         </div>
         {startHour !== 12 && (
           <div>
-            <p>{shift.person1}</p>
-            <p>{shift.person2}</p>
+            <p className="hidden sm:block">{shift.person1}</p>
+            <p className="block sm:hidden">{shortName1}</p>
+            <p className="hidden sm:block">{shift.person2}</p>
+            <p className="block sm:hidden">{shortName2}</p>
           </div>
         )}
       </div>

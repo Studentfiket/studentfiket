@@ -34,41 +34,9 @@ body {
   @apply grid grid-cols-1 content-center pb-5;
 }
 
-/* Dynamicly change the size of the font in the event container (day or week view) */
-/* .event-container {
-  container-name: event-container;
-  container-type: size;
-}
-.event-container p {
-  @apply hidden;
-} 
- */
 .event-container h3 {
   @apply font-bold text-lg leading-none;
 }
-/* 
-@container event-container (width > 100px) {
-  .event-container h3 {
-    @apply text-2xl;
-  }
-  .event-container p {
-    @apply block;
-  }
-  @container event-container (height < 100px) {
-    .event-container div {
-      @apply grid-cols-2 content-around
-    }
-    .event-container-persons {
-      @apply w-1/2;
-    }
-  }
-}
-@container event-container (height < 100px) {
-  .event-container h3 {
-    @apply m-0;
-  }
-} */
-
 
 .booked-shift {
   @apply opacity-50 bg-black !important;

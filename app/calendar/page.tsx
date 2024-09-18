@@ -1,21 +1,17 @@
-
-
 import Header from '@/components/header';
-import { signOut } from '@/lib/pocketbase';
 import { Suspense } from 'react';
 import CalendarLoading from './calendarLoading';
 import CalendarContainer from './calendarContainer';
+import Footer from '@/components/footer';
 
 export default async function Home() {
   return (
-    <div>
+    <div className='flex flex-col'>
       <Header />
       <Suspense fallback={<CalendarLoading />}>
         <CalendarContainer />
       </Suspense>
-      <form action={signOut}>
-        <button type="submit">logout</button>
-      </form>
+      <Footer />
     </div>
   );
 }
