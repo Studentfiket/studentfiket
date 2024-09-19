@@ -2,7 +2,7 @@ import { Shift } from "@/lib/types";
 import { EventApi } from "@fullcalendar/react";
 
 type Props = {
-  event: EventApi
+  event: EventApi;
   eventTime: string;
 }
 
@@ -15,12 +15,13 @@ const EventContent = (props: Props) => {
     if (shift.organisation !== "") {
       return shift.organisation;
     }
-    else {
-      if (shift.person1 !== "") {
-        return "Privat";
-      }
-      return "BOKA";
+    if (shiftHasPassed) {
+      return "Obokat";
     }
+    if (shift.person1 !== "") {
+      return "Privat";
+    }
+    return "BOKA";
   }
 
   // Check if the shift is booked, reserved or free. Used to determine the styling of the shift
@@ -51,10 +52,11 @@ const EventContent = (props: Props) => {
   const shortName2 = shift.person2 !== "" ? (shift.person2.split(" ")[0] + " " + shift.person2.split(" ")[1].charAt(0) + ".") : "";
 
   const startHour = new Date(props.event.startStr).getHours();
+  const shiftHasPassed = new Date(props.event.startStr) < new Date();
 
   return (
     <div className={'event-container w-auto box-content h-full py-1 overflow-hidden rounded-lg cursor-pointer ' +
-      'sm:ml-1 sm:mr-2 hover:scale-105 transition-transform ease-in-out ' + checkAvailability(shift)}>
+      'sm:ml-1 sm:mr-2 hover:scale-105 transition-transform ease-in-out ' + checkAvailability(shift) + (shiftHasPassed && ' grayscale')}>
       <div className="h-full grid grid-rows-2">
         <div>
           <div>

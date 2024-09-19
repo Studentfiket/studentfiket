@@ -22,12 +22,10 @@ export const LoginForm = () => {
     setIsLoading(true)
     e.preventDefault()
     try {
-      console.log("Logging in user: ", { username, password });
       const loginMessage = await login({
         username,
         password
       })
-      console.log("Login: " + loginMessage)
       if (loginMessage === "success") {
         router.push(callbackUrl)
       } else {

@@ -66,9 +66,10 @@ function CalendarView(props: Props) {
         slotDuration={"01:00:00"}
         expandRows={true}
         validRange={
-          {
-            start: new Date().toISOString().split('T')[0]
-          }
+          props.user?.isAdmin ? {} :
+            {
+              start: new Date().toISOString().split('T')[0]
+            }
         }
         slotMinTime="08:00:00"
         slotMaxTime="18:00:00"

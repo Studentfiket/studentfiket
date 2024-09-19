@@ -10,6 +10,7 @@ const config: Config = {
 	theme: {
 		extend: {
 			colors: {
+				grayedOut: '#cdcdcd',
 				shift: {
 					booked: '#2C331E',
 					reserved: '#E69F35',

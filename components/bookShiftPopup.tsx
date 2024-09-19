@@ -6,6 +6,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { User, Shift } from "@/lib/types";
 import ShiftInformation from "./shiftInformation";
 import { CalendarHeart } from "lucide-react"
@@ -30,9 +37,11 @@ export default function bookShiftPopup(props: Props) {
     return
   }
 
-  const isBooked = (props.shift.person1 !== "" && props.shift.person2 !== "") ? true : false;
-  const isPrivate = (props.shift.organisation === "" && !isBooked) ? true : false;
-  const isUser = (props.shift.person1 === props.user.name || props.shift.person2 === props.user.name) ? true : false;
+  const shiftIsBooked = (props.shift.person1 !== "" && props.shift.person2 !== "") ? true : false;
+  const shiftIsFree = (props.shift.person1 === "" && props.shift.person2 === "") ? true : false;
+  const shiftIsPrivate = (props.shift.organisation === "") ? true : false;
+  const shiftHasPassed = new Date(props.shift.start) < new Date();
+  const userIsParticipating = (props.shift.person1 === props.user.name || props.shift.person2 === props.user.name) ? true : false;
 
   // Check if the user is in the organisation of the shift
   const isUserInOrganisation = (shift: Shift, user: User) => {
@@ -43,16 +52,24 @@ export default function bookShiftPopup(props: Props) {
     }
   }
 
+  // If the shift has passed and the user is not an admin, return
+  if (shiftHasPassed && !props.user.isAdmin) {
+    return
+  }
+
   const header = () => {
-    if (isUser) {
+    if (shiftHasPassed) {
+      return <CardTitle className="font-normal">Detta pass har redan passerat</CardTitle>;
+    }
+    if (userIsParticipating) {
       return <CardTitle className="font-normal">Du jobbar detta pass</CardTitle>;
     }
 
-    if (!isPrivate && props.shift && !isUserInOrganisation(props.shift, props.user)) {
+    if (!shiftIsPrivate && props.shift && !isUserInOrganisation(props.shift, props.user)) {
       return <CardTitle className="font-normal">Detta pass kan inte bokas</CardTitle>;
     }
 
-    if (isBooked) {
+    if (shiftIsBooked) {
       return <CardTitle className="font-normal">Detta pass är bokat</CardTitle>;
     }
 
@@ -65,7 +82,14 @@ export default function bookShiftPopup(props: Props) {
   };
 
   const footer = () => {
-    if (isUser) {
+    if (shiftHasPassed) {
+      return (
+        <Button variant="outline" onClick={props.onCancel}>
+          Tillbaka
+        </Button>
+      )
+    }
+    if (userIsParticipating) {
       return (
         <div className="flex flex-row justify-around w-full">
           <Button variant="outline" onClick={props.onCancel}>
@@ -76,10 +100,10 @@ export default function bookShiftPopup(props: Props) {
       )
     }
 
-    if (isBooked || (!isPrivate && props.shift && !isUserInOrganisation(props.shift, props.user))) {
+    if (shiftIsBooked || (!shiftIsPrivate && props.shift && !isUserInOrganisation(props.shift, props.user))) {
       return (
         <Button variant="outline" onClick={props.onCancel}>
-          Avbryt
+          Tillbaka
         </Button>
       )
     }
@@ -97,12 +121,31 @@ export default function bookShiftPopup(props: Props) {
   // TODO: Add the ability to select organisation
   return (
     <div onClick={handleClick} className="absolute inset-0 w-screen h-screen z-20 grid place-items-center bg-[rgba(0,0,0,0.4)]">
-      <Card className="w-4/5 sm:w-[400px] mx-auto">
+      <Card className={"w-4/5 sm:w-[400px] mx-auto " + (shiftHasPassed && "bg-gray-300")}>
         <CardHeader className="flex items-center text-2xl pb-2 mx-6 px-0 mb-2">
           {header()}
         </CardHeader>
         <CardContent>
-          <ShiftInformation shift={props.shift} isGrayedOut={isBooked || (!isUserInOrganisation(props.shift, props.user) && !isPrivate)} />
+          <ShiftInformation shift={props.shift} isGrayedOut={(shiftIsBooked && !userIsParticipating) || (!isUserInOrganisation(props.shift, props.user) && !shiftIsPrivate)} />
+          {(!shiftHasPassed && shiftIsFree && props.user.organisations.length > 0) && (
+            <Card className="mt-6 items-center rounded-md p-4 w-full">
+              <p className="text-md text-muted-foreground">Jag vill jobba som</p>
+              <Select>
+                <SelectTrigger className="text-xl py-6 mt-1">
+                  <SelectValue placeholder="Välj förening" />
+                </SelectTrigger >
+                <SelectContent className="text-xl">
+                  {/* Render the organisations as items to select (in alphabetical order) */}
+                  {props.user.organisations
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map((organisation) => (
+                      <SelectItem key={organisation.id} value={organisation.id}>{organisation.name}</SelectItem>
+                    ))}
+                  <SelectItem className="border-t" value="private">Privatist</SelectItem>
+                </SelectContent>
+              </Select>
+            </Card>
+          )}
         </CardContent>
         <CardFooter className="w-full">
           {footer()}

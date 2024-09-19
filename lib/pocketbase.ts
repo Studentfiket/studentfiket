@@ -80,6 +80,7 @@ export const getUser = async (id: string = ""): Promise<User | null> => {
     return null;
   }
 
+  // If no id is provided, use the current user's id
   if (id == "") {
     id = pb.authStore.model?.id;
   }
@@ -93,7 +94,8 @@ export const getUser = async (id: string = ""): Promise<User | null> => {
       name: user.name,
       email: user.email,
       avatar: user.avatar,
-      organisations: userOrganisations
+      organisations: userOrganisations,
+      isAdmin: user.isAdmin
     };
     return mappedUser;
   } catch (error) {
@@ -108,23 +110,17 @@ export const getUser = async (id: string = ""): Promise<User | null> => {
 /// Uses implementation from https://github.com/heloineto/nextjs-13-pocketbase-auth-example
 export async function login(user: { username: string; password: string; }) {
   try {
-    console.log("Logging in user: ", user.username);
     // Try to login the user with the provided credentials, if successful return true
     const { token, record: model } = await pb.collection('users').authWithPassword(user.username, user.password);
-    console.log("Model retrieved")
 
     // Get the users organisations
     const records = await pb.collection('organisations').getFullList({
       filter: `members ~ "${model.id}"`
     });
-
-    console.log(records);
     const organisations = records.map((record) => ({
       id: record.id,
       name: record.name
     }));
-
-    // TODO: renew token?
 
     // Set the user's token and model in a cookie
     const cookie = JSON.stringify({ token, model });
@@ -134,6 +130,7 @@ export async function login(user: { username: string; password: string; }) {
       sameSite: 'strict',
       httpOnly: false,
     });
+    // Set the user's organisations in a cookie
     cookies().set('pb_organisations', JSON.stringify(organisations), {
       secure: true,
       path: '/',
@@ -141,7 +138,6 @@ export async function login(user: { username: string; password: string; }) {
       httpOnly: false,
     });
 
-    console.log('Login successful');
     return "success";
   } catch (error) {
     console.error("Login error: ", error);

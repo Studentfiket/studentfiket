@@ -4,6 +4,7 @@ export interface User {
   email: string;
   avatar: string;
   organisations: Organisation[];
+  isAdmin: boolean;
 }
 export interface Organisation {
   id: string;
