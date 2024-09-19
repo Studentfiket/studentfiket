@@ -14,24 +14,32 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { User, Shift } from "@/lib/types";
-import ShiftInformation from "./shiftInformation";
+import ShiftInformation from "../shiftInformation";
 import { CalendarHeart } from "lucide-react"
+import { useState } from "react";
+import { updateShift } from "@/lib/scheduling";
 
 type Props = {
   shift: Shift | null;
   user: User;
   onCancel: () => void;
+  setConfirmBooking: (value: boolean) => void;
 }
 
-export default function bookShiftPopup(props: Props) {
-  // Close the popup when clicking outside of the details panel
-  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    // Makes sure the onCancel() is only called when clicking the element thats bound to the onClick (the gray area).
-    if (event.target !== event.currentTarget) {
-      return;
+export default function BookShiftPopup(props: Props) {
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      if (props.shift)
+        updateShift(props.shift.id, props.user, organisationId, userIsBooking);
+    } catch (error) {
+      console.error(error);
     }
-    props.onCancel();
+
   }
+
+  const [organisationId, setOrganisationId] = useState<string>('');
+  const [userIsBooking, setUserIsBooking] = useState<boolean>(true);
 
   if (!props.shift) {
     return
@@ -46,16 +54,12 @@ export default function bookShiftPopup(props: Props) {
   // Check if the user is in the organisation of the shift
   const isUserInOrganisation = (shift: Shift, user: User) => {
     for (const organisation of user.organisations) {
-      if (shift.organisation === organisation.id) {
+      if (shift.organisation === organisation.name) {
         return true;
       }
     }
   }
 
-  // If the shift has passed and the user is not an admin, return
-  if (shiftHasPassed && !props.user.isAdmin) {
-    return
-  }
 
   const header = () => {
     if (shiftHasPassed) {
@@ -90,16 +94,18 @@ export default function bookShiftPopup(props: Props) {
       )
     }
     if (userIsParticipating) {
+      // If the user is participating, show a cancel button
+      // and set userIsBooking to false when the user cancels
+      userIsBooking && setUserIsBooking(false);
       return (
         <div className="flex flex-row justify-around w-full">
           <Button variant="outline" onClick={props.onCancel}>
             Avbryt
           </Button>
-          <Button variant="destructive">Avboka</Button>
+          <Button variant="destructive" type="submit">Avboka</Button>
         </div>
       )
     }
-
     if (shiftIsBooked || (!shiftIsPrivate && props.shift && !isUserInOrganisation(props.shift, props.user))) {
       return (
         <Button variant="outline" onClick={props.onCancel}>
@@ -113,44 +119,42 @@ export default function bookShiftPopup(props: Props) {
         <Button variant="outline" onClick={props.onCancel}>
           Avbryt
         </Button>
-        <Button>Boka</Button>
+        <input type="hidden" name="shift-action" value="book-shift" />
+        <Button type="submit">Boka</Button>
       </div>
     )
   }
 
-  // TODO: Add the ability to select organisation
   return (
-    <div onClick={handleClick} className="absolute inset-0 w-screen h-screen z-20 grid place-items-center bg-[rgba(0,0,0,0.4)]">
-      <Card className={"w-4/5 sm:w-[400px] mx-auto " + (shiftHasPassed && "bg-gray-300")}>
-        <CardHeader className="flex items-center text-2xl pb-2 mx-6 px-0 mb-2">
-          {header()}
-        </CardHeader>
-        <CardContent>
-          <ShiftInformation shift={props.shift} isGrayedOut={(shiftIsBooked && !userIsParticipating) || (!isUserInOrganisation(props.shift, props.user) && !shiftIsPrivate)} />
-          {(!shiftHasPassed && shiftIsFree && props.user.organisations.length > 0) && (
-            <Card className="mt-6 items-center rounded-md p-4 w-full">
-              <p className="text-md text-muted-foreground">Jag vill jobba som</p>
-              <Select>
-                <SelectTrigger className="text-xl py-6 mt-1">
-                  <SelectValue placeholder="Välj förening" />
-                </SelectTrigger >
-                <SelectContent className="text-xl">
-                  {/* Render the organisations as items to select (in alphabetical order) */}
-                  {props.user.organisations
-                    .sort((a, b) => a.name.localeCompare(b.name))
-                    .map((organisation) => (
-                      <SelectItem key={organisation.id} value={organisation.id}>{organisation.name}</SelectItem>
-                    ))}
-                  <SelectItem className="border-t" value="private">Privatist</SelectItem>
-                </SelectContent>
-              </Select>
-            </Card>
-          )}
-        </CardContent>
-        <CardFooter className="w-full">
-          {footer()}
-        </CardFooter>
-      </Card>
-    </div>
+    <form onSubmit={onSubmit} className={(shiftHasPassed ? "bg-gray-300" : "")}>
+      <CardHeader className="flex items-center text-2xl pb-2 mx-6 px-0 mb-2">
+        {header()}
+      </CardHeader>
+      <CardContent>
+        <ShiftInformation shift={props.shift} isGrayedOut={(shiftIsBooked && !userIsParticipating) || (!isUserInOrganisation(props.shift, props.user) && !shiftIsPrivate)} />
+        {(!shiftHasPassed && shiftIsFree && props.user.organisations.length > 0) && (
+          <Card className="mt-6 items-center rounded-md p-4 w-full">
+            <p className="text-md text-muted-foreground">Jag vill jobba som</p>
+            <Select value={organisationId} onValueChange={setOrganisationId} >
+              <SelectTrigger className="text-xl py-6 mt-1">
+                <SelectValue placeholder="Välj förening" />
+              </SelectTrigger >
+              <SelectContent className="text-xl">
+                {/* Render the organisations as items to select (in alphabetical order) */}
+                {props.user.organisations
+                  .sort((a, b) => a.name.localeCompare(b.name))
+                  .map((organisation) => (
+                    <SelectItem key={organisation.id} value={organisation.id}>{organisation.name}</SelectItem>
+                  ))}
+                <SelectItem className="border-t" value="private">Privatist</SelectItem>
+              </SelectContent>
+            </Select>
+          </Card>
+        )}
+      </CardContent>
+      <CardFooter className="w-full">
+        {footer()}
+      </CardFooter>
+    </form>
   )
 }

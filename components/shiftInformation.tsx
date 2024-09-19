@@ -1,6 +1,7 @@
 import { Shift } from "@/lib/types";
 import { getDateDay, getMonth, getWeekday } from "@/functions/shiftFunctions"
 import { Card } from "./ui/card";
+import { Separator } from "./ui/separator";
 
 type Props = {
   shift: Shift;
@@ -27,7 +28,8 @@ export default function ShiftInformation(props: Props) {
           </p>
         </div>
         {!isFree &&
-          <div className="border-t pt-2">
+          <div>
+            <Separator className="mb-2" />
             <p className="text-md text-muted-foreground">Detta pass {shiftHasPassed ? "jobbade" : "jobbar"}</p>
             <p className="text-4xl font-light">{props.shift.person1}</p>
             <p className="text-4xl font-light">{props.shift.person2}</p>

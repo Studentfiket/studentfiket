@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { RegisterForm } from '@/components/registerForm'
+import { RegisterForm } from './registerForm'
 import { Suspense } from 'react'
 
 export default function RegisterPage() {

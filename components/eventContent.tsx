@@ -13,14 +13,18 @@ const EventContent = (props: Props) => {
   // Generate the title of the shift (Organisation name, Private or Book)
   const getTitle = (shift: Shift) => {
     if (shift.organisation !== "") {
+      // If the shift is booked by an organisation, return the organisation name
       return shift.organisation;
     }
-    if (shiftHasPassed) {
+    if (shiftHasPassed && shift.person1 === "" && shift.person2 === "") {
+      // If the shift has passed and was free, return "Obokat"
       return "Obokat";
     }
-    if (shift.person1 !== "") {
+    if (shift.person1 !== "" || shift.person2 !== "") {
+      // If the shift i booked by a person but no organisation, return "Privat"
       return "Privat";
     }
+    // If the shift is free, return "BOKA"
     return "BOKA";
   }
 

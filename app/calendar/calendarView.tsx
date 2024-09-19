@@ -6,9 +6,10 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import EventContent from "@/components/eventContent";
 import { Shift, User } from "@/lib/types";
-import BookShiftPopup from "@/components/bookShiftPopup";
+import BookShiftPopup from "@/components/popup/bookShiftPopup";
 import { useState } from "react";
 import { Event } from "@/lib/types";
+import Popup from "@/components/popup/popup";
 
 type Props = {
   loadedShifts: Shift[];
@@ -49,7 +50,8 @@ function CalendarView(props: Props) {
 
   return (
     <div className="w-screen">
-      <BookShiftPopup shift={selectedShift} user={props.user} onCancel={closePopup} />
+      <Popup onCancel={closePopup} shift={selectedShift} user={props.user} />
+      {/* <BookShiftPopup shift={selectedShift} user={props.user} onCancel={closePopup} /> */}
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="timeGridWeek"
