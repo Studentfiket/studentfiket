@@ -6,7 +6,6 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import EventContent from "@/components/eventContent";
 import { Shift, User } from "@/lib/types";
-import BookShiftPopup from "@/components/popup/bookShiftPopup";
 import { useState } from "react";
 import { Event } from "@/lib/types";
 import Popup from "@/components/popup/popup";

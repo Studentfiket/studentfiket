@@ -6,6 +6,7 @@ import { Separator } from "./ui/separator";
 type Props = {
   shift: Shift;
   isGrayedOut?: boolean;
+  isLoading?: boolean;
 }
 
 export default function ShiftInformation(props: Props) {
@@ -16,8 +17,20 @@ export default function ShiftInformation(props: Props) {
   const isFree = props.shift.organisation === "" && props.shift.person1 === "" && props.shift.person2 === "";
   const isPrivate = props.shift.organisation === "" && !isFree;
 
+  const loader = () => {
+    return (
+      <div className="w-full h-full bg-card flex items-center absolute top-0 left-0 rounded-md">
+        <div className="w-fit m-auto opacity-80">
+          <div className="loader">
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <Card className={`flex items-center space-x-4 rounded-md p-4 w-full ${props.isGrayedOut && "bg-red-100"} `}>
+    <Card className={`flex items-center space-x-4 rounded-md p-4 w-full relative ${props.isGrayedOut && "bg-red-100"}`}>
+      {props.isLoading && loader()}
       <div className="flex flex-col space-y-2 w-full">
         <div className="flex flex-col w-full">
           <p className="text-md text-muted-foreground">{getWeekday(shiftDateStart)} {getDateDay(shiftDateStart)} {getMonth(shiftDateStart, false)}</p>
@@ -27,9 +40,10 @@ export default function ShiftInformation(props: Props) {
             {shiftDateEnd.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
           </p>
         </div>
+
         {!isFree &&
           <div>
-            <Separator className="mb-2" />
+            <Separator className="mb-2 " />
             <p className="text-md text-muted-foreground">Detta pass {shiftHasPassed ? "jobbade" : "jobbar"}</p>
             <p className="text-4xl font-light">{props.shift.person1}</p>
             <p className="text-4xl font-light">{props.shift.person2}</p>

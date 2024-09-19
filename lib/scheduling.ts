@@ -92,20 +92,22 @@ export const createShift = async (startTime: string, canOverride = false, isCrea
 /// @returns A promise that resolves to an object containing a message and optionally the updated shift.
 export const updateShift = async (shiftId: string, user: User, bookedOrganisationId: string, userIsBooking: boolean): Promise<{ message: string, shift?: Shift }> => {
   const validateWorkerToShift = () => {
-    if (shift?.workers.length >= 2) {
-      console.error("Shift is already full");
-      return "Shift is already full";
-    }
-    if (shift?.workers.includes(pb?.authStore.model?.id)) {
-      console.error("User is already in the shift");
-      return "User is already in the shift";
-    }
-    if (shift?.organisation.length === 1) {
-      // Check if the user is in the same organisation as the one already in the shift
-      const userOrganisations = user.organisations || [];
-      if (!userOrganisations.includes(shift.organisation)) {
-        console.error("User is not in the same organisation as the shift");
-        return "User is not in the same organisation as the shift";
+    if (userIsBooking) {
+      if (shift?.workers.length >= 2) {
+        console.error("Shift is already full");
+        return "Shift is already full";
+      }
+      if (shift?.workers.includes(pb?.authStore.model?.id)) {
+        console.error("User is already in the shift");
+        return "User is already in the shift";
+      }
+      if (shift?.organisation.length === 1) {
+        // Check if the user is in the same organisation as the one already in the shift
+        const userOrganisations = user.organisations || [];
+        if (!userOrganisations.includes(shift.organisation)) {
+          console.error("User is not in the same organisation as the shift");
+          return "User is not in the same organisation as the shift";
+        }
       }
     }
 
@@ -163,6 +165,7 @@ export const updateShift = async (shiftId: string, user: User, bookedOrganisatio
 
   try {
     const updatedShift = await pb.collection('shifts').update(shift.id, shift);
+    console.log("Shift updated successfully: ", updatedShift);
     return { message: "Shift updated successfully", shift: mapRecordsToShifts([updatedShift])[0] };
   } catch (error) {
     console.error("Error updating shift: ", error);

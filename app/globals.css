@@ -107,3 +107,46 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* HTML: <div class="loader"></div> */
+.loader {
+  transform: translate(-70%, -70%);
+  width: 50px;
+  height: 10px;
+  background: hsl(var(--primary));
+  border-radius: 5px;
+  animation: load 1.8s ease-in-out infinite; 
+}
+.loader:before, .loader:after {
+  position: absolute; 
+  display: block;
+  content: "";
+  animation: load 1.8s ease-in-out infinite;
+  height: 10px;
+  border-radius: 5px;
+}
+.loader:before {
+  top: -20px;
+  left: 10px;
+  width: 40px;
+  @apply bg-shift-freeLight;
+}
+.loader:after {
+  bottom: -20px;
+  width: 35px;
+  animation-delay: 0.3s;
+  @apply bg-shift-reservedLight;
+}
+
+@keyframes load {
+  0% {
+    transform: translateX(50px);
+  }
+  
+  50% {
+    transform: translateX(-40px);
+  }
+  100% {
+    transform: translateX(50px);
+  }
+}

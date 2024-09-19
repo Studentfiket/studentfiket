@@ -19,8 +19,13 @@ export default function Popup(props: Props) {
     }
     props.onCancel();
   }
+  const changePopup = (isBooking: boolean) => {
+    setShowConfirmation(true);
+    setUserIsBooking(isBooking);
+  }
 
-  const [confirmBooking, setConfirmBooking] = useState<boolean>(false);
+  const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
+  const [userIsBooking, setUserIsBooking] = useState<boolean>(false);
 
   if (!props.shift) {
     return
@@ -35,10 +40,10 @@ export default function Popup(props: Props) {
   return (
     <div onClick={handleClick} className="absolute inset-0 w-screen h-screen z-20 grid place-items-center bg-[rgba(0,0,0,0.4)]">
       <Card className={"w-4/5 sm:w-[400px] mx-auto"}>
-        {!confirmBooking ?
-          <BookShiftPopup shift={props.shift} user={props.user} onCancel={props.onCancel} setConfirmBooking={setConfirmBooking} />
+        {!showConfirmation ?
+          <BookShiftPopup shift={props.shift} user={props.user} onCancel={props.onCancel} changePopup={changePopup} />
           :
-          <ConfirmShiftPopup shift={props.shift} onCancel={props.onCancel} />
+          <ConfirmShiftPopup shift={props.shift} onCancel={props.onCancel} userIsBooking={userIsBooking} />
         }
       </Card>
     </div>

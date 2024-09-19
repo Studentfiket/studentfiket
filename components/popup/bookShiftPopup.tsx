@@ -23,23 +23,27 @@ type Props = {
   shift: Shift | null;
   user: User;
   onCancel: () => void;
-  setConfirmBooking: (value: boolean) => void;
+  changePopup: (isBooking: boolean) => void;
 }
 
 export default function BookShiftPopup(props: Props) {
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const submit = (userIsBooking: boolean) => {
     try {
+      setIsLoading(true);
       if (props.shift)
-        updateShift(props.shift.id, props.user, organisationId, userIsBooking);
+        updateShift(props.shift.id, props.user, organisationId, userIsBooking).then(() => {
+          props.changePopup(userIsBooking);
+        }
+        );
     } catch (error) {
+      setIsLoading(false);
       console.error(error);
     }
 
   }
 
   const [organisationId, setOrganisationId] = useState<string>('');
-  const [userIsBooking, setUserIsBooking] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   if (!props.shift) {
     return
@@ -87,6 +91,7 @@ export default function BookShiftPopup(props: Props) {
 
   const footer = () => {
     if (shiftHasPassed) {
+      // The shift has passed, show back button
       return (
         <Button variant="outline" onClick={props.onCancel}>
           Tillbaka
@@ -94,19 +99,18 @@ export default function BookShiftPopup(props: Props) {
       )
     }
     if (userIsParticipating) {
-      // If the user is participating, show a cancel button
-      // and set userIsBooking to false when the user cancels
-      userIsBooking && setUserIsBooking(false);
+      // The user is participating in the shift, show back and cancel button
       return (
         <div className="flex flex-row justify-around w-full">
           <Button variant="outline" onClick={props.onCancel}>
-            Avbryt
+            Tillbaka
           </Button>
-          <Button variant="destructive" type="submit">Avboka</Button>
+          <Button variant="destructive" onClick={() => submit(false)} >Avboka</Button>
         </div>
       )
     }
     if (shiftIsBooked || (!shiftIsPrivate && props.shift && !isUserInOrganisation(props.shift, props.user))) {
+      // The shift is booked or the user is not in the organisation of the shift, show back button
       return (
         <Button variant="outline" onClick={props.onCancel}>
           Tillbaka
@@ -117,23 +121,35 @@ export default function BookShiftPopup(props: Props) {
     return (
       <div className="flex flex-row justify-around w-full">
         <Button variant="outline" onClick={props.onCancel}>
-          Avbryt
+          Tillbaka
         </Button>
         <input type="hidden" name="shift-action" value="book-shift" />
-        <Button type="submit">Boka</Button>
+        {shiftIsFree && organisationId === "" ?
+          <Button disabled>Boka</Button>
+          :
+          <Button type="submit" onClick={() => submit(true)}>Boka</Button>
+        }
       </div>
     )
   }
 
   return (
-    <form onSubmit={onSubmit} className={(shiftHasPassed ? "bg-gray-300" : "")}>
+    <div className={(shiftHasPassed ? "bg-gray-200 rounded-xl" : "")}>
       <CardHeader className="flex items-center text-2xl pb-2 mx-6 px-0 mb-2">
         {header()}
       </CardHeader>
       <CardContent>
-        <ShiftInformation shift={props.shift} isGrayedOut={(shiftIsBooked && !userIsParticipating) || (!isUserInOrganisation(props.shift, props.user) && !shiftIsPrivate)} />
+        <ShiftInformation
+          shift={props.shift}
+          isGrayedOut={(
+            shiftIsBooked && !userIsParticipating)
+            ||
+            (!isUserInOrganisation(props.shift, props.user) && !shiftIsPrivate
+            )}
+          isLoading={isLoading}
+        />
         {(!shiftHasPassed && shiftIsFree && props.user.organisations.length > 0) && (
-          <Card className="mt-6 items-center rounded-md p-4 w-full">
+          <Card className="mt-6 items-center p-4 w-full">
             <p className="text-md text-muted-foreground">Jag vill jobba som</p>
             <Select value={organisationId} onValueChange={setOrganisationId} >
               <SelectTrigger className="text-xl py-6 mt-1">
@@ -155,6 +171,6 @@ export default function BookShiftPopup(props: Props) {
       <CardFooter className="w-full">
         {footer()}
       </CardFooter>
-    </form>
+    </div>
   )
 }

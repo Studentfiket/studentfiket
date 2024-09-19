@@ -14,7 +14,9 @@ const config: Config = {
 				shift: {
 					booked: '#2C331E',
 					reserved: '#E69F35',
-					free: '#7bae10'
+					reservedLight: '#F0B74A',
+					free: '#7bae10',
+					freeLight: '#9DCB3B'
 				},
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
