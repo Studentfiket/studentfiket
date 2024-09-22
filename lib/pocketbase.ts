@@ -9,6 +9,7 @@ import { createAvatar } from '@dicebear/core';
 import { botttsNeutral } from '@dicebear/collection';
 import { getNextjsCookie } from "@/utils/server-cookie";
 import { Organisation, User } from './types';
+import Client from 'pocketbase';
 
 const pb = new PocketBase(process.env.POCKETBASE_URL);
 
@@ -73,8 +74,8 @@ export async function getAvatar(userId: string, fileName: string) {
 
 /* #region Local user handling */
 
-export const getUser = async (id: string = ""): Promise<User | null> => {
-  const pb = await loadPocketBase();
+export const getUser = async (pb?: Client, id: string = ""): Promise<User | null> => {
+  pb = pb || await loadPocketBase();
   if (!pb?.authStore.model) {
     console.error("No user logged in");
     return null;

@@ -9,6 +9,8 @@ import { Shift, User } from "@/lib/types";
 import { useState } from "react";
 import { Event } from "@/lib/types";
 import Popup from "@/components/popup/popup";
+import PocketBase from 'pocketbase';
+// import { useCookies } from 'next-client-cookies';
 
 type Props = {
   loadedShifts: Shift[];
@@ -46,6 +48,15 @@ function CalendarView(props: Props) {
 
   const [selectedShift, setSelectedShift] = useState<Shift | null>(null);
   const events = mapShiftsToEvents(props.loadedShifts);
+
+  // Load pb from cookie
+  const pb = new PocketBase(process.env.POCKETBASE_URL);
+
+  // Subscribe to changes in any shifts record
+  pb.collection('shifts').subscribe('*', function (e) {
+    console.log(e.action);
+    console.log(e.record);
+  }, { /* other options like expand, custom headers, etc. */ });
 
   return (
     <div className="w-screen">

@@ -10,7 +10,6 @@ const CalendarView = dynamic(() => import('@/app/calendar/calendarView'), {
 });
 
 export default async function CalendarContainer() {
-
   // Get the shifts
   const loadedShifts = await getShifts();
 

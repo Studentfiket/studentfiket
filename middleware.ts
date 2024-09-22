@@ -19,19 +19,6 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // TODO: Get authRefresh working
-  // try {
-  //   // get an up-to-date auth store state by verifying and refreshing the loaded auth model (if any)
-  //   pb.authStore.isValid && (await pb.collection('user').authRefresh());
-  // } catch (err) {
-  //   // clear the auth store on failed refresh
-  //   pb.authStore.clear();
-  //   response.headers.set(
-  //     "set-cookie",
-  //     pb.authStore.exportToCookie({ httpOnly: false })
-  //   );
-  // }
-
   if (request.nextUrl.pathname.startsWith("/login") || request.nextUrl.pathname.startsWith("/register")) {
     if (pb.authStore.isValid) {
       const redirect_to = new URL("/calendar", request.url);
@@ -42,6 +29,18 @@ export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith("/calendar")) {
     if (!pb.authStore.isValid) {
       const redirect_to = new URL("/login", request.url);
+      return NextResponse.redirect(redirect_to);
+    }
+  }
+
+  if (request.nextUrl.pathname.startsWith("/admin")) {
+    if (!pb.authStore.isValid) {
+      const redirect_to = new URL("/login", request.url);
+      return NextResponse.redirect(redirect_to);
+    }
+
+    if (!pb.authStore.model?.isAdmin) {
+      const redirect_to = new URL("/calendar", request.url);
       return NextResponse.redirect(redirect_to);
     }
   }

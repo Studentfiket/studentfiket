@@ -1,8 +1,8 @@
 'use server'
 
-import { RecordModel } from 'pocketbase';
 // Handles the shift creation and retrieval
 
+import Client, { RecordModel } from 'pocketbase';
 import { loadPocketBase } from './pocketbase';
 import { Shift, User } from './types';
 
@@ -18,8 +18,46 @@ export const mapRecordsToShifts = (records: RecordModel[]): Shift[] => {
   }));
 }
 
-export const createShift = async (startTime: string, canOverride = false, isCreatingInBatch: boolean = false) => {
+// TODO: fix the batch creation, without overloading the server
+/// Generates new shifts for a given period.
+/// @param startDate - The start date of the period.
+/// @param endDate - The end date of the period.
+/// @returns A promise that resolves to a message when the shifts have been generated.
+export const generateNewPeriod = async (startDate: Date, endDate: Date): Promise<string> => {
+  async function generateNewDay(date: Date) {
+    const day = date.getDay();
+    if (day !== 0 && day !== 6) {
+      // Generate shifts for the day
+      for (let i = 8; i <= 15; i += 2) {
+        // Adjust the time for the lunch shift
+        if (i === 14) {
+          i -= 1
+        }
+        // Create the shift
+        const shiftStartTime = new Date(date.setHours(i, 0, 0, 0)).toISOString();
+        pb && await createShift(shiftStartTime, true, pb);
+      }
+    }
+  }
+
   const pb = await loadPocketBase();
+  if (!pb?.authStore.model) {
+    console.error("No user logged in");
+    return "No user logged in";
+  }
+
+  // Generate new shifts for the period
+  for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+    console.log("Generating shifts for: ", d);
+    await generateNewDay(d);
+  }
+
+  return "Done";
+}
+
+export const createShift = async (startTime: string, isCreatingInBatch: boolean = false, pb: Client) => {
+
+  // const pb = await loadPocketBase();
 
   if (!pb?.authStore.model) {
     console.error("No user logged in");
@@ -46,7 +84,7 @@ export const createShift = async (startTime: string, canOverride = false, isCrea
   }
 
   // Disable auto cancellation if creating shifts in batch
-  isCreatingInBatch ? pb.autoCancellation(false) : null;
+  isCreatingInBatch && pb.autoCancellation(false);
 
   try {
     // Check if the shift already exists
@@ -60,26 +98,20 @@ export const createShift = async (startTime: string, canOverride = false, isCrea
 
     if (resultList.items.length > 0) {
       // If the shift already exists, return an error message
-      if (!canOverride) {
-        console.error("Shift already exists");
-        return;
-      }
-      else {
-        // If the shift already exists and can be overridden, delete the existing shift
-        await pb.collection('shifts').delete(resultList.items[0].id);
-      }
+      console.error("Shift already exists");
+      return;
     }
 
     const createdShift = await pb.collection('shifts').create(shift);
 
     // Enable auto cancellation if creating shifts in batch
-    isCreatingInBatch ? pb.autoCancellation(true) : null;
+    isCreatingInBatch && pb.autoCancellation(true);
 
     return createdShift;
   }
   catch (error) {
     // Enable auto cancellation if creating shifts in batch
-    isCreatingInBatch ? pb.autoCancellation(true) : null;
+    isCreatingInBatch && pb.autoCancellation(true);
     console.error("Error creating shift: ", error);
     return
   }
@@ -173,43 +205,8 @@ export const updateShift = async (shiftId: string, user: User, bookedOrganisatio
   }
 }
 
-// TODO: fix the batch creation, without overloading the server
-/// Generates new shifts for a given period.
-/// @param startDate - The start date of the period.
-/// @param endDate - The end date of the period.
-/// @param canOverride - If true, the function will override existing shifts.
-/// @returns A promise that resolves to a message when the shifts have been generated.
-export const generateNewPeriod = async (startDate: Date, endDate: Date, canOverride: boolean = false): Promise<string> => {
-  const pb = await loadPocketBase();
-  if (!pb?.authStore.model) {
-    console.error("No user logged in");
-    return "No user logged in";
-  }
-
-  const generateNewDay = async (date: Date) => {
-    const day = date.getDay();
-    if (day !== 0 && day !== 6) {
-      for (let i = 8; i <= 15; i += 2) {
-        if (i === 14) {
-          i -= 1
-        }
-        const shiftStartTime = new Date(date.setHours(i, 0, 0, 0)).toISOString()
-        createShift(shiftStartTime, canOverride, true);
-      }
-    }
-  }
-
-  // Generate new shifts for the period
-  for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-    console.log("Generating shifts for: ", d);
-    await generateNewDay(d);
-  }
-
-  return "Done";
-}
-
-export const getShifts = async (): Promise<Shift[] | undefined> => {
-  const pb = await loadPocketBase();
+export const getShifts = async (pbClient?: Client): Promise<Shift[] | undefined> => {
+  const pb = pbClient || await loadPocketBase();
   if (!pb?.authStore.model) {
     console.error("No user logged in");
     return;

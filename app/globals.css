@@ -108,6 +108,13 @@ body {
   }
 }
 
+h3 {
+  @apply text-2xl font-bold;
+}
+h4 {
+  @apply text-lg font-semibold;
+}
+
 /* HTML: <div class="loader"></div> */
 .loader {
   transform: translate(-70%, -70%);
