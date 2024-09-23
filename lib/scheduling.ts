@@ -8,13 +8,6 @@ import { Shift, User } from './types';
 
 // Map the records from the database to the Shift type
 export const mapRecordsToShifts = (records: RecordModel[]): Shift[] => {
-  console.log(records.map((record: RecordModel): Shift => ({
-    id: record.id,
-    organisation: record.expand?.organisation?.name || "",
-    workers: record.expand?.workers?.map((worker: { name: string }) => worker.name) || [],
-    start: record.startTime,
-    end: record.endTime
-  })));
   return records.map((record: RecordModel): Shift => ({
     id: record.id,
     organisation: record.expand?.organisation?.name || "",
