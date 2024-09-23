@@ -8,11 +8,17 @@ import { Shift, User } from './types';
 
 // Map the records from the database to the Shift type
 export const mapRecordsToShifts = (records: RecordModel[]): Shift[] => {
-  console.log('records: ', records);
-  return records.map((record: RecordModel) => ({
+  console.log(records.map((record: RecordModel): Shift => ({
     id: record.id,
-    organisation: record.expand?.organisation === undefined ? "" : record.expand?.organisation.name,
-    workers: record.expand?.workers?.map((worker: { name: string }) => worker.name) ?? [],
+    organisation: record.expand?.organisation?.name || "",
+    workers: record.expand?.workers?.map((worker: { name: string }) => worker.name) || [],
+    start: record.startTime,
+    end: record.endTime
+  })));
+  return records.map((record: RecordModel): Shift => ({
+    id: record.id,
+    organisation: record.expand?.organisation?.name || "",
+    workers: record.expand?.workers?.map((worker: { name: string }) => worker.name) || [],
     start: record.startTime,
     end: record.endTime
   }));
@@ -235,7 +241,7 @@ export const getShiftRecordById = async (id: string) => {
   }
 
   try {
-    const shift = await pb.collection('shifts').getOne(id);
+    const shift = await pb.collection('shifts').getOne(id, { expand: 'workers,organisation' });
     return shift;
   } catch (error) {
     console.error("Error getting shift: ", error);

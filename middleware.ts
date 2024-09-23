@@ -10,7 +10,7 @@ export async function middleware(request: NextRequest) {
   const request_cookie = request.cookies.get("pb_auth")
 
   const cookie = await getNextjsCookie(request_cookie)
-  const pb = new PocketBase(process.env.POCKETBASE_URL);
+  const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
   if (cookie) {
     try {
       pb.authStore.loadFromCookie(cookie)

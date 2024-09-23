@@ -1,6 +1,6 @@
 'use client'
 
-// import { useEffect } from "react";
+import { useEffect } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -10,8 +10,9 @@ import { Shift, User } from "@/lib/types";
 import { useState } from "react";
 import { Event } from "@/lib/types";
 import Popup from "@/components/popup/popup";
-// import PocketBase from 'pocketbase';
-// import { useCookies } from 'next-client-cookies';
+import PocketBase, { RecordModel } from 'pocketbase';
+import { getShiftRecordById } from "@/lib/scheduling";
+import { set } from "date-fns";
 
 type Props = {
   loadedShifts: Shift[];
@@ -39,6 +40,26 @@ const mapShiftsToEvents = (shifts: Shift[]): Event[] => {
   })
 }
 
+const updateShiftCollection = (loadedShifts: Shift[], updatedShift: Shift) => {
+  // Delete the old shift
+  loadedShifts = loadedShifts.filter(shift => shift.id !== updatedShift.id);
+
+  // Add the updated shift
+  loadedShifts.push(updatedShift);
+  return loadedShifts;
+}
+
+// Map the records from the database to the Shift type
+export const mapRecordsToShifts = (records: RecordModel[]): Shift[] => {
+  return records.map((record: RecordModel): Shift => ({
+    id: record.id,
+    organisation: record.expand?.organisation?.name || "",
+    workers: record.expand?.workers?.map((worker: { name: string }) => worker.name) || [],
+    start: record.startTime,
+    end: record.endTime
+  }));
+}
+
 //#endregion
 
 
@@ -48,29 +69,47 @@ function CalendarView(props: Props) {
   }
 
   const [selectedShift, setSelectedShift] = useState<Shift | null>(null);
-  const events = mapShiftsToEvents(props.loadedShifts);
+  const [loadedShifts, setLoadedShifts] = useState(props.loadedShifts); // Store the shifts in local state
+  const [events, setEvents] = useState(mapShiftsToEvents(props.loadedShifts)); // Store the events in local state
 
-  // useEffect(() => {
-  //   // Load pb from cookie
-  //   const pb = new PocketBase(process.env.POCKETBASE_URL);
-  //   pb.autoCancellation(false)
-  //   console.log("pb", pb);
+  useEffect(() => {
+    const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
+    pb.autoCancellation(false);
 
-  //   try {
-  //     // Subscribe to changes in any shifts record
-  //     pb.collection('shifts').subscribe('*', function (e) {
-  //       console.log(e.action);
-  //       console.log(e.record);
-  //     }, { /* other options like expand, custom headers, etc. */ });
-  //   } catch (error) {
-  //     console.error("Error subscribing to shifts", error);
-  //   }
+    const updateShift = async (e: { action: string; record: { id: string } }) => {
+      console.log("Event", e);
+      if (e.action === 'update') {
+        console.log("Record updated", e.record);
 
-  //   // Cleanup subscription on component unmount
-  //   return () => {
-  //     pb.collection('shifts').unsubscribe('*');
-  //   };
-  // }, []);
+        // Fetch the updated record from PocketBase
+        const updatedRecord = await getShiftRecordById(e.record.id);
+        if (!updatedRecord) return;
+        console.log("Updated record", updatedRecord);
+
+        const updatedShift = mapRecordsToShifts([updatedRecord])[0];
+        console.log("Shift mapped", updatedShift);
+
+        // Check if the shift data has actually changed before updating state
+        setLoadedShifts((prevShifts) => {
+          const updatedShifts = updateShiftCollection(prevShifts, updatedShift);
+
+          // Compare updatedShifts with prevShifts to avoid unnecessary re-renders
+          if (JSON.stringify(prevShifts) !== JSON.stringify(updatedShifts)) {
+            setEvents(mapShiftsToEvents(updatedShifts));
+            return updatedShifts;
+          }
+
+          return prevShifts; // Don't update state if no actual changes
+        });
+      }
+    };
+
+    pb.collection('shifts').subscribe('*', updateShift);
+
+    return () => {
+      pb.collection('shifts').unsubscribe();
+    };
+  }, [props.loadedShifts]);
 
 
   return (
@@ -102,7 +141,7 @@ function CalendarView(props: Props) {
         slotMaxTime="18:00:00"
         allDaySlot={false}
         navLinkDayClick={(e) => console.log(e)}
-        eventClick={(e) => setSelectedShift(getShiftByIdFromCollection(e.event.id, props.loadedShifts))}
+        eventClick={(e) => setSelectedShift(getShiftByIdFromCollection(e.event.id, loadedShifts))}
         eventContent={(arg) => (
           <EventContent event={arg.event} eventTime={arg.timeText} />
         )}

@@ -3,6 +3,9 @@ import { Suspense } from 'react';
 import CalendarLoading from './calendarLoading';
 import CalendarContainer from './calendarContainer';
 import Footer from '@/components/footer';
+import eventsource from 'eventsource';
+import PocketBase from 'pocketbase';
+import { getShiftRecordById, mapRecordsToShifts } from '@/lib/scheduling';
 
 export default async function Home() {
   return (
