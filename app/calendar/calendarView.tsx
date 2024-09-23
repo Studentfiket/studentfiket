@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -49,14 +50,28 @@ function CalendarView(props: Props) {
   const [selectedShift, setSelectedShift] = useState<Shift | null>(null);
   const events = mapShiftsToEvents(props.loadedShifts);
 
-  // Load pb from cookie
-  const pb = new PocketBase(process.env.POCKETBASE_URL);
+  // useEffect(() => {
+  //   // Load pb from cookie
+  //   const pb = new PocketBase(process.env.POCKETBASE_URL);
+  //   pb.autoCancellation(false)
+  //   console.log("pb", pb);
 
-  // Subscribe to changes in any shifts record
-  pb.collection('shifts').subscribe('*', function (e) {
-    console.log(e.action);
-    console.log(e.record);
-  }, { /* other options like expand, custom headers, etc. */ });
+  //   try {
+  //     // Subscribe to changes in any shifts record
+  //     pb.collection('shifts').subscribe('*', function (e) {
+  //       console.log(e.action);
+  //       console.log(e.record);
+  //     }, { /* other options like expand, custom headers, etc. */ });
+  //   } catch (error) {
+  //     console.error("Error subscribing to shifts", error);
+  //   }
+
+  //   // Cleanup subscription on component unmount
+  //   return () => {
+  //     pb.collection('shifts').unsubscribe('*');
+  //   };
+  // }, []);
+
 
   return (
     <div className="w-screen">

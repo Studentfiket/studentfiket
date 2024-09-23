@@ -224,6 +224,15 @@ export const getShifts = async (pbClient?: Client): Promise<Shift[] | undefined>
   }
 }
 
+export const updateShiftCollection = (loadedShifts: Shift[], updatedShift: Shift) => {
+  const updatedShiftIndex = loadedShifts.findIndex(shift => shift.id === updatedShift.id);
+  if (updatedShiftIndex > -1) {
+    loadedShifts[updatedShiftIndex] = updatedShift;
+  }
+  return loadedShifts;
+}
+
+
 export const getShiftById = async (id: string) => {
   const pb = await loadPocketBase();
   if (!pb?.authStore.model) {
