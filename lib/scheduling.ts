@@ -8,6 +8,7 @@ import { Shift, User } from './types';
 
 // Map the records from the database to the Shift type
 export const mapRecordsToShifts = (records: RecordModel[]): Shift[] => {
+  console.log('records: ', records);
   return records.map((record: RecordModel) => ({
     id: record.id,
     organisation: record.expand?.organisation === undefined ? "" : record.expand?.organisation.name,
@@ -154,7 +155,7 @@ export const updateShift = async (shiftId: string, user: User, bookedOrganisatio
   }
 
   // Retrieve the current shift from the database, to make sure it is up to date
-  const shift = await getShiftById(shiftId);
+  const shift = await getShiftRecordById(shiftId);
   if (!shift) {
     console.error("Shift not found");
     return { message: "Shift not found" };
@@ -170,7 +171,7 @@ export const updateShift = async (shiftId: string, user: User, bookedOrganisatio
     // User is booking the shift
     // Add organisation to the shift
     if (shift.organisation === "") {
-      shift.organisation = bookedOrganisationId;
+      shift.organisation = bookedOrganisationId == 'private' ? "" : bookedOrganisationId;
     }
 
     // Add the user to the shift
@@ -196,8 +197,10 @@ export const updateShift = async (shiftId: string, user: User, bookedOrganisatio
 
 
   try {
+    console.log('shift: ', shift);
+
+    // TODO: Maybe dont need to return the updated shift. Should be taken care of by the subscription
     const updatedShift = await pb.collection('shifts').update(shift.id, shift);
-    console.log("Shift updated successfully: ", updatedShift);
     return { message: "Shift updated successfully", shift: mapRecordsToShifts([updatedShift])[0] };
   } catch (error) {
     console.error("Error updating shift: ", error);
@@ -224,16 +227,8 @@ export const getShifts = async (pbClient?: Client): Promise<Shift[] | undefined>
   }
 }
 
-export const updateShiftCollection = (loadedShifts: Shift[], updatedShift: Shift) => {
-  const updatedShiftIndex = loadedShifts.findIndex(shift => shift.id === updatedShift.id);
-  if (updatedShiftIndex > -1) {
-    loadedShifts[updatedShiftIndex] = updatedShift;
-  }
-  return loadedShifts;
-}
 
-
-export const getShiftById = async (id: string) => {
+export const getShiftRecordById = async (id: string) => {
   const pb = await loadPocketBase();
   if (!pb?.authStore.model) {
     console.error("No user logged in");
