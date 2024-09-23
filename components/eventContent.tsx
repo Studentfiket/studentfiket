@@ -16,11 +16,11 @@ const EventContent = (props: Props) => {
       // If the shift is booked by an organisation, return the organisation name
       return shift.organisation;
     }
-    if (shiftHasPassed && shift.person1 === "" && shift.person2 === "") {
+    if (shiftHasPassed && shift.workers[0] === "" && shift.workers[1] === "") {
       // If the shift has passed and was free, return "Obokat"
       return "Obokat";
     }
-    if (shift.person1 !== "" || shift.person2 !== "") {
+    if (shift.workers[0] !== "" || shift.workers[1] !== "") {
       // If the shift i booked by a person but no organisation, return "Privat"
       return "Privat";
     }
@@ -33,11 +33,11 @@ const EventContent = (props: Props) => {
     const shiftTitle = getTitle(shift);
     switch (shiftTitle) {
       case "Privat":
-        return (shift.person1 !== "" && shift.person2 !== "") ? bookedClass : "bg-shift-reserved " + interactiveClass;
+        return (shift.workers[0] !== "" && shift.workers[1] !== "") ? bookedClass : "bg-shift-reserved " + interactiveClass;
       case "BOKA":
         return "bg-shift-free " + interactiveClass;
       default:
-        return (shift.person1 !== "" && shift.person2 !== "") ? bookedClass : "bg-shift-reserved " + interactiveClass;
+        return (shift.workers[0] !== "" && shift.workers[1] !== "") ? bookedClass : "bg-shift-reserved " + interactiveClass;
     }
   }
 
@@ -46,14 +46,16 @@ const EventContent = (props: Props) => {
   const shift: Shift = {
     id: props.event.id,
     organisation: shiftInfo[0],
-    person1: shiftInfo[1],
-    person2: shiftInfo[2],
+    workers: [shiftInfo[1], shiftInfo[2]],
     start: props.event.startStr,
     end: props.event.endStr
   }
 
-  const shortName1 = shift.person1 !== "" ? (shift.person1.split(" ")[0] + " " + shift.person1.split(" ")[1].charAt(0) + ".") : "";
-  const shortName2 = shift.person2 !== "" ? (shift.person2.split(" ")[0] + " " + shift.person2.split(" ")[1].charAt(0) + ".") : "";
+  // const shortName1 = shift.workers[0] !== "" ? (shift.workers[0].split(" ")[0] + " " + shift.workers[0].split(" ")[1].charAt(0) + ".") : "";
+  // const shortName2 = shift.workers[1] !== "" ? (shift.workers[1].split(" ")[0] + " " + shift.workers[1].split(" ")[1].charAt(0) + ".") : "";
+  const shortName1 = shift.workers[0] !== "" ? shift.workers[0].split(" ")[0] : "";
+  const shortName2 = shift.workers[1] !== "" ? shift.workers[1].split(" ")[0] : "";
+
 
   const startHour = new Date(props.event.startStr).getHours();
   const shiftHasPassed = new Date(props.event.startStr) < new Date();
@@ -70,9 +72,9 @@ const EventContent = (props: Props) => {
         </div>
         {startHour !== 12 && (
           <div>
-            <p className="hidden sm:block">{shift.person1}</p>
+            <p className="hidden sm:block">{shift.workers[0]}</p>
             <p className="block sm:hidden">{shortName1}</p>
-            <p className="hidden sm:block">{shift.person2}</p>
+            <p className="hidden sm:block">{shift.workers[1]}</p>
             <p className="block sm:hidden">{shortName2}</p>
           </div>
         )}

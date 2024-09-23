@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from "react";
+// import { useEffect } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -10,7 +10,7 @@ import { Shift, User } from "@/lib/types";
 import { useState } from "react";
 import { Event } from "@/lib/types";
 import Popup from "@/components/popup/popup";
-import PocketBase from 'pocketbase';
+// import PocketBase from 'pocketbase';
 // import { useCookies } from 'next-client-cookies';
 
 type Props = {
@@ -29,7 +29,7 @@ const getShiftByIdFromCollection = (id: string, shiftCollection: Shift[] = []) =
 const mapShiftsToEvents = (shifts: Shift[]): Event[] => {
   // Map the shifts to events, combining the organisation and workers information into the title
   return shifts.map(shift => {
-    const title = `${shift.organisation}/&${shift.person1}/&${shift.person2}`;
+    const title = `${shift.organisation}/&${shift.workers[0] ? shift.workers[0] : ""}/&${shift.workers[1] ? shift.workers[1] : ""}`;
     return {
       id: shift.id,
       title: title,

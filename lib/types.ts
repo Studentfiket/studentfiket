@@ -19,8 +19,7 @@ export interface Event {
 export interface Shift {
   id: string;
   organisation: string;
-  person1: string;
-  person2: string;
+  workers: string[];
   start: string;
   end: string;
 }

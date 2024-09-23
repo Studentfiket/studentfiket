@@ -12,8 +12,7 @@ export const mapRecordsToShifts = (records: RecordModel[]): Shift[] => {
   return records.map((record: RecordModel) => ({
     id: record.id,
     organisation: record.expand?.organisation === undefined ? "" : record.expand?.organisation.name,
-    person1: record.workers[0] === undefined ? "" : record.expand?.workers[0].name,
-    person2: record.workers[1] === undefined ? "" : record.expand?.workers[1].name,
+    workers: record.expand?.workers?.map((worker: { name: string }) => worker.name) ?? [],
     start: record.startTime,
     end: record.endTime
   }));
