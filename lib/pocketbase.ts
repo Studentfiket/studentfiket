@@ -42,6 +42,42 @@ export const getUserOrganisations = async (): Promise<Organisation[]> => {
   return organisations;
 }
 
+export const getOrganisations = async (): Promise<Organisation[] | null> => {
+  try {
+    const organisation = await pb.collection('organisations').getFullList({
+      sort: '-created', expand: ['shifts']
+    });
+    const mappedOrganisations: Organisation[] = organisation.map((record) => ({
+      id: record.id,
+      name: record.name,
+      nrOfShifts: record.expand?.shifts?.length || 0
+    }));
+    return mappedOrganisations;
+  } catch (error) {
+    console.error("Error getting organisation: ", error);
+    return null;
+  }
+}
+
+export const getUsers = async (limit: number): Promise<User[] | null> => {
+  try {
+    const users = await pb.collection('users').getList(1, limit);
+    const mappedUsers: User[] = users.items.map((record) => ({
+      id: record.id,
+      name: record.name,
+      email: record.email,
+      avatar: record.avatar,
+      organisations: [],
+      isAdmin: record.isAdmin
+    }));
+    return mappedUsers;
+  } catch (error) {
+    console.error("Error getting users: ", error);
+    return null;
+  }
+}
+
+
 
 /* #region Avatar */
 async function generateAvatar(seed: string) {

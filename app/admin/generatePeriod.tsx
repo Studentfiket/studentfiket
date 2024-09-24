@@ -5,10 +5,8 @@ import { useState } from 'react';
 import { DateRange } from 'react-day-picker';
 import { addDays } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { Alert } from '@/components/ui/alert';
 
 import { DatePickerWithRange } from '@/components/datePickerWithRange';
-import { Progress } from '@/components/ui/progress';
 import { generateNewPeriod } from '@/lib/scheduling';
 
 

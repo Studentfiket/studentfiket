@@ -1,33 +1,29 @@
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+'use server'
+
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
+import DataTable from "./dataTable"
+import { getUsers as getMultipleUsers, getOrganisations } from "@/lib/pocketbase"
 
-export default function DataTabs() {
+export default async function DataTabs() {
+  const users = await getMultipleUsers(10)
+  const organisations = await getOrganisations()
+
   return (
-    <Tabs defaultValue="account" className="w-[400px]">
+    <Tabs defaultValue="org" className="w-[600px]">
       <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="account">Användare</TabsTrigger>
-        <TabsTrigger value="password">Föreningar</TabsTrigger>
+        <TabsTrigger value="org">Föreningar</TabsTrigger>
+        <TabsTrigger value="users">Användare</TabsTrigger>
       </TabsList>
-      <TabsContent value="account">
-
+      <TabsContent value="org">
+        <DataTable dataContent={organisations} />
       </TabsContent>
-      <TabsContent value="password">
-
+      <TabsContent value="users">
+        <DataTable dataContent={users} />
       </TabsContent>
     </Tabs>
   )

@@ -9,6 +9,7 @@ export interface User {
 export interface Organisation {
   id: string;
   name: string;
+  nrOfShifts: number;
 }
 export interface Event {
   id: string;
