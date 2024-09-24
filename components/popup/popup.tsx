@@ -17,7 +17,12 @@ export default function Popup(props: Props) {
     if (event.target !== event.currentTarget) {
       return;
     }
-    props.onCancel();
+    closePopup();
+  }
+  const closePopup = () => {
+    console.log("closePopup");
+    setShowConfirmation(false); // Reset the popup
+    props.onCancel();           // Close the popup
   }
   const changePopup = (isBooking: boolean) => {
     setShowConfirmation(true);
@@ -41,9 +46,9 @@ export default function Popup(props: Props) {
     <div onClick={handleClick} className="absolute inset-0 w-screen h-screen z-20 grid place-items-center bg-[rgba(0,0,0,0.4)]">
       <Card className={"w-4/5 sm:w-[400px] mx-auto"}>
         {!showConfirmation ?
-          <BookShiftPopup shift={props.shift} user={props.user} onCancel={props.onCancel} changePopup={changePopup} />
+          <BookShiftPopup shift={props.shift} user={props.user} onCancel={closePopup} changePopup={changePopup} />
           :
-          <ConfirmShiftPopup shift={props.shift} onCancel={props.onCancel} userIsBooking={userIsBooking} />
+          <ConfirmShiftPopup shift={props.shift} onCancel={closePopup} userIsBooking={userIsBooking} />
         }
       </Card>
     </div>

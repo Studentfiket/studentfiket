@@ -94,6 +94,8 @@ function CalendarView(props: Props) {
 
           // Compare updatedShifts with prevShifts to avoid unnecessary re-renders
           if (JSON.stringify(prevShifts) !== JSON.stringify(updatedShifts)) {
+            if (selectedShift?.id === updatedShift.id)
+              setSelectedShift(updatedShift);
             setEvents(mapShiftsToEvents(updatedShifts));
             return updatedShifts;
           }
@@ -108,7 +110,7 @@ function CalendarView(props: Props) {
     return () => {
       pb.collection('shifts').unsubscribe();
     };
-  }, [props.loadedShifts]);
+  }, [props.loadedShifts, selectedShift]);
 
 
   return (
