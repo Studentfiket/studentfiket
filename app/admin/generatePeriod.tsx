@@ -42,15 +42,14 @@ export default function GeneratePeriod() {
     <div>
       <div>
         <h4 className='text-lg font-semibold'>Generera skift för period</h4>
-        <Alert className='w-1/2 my-3'>
-          <Progress value={loadingProgress} />
-        </Alert>
       </div>
-      <div className='flex flex-col sm:flex-row'>
-        <DatePickerWithRange date={date} setDate={setDate} />
-        <Button className='mt-4 sm:mt-0 sm:ml-4' onClick={handleSubmit}>
-          Generera skift
-        </Button>
+      <div className='flex flex-row'>
+        <div className='flex flex-col sm:flex-row'>
+          <DatePickerWithRange date={date} setDate={setDate} />
+          <Button className='mt-4 sm:mt-0 sm:ml-4' disabled onClick={handleSubmit}>
+            <div className="generating"></div>
+          </Button>
+        </div>
       </div>
     </div>
   );

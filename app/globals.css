@@ -157,3 +157,24 @@ h4 {
     transform: translateX(50px);
   }
 }
+
+/* HTML: <div className="generating"></div> */
+.generating {
+  width: fit-content;
+  font-weight: bold;
+  font-family: monospace;
+  white-space: pre;
+  line-height: 1.1em;
+  height:1.2em;
+  overflow: hidden;
+}
+.generating:before {
+  content: "Genererar...\AG⟒nererar...\AG⟒n⟟rerar...\AG⟒n⟟r⟒rar...\AG⟒n⟟r⟒r⟟r...";
+  white-space: pre;
+  display: inline-block;
+  animation: l39 1s infinite steps(11) alternate;
+}
+
+@keyframes l39 {
+  100%{transform: translateY(-100%)}
+}
