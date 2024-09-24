@@ -5,6 +5,7 @@
 import Client, { RecordModel } from 'pocketbase';
 import { loadPocketBase } from './pocketbase';
 import { Shift, User } from './types';
+import { DateTime } from "luxon";
 
 // Map the records from the database to the Shift type
 export const mapRecordsToShifts = (records: RecordModel[]): Shift[] => {
@@ -23,8 +24,8 @@ export const mapRecordsToShifts = (records: RecordModel[]): Shift[] => {
 /// @param endDate - The end date of the period.
 /// @returns A promise that resolves to a message when the shifts have been generated.
 export const generateNewPeriod = async (startDate: Date, endDate: Date): Promise<string> => {
-  async function generateNewDay(date: Date) {
-    const day = date.getDay();
+  async function generateNewDay(date: DateTime) {
+    const day = date.day;
     if (day !== 0 && day !== 6) {
       // Generate shifts for the day
       for (let i = 8; i <= 15; i += 2) {
@@ -32,8 +33,8 @@ export const generateNewPeriod = async (startDate: Date, endDate: Date): Promise
         if (i === 14) {
           i -= 1
         }
-        // Create the shift
-        const shiftStartTime = new Date(date.setHours(i, 0, 0, 0)).toISOString();
+        // Create the shift, using the Swedish timezone
+        const shiftStartTime = new DateTime(date).set({ hour: i, minute: 0, second: 0, millisecond: 0 }).toISO();
         pb && await createShift(shiftStartTime, true, pb);
       }
     }
@@ -46,8 +47,8 @@ export const generateNewPeriod = async (startDate: Date, endDate: Date): Promise
   }
 
   // Generate new shifts for the period
-  for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-    console.log("Generating shifts for: ", d);
+  for (let d = DateTime.fromJSDate(startDate).setZone('Europe/Paris'); d <= DateTime.fromJSDate(endDate); d = d.plus({ days: 1 })) {
+    console.log("Generating shifts for: ", d.toISO());
     await generateNewDay(d);
   }
 
@@ -64,8 +65,9 @@ export const createShift = async (startTime: string, isCreatingInBatch: boolean 
   }
 
   // Check if the shift is created between 08:00 and 16:00
-  const startTimeDate = new Date(startTime).toISOString();
-  const startHour = new Date(startTime).getHours();
+  const startTimeDate = DateTime.fromISO(startTime).setZone('Europe/Paris')
+  console.log('startTimeDate: ', startTime, startTimeDate);
+  const startHour = startTimeDate.hour
   if (startHour < 8 || startHour > 16) {
     console.error("Shifts can only be created between 08:00 and 16:00");
     return;
@@ -73,7 +75,7 @@ export const createShift = async (startTime: string, isCreatingInBatch: boolean 
 
   // Calculate the end time of the shift (lunch shift is 1 hour, other shifts are 2 hours)
   const shiftLength = startHour === 12 ? 1 : 2;
-  const endTimeDate = new Date(new Date(startTime).getTime() + shiftLength * 60 * 60 * 1000).toISOString();
+  const endTimeDate = DateTime.fromISO(startTime).plus({ hours: shiftLength }).toISO();
 
   const shift = {
     startTime: startTimeDate,
@@ -87,9 +89,9 @@ export const createShift = async (startTime: string, isCreatingInBatch: boolean 
 
   try {
     // Check if the shift already exists
-    console.log('startTimeDate: ', startTimeDate.split('T')[0], startTimeDate.split('T')[1].split('Z')[0]);
-    const startDate = new Date(startTimeDate.split('T')[0]).toISOString();
-    const startTime = startTimeDate.split('T')[1].split('.')[0];
+    const startDate = startTimeDate.day;
+    const startTime = startTimeDate.hour;
+    console.log('startTimeDate: ', startDate, startTime);
 
     const resultList = await pb.collection('shifts').getList(1, 5, {
       filter: `startTime = "${startDate} ${startTime}" `,
