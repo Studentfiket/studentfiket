@@ -34,12 +34,12 @@ export const generateNewPeriod = async (startDate: Date, endDate: Date): Promise
           i -= 1
         }
         // Create the shift, using the Swedish timezone
-        const shiftStartTime = DateTime.fromObject({ ...date.toObject(), hour: i, minute: 0, second: 0, millisecond: 0 }).toISO();
-        if (shiftStartTime) {
-          pb && await createShift(shiftStartTime, true, pb);
-        } else {
-          console.error("Shift start time is null");
+        const shiftStartTime = DateTime.fromObject({ ...date.toObject(), hour: i, minute: 0, second: 0, millisecond: 0 }).setZone('Europe/Paris').toISO();
+        if (!shiftStartTime) {
+          console.error("Error creating shift start time");
+          return;
         }
+        pb && await createShift(shiftStartTime, true, pb);
       }
     }
   }
