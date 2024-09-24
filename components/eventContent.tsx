@@ -51,13 +51,11 @@ const EventContent = (props: Props) => {
     end: props.event.endStr
   }
 
-  // const shortName1 = shift.workers[0] !== "" ? (shift.workers[0].split(" ")[0] + " " + shift.workers[0].split(" ")[1].charAt(0) + ".") : "";
-  // const shortName2 = shift.workers[1] !== "" ? (shift.workers[1].split(" ")[0] + " " + shift.workers[1].split(" ")[1].charAt(0) + ".") : "";
   const shortName1 = shift.workers[0] !== "" ? shift.workers[0].split(" ")[0] : "";
   const shortName2 = shift.workers[1] !== "" ? shift.workers[1].split(" ")[0] : "";
 
 
-  const startHour = new Date(props.event.startStr).getHours();
+  const startHour = new Date(props.event.startStr).getUTCHours();
   const shiftHasPassed = new Date(props.event.startStr) < new Date();
 
   return (
