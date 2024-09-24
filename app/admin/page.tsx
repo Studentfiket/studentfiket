@@ -5,6 +5,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import GeneratePeriod from "./generatePeriod";
+import DataContainer from "./dataContainer";
 
 
 function AdminPage() {
@@ -23,6 +24,16 @@ function AdminPage() {
         </CardHeader>
         <CardContent>
           <GeneratePeriod />
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            Jobbade pass
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <DataContainer />
         </CardContent>
       </Card>
     </div>

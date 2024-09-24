@@ -19,7 +19,7 @@ export default function GeneratePeriod() {
       return;
     }
 
-    setLoadingProgress(0); // Start loading
+    setIsLoading(0); // Start loading
 
     generateNewPeriod(date?.from, date?.to).then(() => {
       console.log("Done");
@@ -27,7 +27,7 @@ export default function GeneratePeriod() {
   };
 
   // TODO: Implement loading progress or whatever
-  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const [date, setDate] = React.useState<DateRange | undefined>(() => {
     const now = new Date();
     const startOfNextWeek = new Date(now.setDate(now.getDate() + (7 - now.getDay())));
@@ -39,15 +39,21 @@ export default function GeneratePeriod() {
   });
 
   return (
-    <div>
+    <div className='relative'>
       <div>
         <h4 className='text-lg font-semibold'>Generera skift för period</h4>
       </div>
       <div className='flex flex-row'>
         <div className='flex flex-col sm:flex-row'>
           <DatePickerWithRange date={date} setDate={setDate} />
-          <Button className='mt-4 sm:mt-0 sm:ml-4' disabled onClick={handleSubmit}>
-            <div className="generating"></div>
+          <Button
+            className='mt-4 sm:mt-0 sm:ml-4 py-4 flex justify-center'
+            onClick={handleSubmit}
+            disabled={isLoading}
+          >
+            {
+              isLoading ? <div className="generating"><p className='text-transparent'>Generera skift</p></div> : <p>Generera skift</p>
+            }
           </Button>
         </div>
       </div>
