@@ -26,6 +26,9 @@ export default async function CalendarContainer() {
   }
 
   return (
-    <CalendarView loadedShifts={loadedShifts} user={user} />
+    <div>
+      <CalendarView loadedShifts={loadedShifts} user={user} />
+      <div>{user.name} {user.isAdmin}</div>
+    </div>
   );
 }
