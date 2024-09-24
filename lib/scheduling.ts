@@ -34,11 +34,12 @@ export const generateNewPeriod = async (startDate: Date, endDate: Date): Promise
           i -= 1
         }
         // Create the shift, using the Swedish timezone
-        const shiftStartTime = DateTime.fromObject({ ...date.toObject(), hour: i, minute: 0, second: 0, millisecond: 0 }).setZone('Europe/Paris').toISO();
+        const shiftStartTime = DateTime.fromObject({ ...date.toObject(), hour: i, minute: 0, second: 0, millisecond: 0 }, { zone: "utc" }).toISO();
         if (!shiftStartTime) {
           console.error("Error creating shift start time");
           return;
         }
+        console.log('shiftStartTime: ', shiftStartTime);
         pb && await createShift(shiftStartTime, true, pb);
       }
     }
@@ -51,7 +52,7 @@ export const generateNewPeriod = async (startDate: Date, endDate: Date): Promise
   }
 
   // Generate new shifts for the period
-  for (let d = DateTime.fromJSDate(startDate).setZone('Europe/Paris'); d <= DateTime.fromJSDate(endDate); d = d.plus({ days: 1 })) {
+  for (let d = DateTime.fromJSDate(startDate, { zone: "utc" }); d <= DateTime.fromJSDate(endDate, { zone: "utc" }); d = d.plus({ days: 1 })) {
     console.log("Generating shifts for: ", d.toISO());
     await generateNewDay(d);
   }
@@ -69,7 +70,7 @@ export const createShift = async (startTime: string, isCreatingInBatch: boolean 
   }
 
   // Check if the shift is created between 08:00 and 16:00
-  const startTimeDate = DateTime.fromISO(startTime).setZone('Europe/Paris')
+  const startTimeDate = DateTime.fromISO(startTime).setZone('utc')
   console.log('startTimeDate: ', startTime, startTimeDate);
   const startHour = startTimeDate.hour
   if (startHour < 8 || startHour > 16) {
@@ -79,7 +80,7 @@ export const createShift = async (startTime: string, isCreatingInBatch: boolean 
 
   // Calculate the end time of the shift (lunch shift is 1 hour, other shifts are 2 hours)
   const shiftLength = startHour === 12 ? 1 : 2;
-  const endTimeDate = DateTime.fromISO(startTime).plus({ hours: shiftLength }).toISO();
+  const endTimeDate = DateTime.fromISO(startTime, { zone: "Europe/Paris" }).plus({ hours: shiftLength }).toISO();
 
   const shift = {
     startTime: startTimeDate,

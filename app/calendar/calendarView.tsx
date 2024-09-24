@@ -116,6 +116,7 @@ function CalendarView(props: Props) {
       <Popup onCancel={closePopup} shift={selectedShift} user={props.user} />
       {/* <BookShiftPopup shift={selectedShift} user={props.user} onCancel={closePopup} /> */}
       <FullCalendar
+        timeZone="UTC"
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="timeGridWeek"
         eventTimeFormat={{ hour: "2-digit", minute: "2-digit", meridiem: false, hour12: false }}
