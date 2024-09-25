@@ -68,18 +68,24 @@ export default async function DataTable(props: Props) {
     return null
   }
 
-  // const users = dataContent as User[]
-  // const organisations = dataContent as Organisation[]
+  const isUser = (dataContent: User[] | Organisation[]): dataContent is User[] => {
+    return (dataContent as User[])[0]?.email !== undefined;
+  };
+
+  if (isUser(dataContent)) {
+    console.log("Data is of type User");
+  } else {
+    console.log("Data is of type Organisation");
+  }
 
   return (
     <Table>
       <TableCaption>A list of your recent invoices.</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[100px]">Invoice</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Method</TableHead>
-          <TableHead className="text-right">Amount</TableHead>
+          <TableHead className="w-[100px]">Namn</TableHead>
+          <TableHead>LiuId</TableHead>
+          <TableHead className="text-right">Antal pass</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

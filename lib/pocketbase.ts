@@ -62,6 +62,8 @@ export const getOrganisations = async (): Promise<Organisation[] | null> => {
 export const getUsers = async (limit: number): Promise<User[] | null> => {
   try {
     const users = await pb.collection('users').getList(1, limit);
+    console.log("fetch: ", users);
+
     const mappedUsers: User[] = users.items.map((record) => ({
       id: record.id,
       name: record.name,
