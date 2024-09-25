@@ -10,6 +10,7 @@ import { botttsNeutral } from '@dicebear/collection';
 import { getNextjsCookie } from "@/utils/server-cookie";
 import { Organisation, User } from './types';
 import Client from 'pocketbase';
+import { getOrganisationShifts } from './scheduling';
 
 const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
@@ -42,16 +43,18 @@ export const getUserOrganisations = async (): Promise<Organisation[]> => {
   return organisations;
 }
 
-export const getOrganisations = async (): Promise<Organisation[] | null> => {
+export const getOrganisations = async (pb: Client, limit): Promise<Organisation[] | null> => {
   try {
-    const organisation = await pb.collection('organisations').getFullList({
-      sort: '-created', expand: 'shifts'
+    pb.autoCancellation(false);
+    const organisation = await pb.collection('organisations').getList(1, limit, {
+      sort: '-name'
     });
-    const mappedOrganisations: Organisation[] = organisation.map((record) => ({
+    const mappedOrganisations: Organisation[] = await Promise.all(organisation.items.map(async (record) => ({
       id: record.id,
       name: record.name,
-      nrOfShifts: record.expand?.shifts?.length || 0
-    }));
+      nrOfShifts: (await getOrganisationShifts(pb, record.id)).length
+    })));
+    pb.autoCancellation(true);
     return mappedOrganisations;
   } catch (error) {
     console.error("Error getting organisation: ", error);
@@ -59,15 +62,14 @@ export const getOrganisations = async (): Promise<Organisation[] | null> => {
   }
 }
 
-export const getUsers = async (limit: number): Promise<User[] | null> => {
+export const getMultipleUsers = async (limit: number): Promise<User[] | null> => {
   try {
     const users = await pb.collection('users').getList(1, limit);
-    console.log("fetch: ", users);
 
     const mappedUsers: User[] = users.items.map((record) => ({
       id: record.id,
+      username: record.username,
       name: record.name,
-      email: record.email,
       avatar: record.avatar,
       organisations: [],
       isAdmin: record.isAdmin
@@ -78,8 +80,6 @@ export const getUsers = async (limit: number): Promise<User[] | null> => {
     return null;
   }
 }
-
-
 
 /* #region Avatar */
 async function generateAvatar(seed: string) {

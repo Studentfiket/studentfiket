@@ -3,62 +3,23 @@
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
 import { User, Organisation } from "@/lib/types"
-
-const invoices = [
-  {
-    invoice: "INV001",
-    paymentStatus: "Paid",
-    totalAmount: "$250.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV002",
-    paymentStatus: "Pending",
-    totalAmount: "$150.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    invoice: "INV003",
-    paymentStatus: "Unpaid",
-    totalAmount: "$350.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    invoice: "INV004",
-    paymentStatus: "Paid",
-    totalAmount: "$450.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV005",
-    paymentStatus: "Paid",
-    totalAmount: "$550.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    invoice: "INV006",
-    paymentStatus: "Pending",
-    totalAmount: "$200.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    invoice: "INV007",
-    paymentStatus: "Unpaid",
-    totalAmount: "$300.00",
-    paymentMethod: "Credit Card",
-  },
-]
+import { loadPocketBase } from "@/lib/pocketbase"
+import { getUsersShifts } from "@/lib/scheduling"
 
 type Props = {
   dataContent: User[] | Organisation[] | null;
+}
+
+type accountData = {
+  name: string;
+  liuId: string;
+  nrOfShifts: number;
 }
 
 export default async function DataTable(props: Props) {
@@ -68,42 +29,53 @@ export default async function DataTable(props: Props) {
     return null
   }
 
-  const isUser = (dataContent: User[] | Organisation[]): dataContent is User[] => {
-    return (dataContent as User[])[0]?.email !== undefined;
-  };
+  const assignData = async (dataContent: User[] | Organisation[]): Promise<accountData[]> => {
+    // Get the shifts for the user
+    const pb = await loadPocketBase();
+    if (!pb) {
+      console.error("Failed to load PocketBase");
+      return [];
+    }
 
-  if (isUser(dataContent)) {
-    console.log("Data is of type User");
-  } else {
-    console.log("Data is of type Organisation");
+    pb.autoCancellation(false);
+    if (isUserData) {
+      const userData = await Promise.all((dataContent as User[]).map(async (user) => ({
+        name: user.name,
+        liuId: user.username,
+        nrOfShifts: (await getUsersShifts(pb, user))?.length || 0,
+      })));
+      pb?.autoCancellation(true);
+      return userData;
+    } else {
+      return (dataContent as Organisation[]).map((organisation) => ({
+        name: organisation.name,
+        liuId: "",
+        nrOfShifts: organisation.nrOfShifts,
+      }));
+    }
   }
+
+  const isUserData = (dataContent as User[])[0]?.username !== undefined;
+  const tableData = await assignData(dataContent);
 
   return (
     <Table>
-      <TableCaption>A list of your recent invoices.</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[100px]">Namn</TableHead>
-          <TableHead>LiuId</TableHead>
-          <TableHead className="text-right">Antal pass</TableHead>
+          <TableHead className="sm:w-[120px] sm:block hidden">Namn</TableHead>
+          {isUserData && <TableHead>LiuId</TableHead>}
+          <TableHead className="text-right">Jobbade pass</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {invoices.map((invoice) => (
-          <TableRow key={invoice.invoice}>
-            <TableCell className="font-medium">{invoice.invoice}</TableCell>
-            <TableCell>{invoice.paymentStatus}</TableCell>
-            <TableCell>{invoice.paymentMethod}</TableCell>
-            <TableCell className="text-right">{invoice.totalAmount}</TableCell>
+        {tableData.map((data, index) => (
+          <TableRow key={data.name} className={index % 2 === 0 ? "bg-gray-50" : ""}>
+            <TableCell className="font-medium sm:block hidden">{data.name}</TableCell>
+            {isUserData && <TableCell>{data.liuId}</TableCell>}
+            <TableCell className="text-right">{data.nrOfShifts}</TableCell>
           </TableRow>
         ))}
       </TableBody>
-      <TableFooter>
-        <TableRow>
-          <TableCell colSpan={3}>Total</TableCell>
-          <TableCell className="text-right">$2,500.00</TableCell>
-        </TableRow>
-      </TableFooter>
     </Table>
   )
 }

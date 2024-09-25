@@ -7,18 +7,24 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs"
 import DataTable from "./dataTable"
-import { getUsers as getMultipleUsers, getOrganisations } from "@/lib/pocketbase"
+import { getMultipleUsers, getOrganisations, loadPocketBase } from "@/lib/pocketbase"
 
 export default async function DataTabs() {
-  const users = await getMultipleUsers(10)
-  console.log(users);
 
-  const organisations = await getOrganisations()
+  const pb = await loadPocketBase();
+  if (!pb) {
+    console.error("Failed to load PocketBase");
+    return [];
+  }
+
+  const users = await getMultipleUsers(10)
+
+  const organisations = await getOrganisations(pb);
   console.log(organisations);
 
 
   return (
-    <Tabs defaultValue="org" className="w-[600px]">
+    <Tabs defaultValue="org" className="sm:w-[600px]">
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="org">Föreningar</TabsTrigger>
         <TabsTrigger value="users">Användare</TabsTrigger>

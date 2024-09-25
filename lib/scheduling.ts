@@ -67,6 +67,70 @@ export const generateNewPeriod = async (startDate: Date, endDate: Date): Promise
   return "Done";
 }
 
+//#region Get shifts
+export const getShifts = async (pbClient?: Client): Promise<Shift[] | undefined> => {
+  const pb = pbClient || await loadPocketBase();
+  if (!pb?.authStore.model) {
+    console.error("No user logged in");
+    return;
+  }
+
+  // Get the date from the start of a week ago to the end of 3 weeks ahead
+  const periodStart = DateTime.now().minus({ weeks: 1 }).startOf('week').toISODate();
+  const periodEnd = DateTime.now().plus({ weeks: 3 }).endOf('week').toISODate();
+
+  try {
+    const resultList = await pb.collection('shifts').getList(1, 50, {
+      sort: 'startTime',
+      filter: `startTime >= "${periodStart} 00:00:00" && startTime <= "${periodEnd} 00:00:00"`,
+      expand: 'workers,organisation',
+    });
+
+    console.log('resultList: ', resultList);
+
+
+    return mapRecordsToShifts(resultList.items);
+  } catch (error) {
+    console.error("Error getting shifts: ", error);
+    return [];
+  }
+}
+
+export const getShiftRecordById = async (id: string) => {
+  const pb = await loadPocketBase();
+  if (!pb?.authStore.model) {
+    console.error("No user logged in");
+    return;
+  }
+
+  try {
+    const shift = await pb.collection('shifts').getOne(id, { expand: 'workers,organisation' });
+    return shift;
+  } catch (error) {
+    console.error("Error getting shift: ", error);
+    return;
+  }
+
+  // return loadedShifts.find(shift => shift.id === id);
+}
+
+export const getOrganisationShifts = async (pb: Client, orgId: string) => {
+
+  const records = await pb.collection('shifts').getFullList({
+    filter: `organisation = "${orgId}" && startTime <= "${DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss')}"`,
+  });
+
+  return mapRecordsToShifts(records);
+}
+
+export const getUsersShifts = async (pb: Client, user: User) => {
+  const records = await pb.collection('shifts').getFullList({
+    filter: `workers ~ "${user.id}" && startTime <= "${DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss')}" && organisation = null`,
+  });
+  return mapRecordsToShifts(records);
+}
+//#endregion
+
 export const createShift = async (startTime: string, isCreatingInBatch: boolean = false, pb: Client) => {
 
   // const pb = await loadPocketBase();
@@ -129,8 +193,6 @@ export const createShift = async (startTime: string, isCreatingInBatch: boolean 
     return
   }
 }
-
-
 
 /// Updates a shift in the database by its ID.
 /// @param shiftId - The ID of the shift to be updated.
@@ -220,49 +282,3 @@ export const updateShift = async (shiftId: string, user: User, bookedOrganisatio
   }
 }
 
-export const getShifts = async (pbClient?: Client): Promise<Shift[] | undefined> => {
-  const pb = pbClient || await loadPocketBase();
-  if (!pb?.authStore.model) {
-    console.error("No user logged in");
-    return;
-  }
-
-  // Get the date from the start of a week ago to the end of 3 weeks ahead
-  const periodStart = DateTime.now().minus({ weeks: 1 }).startOf('week').toISODate();
-  const periodEnd = DateTime.now().plus({ weeks: 3 }).endOf('week').toISODate();
-
-  try {
-    const resultList = await pb.collection('shifts').getList(1, 50, {
-      sort: 'startTime',
-      filter: `startTime >= "${periodStart} 00:00:00" && startTime <= "${periodEnd} 00:00:00"`,
-      expand: 'workers,organisation',
-    });
-
-    console.log('resultList: ', resultList);
-
-
-    return mapRecordsToShifts(resultList.items);
-  } catch (error) {
-    console.error("Error getting shifts: ", error);
-    return [];
-  }
-}
-
-
-export const getShiftRecordById = async (id: string) => {
-  const pb = await loadPocketBase();
-  if (!pb?.authStore.model) {
-    console.error("No user logged in");
-    return;
-  }
-
-  try {
-    const shift = await pb.collection('shifts').getOne(id, { expand: 'workers,organisation' });
-    return shift;
-  } catch (error) {
-    console.error("Error getting shift: ", error);
-    return;
-  }
-
-  // return loadedShifts.find(shift => shift.id === id);
-}
