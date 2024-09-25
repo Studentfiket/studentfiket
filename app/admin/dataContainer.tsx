@@ -19,10 +19,11 @@ export default async function DataTabs() {
 
   const users = await getMultipleUsers(10)
 
-  const organisations = await getOrganisations(pb);
+  const organisations = await getOrganisations(pb, 10);
   console.log(organisations);
 
 
+  // TODO: Make it multi-paged
   return (
     <Tabs defaultValue="org" className="sm:w-[600px]">
       <TabsList className="grid w-full grid-cols-2">

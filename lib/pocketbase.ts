@@ -43,7 +43,7 @@ export const getUserOrganisations = async (): Promise<Organisation[]> => {
   return organisations;
 }
 
-export const getOrganisations = async (pb: Client, limit): Promise<Organisation[] | null> => {
+export const getOrganisations = async (pb: Client, limit: number): Promise<Organisation[] | null> => {
   try {
     pb.autoCancellation(false);
     const organisation = await pb.collection('organisations').getList(1, limit, {
@@ -130,8 +130,8 @@ export const getUser = async (pb?: Client, id: string = ""): Promise<User | null
 
     const mappedUser: User = {
       id: user.id,
+      username: user.username,
       name: user.name,
-      email: user.email,
       avatar: user.avatar,
       organisations: userOrganisations,
       isAdmin: user.isAdmin
@@ -202,7 +202,7 @@ export async function signUp(user: { name: string; email: string; password: stri
       passwordConfirm: user.password,
       avatar: avatar,
       name: user.name,
-      orginisations: [],
+      organisations: [],
       isAdmin: false
     };
     const createdUser = await pb.collection('users').create(data);
