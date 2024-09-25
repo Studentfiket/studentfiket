@@ -75,7 +75,7 @@ function CalendarView(props: Props) {
     const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
     pb.autoCancellation(false);
 
-    const updateShift = async (e: { action: string; record: { id: string } }) => {
+    const updateShift2 = async (e: { action: string; record: { id: string } }) => {
       console.log("Event", e);
       if (e.action === 'update') {
         console.log("Record updated", e.record);
@@ -105,7 +105,7 @@ function CalendarView(props: Props) {
       }
     };
 
-    pb.collection('shifts').subscribe('*', updateShift);
+    pb.collection('shifts').subscribe('*', updateShift2);
 
     return () => {
       pb.collection('shifts').unsubscribe();

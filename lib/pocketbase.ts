@@ -45,7 +45,7 @@ export const getUserOrganisations = async (): Promise<Organisation[]> => {
 export const getOrganisations = async (): Promise<Organisation[] | null> => {
   try {
     const organisation = await pb.collection('organisations').getFullList({
-      sort: '-created', expand: ['shifts']
+      sort: '-created', expand: 'shifts'
     });
     const mappedOrganisations: Organisation[] = organisation.map((record) => ({
       id: record.id,

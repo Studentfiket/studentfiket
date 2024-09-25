@@ -17,10 +17,9 @@ export default function GeneratePeriod() {
       return;
     }
 
-    setIsLoading(0); // Start loading
-
+    setIsLoading(true); // Start loading
     generateNewPeriod(date?.from, date?.to).then(() => {
-      console.log("Done");
+      setIsLoading(false); // Start loading
     });
   };
 

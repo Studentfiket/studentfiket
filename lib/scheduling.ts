@@ -26,6 +26,7 @@ export const mapRecordsToShifts = (records: RecordModel[]): Shift[] => {
 export const generateNewPeriod = async (startDate: Date, endDate: Date): Promise<string> => {
   async function generateNewDay(date: DateTime) {
     const day = date.day;
+
     if (day !== 0 && day !== 6) {
       // Generate shifts for the day
       for (let i = 8; i <= 15; i += 2) {
@@ -39,7 +40,6 @@ export const generateNewPeriod = async (startDate: Date, endDate: Date): Promise
           console.error("Error creating shift start time");
           return;
         }
-        console.log('shiftStartTime: ', shiftStartTime);
         pb && await createShift(shiftStartTime, true, pb);
       }
     }
@@ -53,8 +53,15 @@ export const generateNewPeriod = async (startDate: Date, endDate: Date): Promise
 
   // Generate new shifts for the period
   for (let d = DateTime.fromJSDate(startDate, { zone: "utc" }); d <= DateTime.fromJSDate(endDate, { zone: "utc" }); d = d.plus({ days: 1 })) {
-    console.log("Generating shifts for: ", d.toISO());
-    await generateNewDay(d);
+    // Check if the day is a weekend day
+    if (d.weekday !== 6 && d.weekday !== 7) {
+      console.log("Generating shifts for: ", d.toFormat('dd-MM-yyyy'));
+      await generateNewDay(d);
+    }
+    else {
+      console.log("Skipping weekend day: ", d.toFormat('dd-MM-yyyy'));
+    }
+
   }
 
   return "Done";
@@ -94,12 +101,12 @@ export const createShift = async (startTime: string, isCreatingInBatch: boolean 
 
   try {
     // Check if the shift already exists
-    const startDate = startTimeDate.day;
-    const startTime = startTimeDate.hour;
-    console.log('startTimeDate: ', startDate, startTime);
+    const startDate = startTimeDate.toFormat('yyyy-MM-dd');
+    const startTime = startTimeDate.toFormat("HH:mm:ss.SSS'Z'");
+    console.log('      Start time: ', startDate, startTime);
 
     const resultList = await pb.collection('shifts').getList(1, 5, {
-      filter: `startTime = "${startDate} ${startTime}" `,
+      filter: `startTime = "${startDate} ${startTime}"`,
     });
 
     if (resultList.items.length > 0) {
@@ -220,11 +227,20 @@ export const getShifts = async (pbClient?: Client): Promise<Shift[] | undefined>
     return;
   }
 
+  // Get the date from the start of a week ago to the end of 3 weeks ahead
+  const periodStart = DateTime.now().minus({ weeks: 1 }).startOf('week').toISODate();
+  const periodEnd = DateTime.now().plus({ weeks: 3 }).endOf('week').toISODate();
+
   try {
     const resultList = await pb.collection('shifts').getList(1, 50, {
-      filter: 'startTime >= "2024-09-01 00:00:00" && startTime <= "2025-09-01 00:00:00"',
+      sort: 'startTime',
+      filter: `startTime >= "${periodStart} 00:00:00" && startTime <= "${periodEnd} 00:00:00"`,
       expand: 'workers,organisation',
     });
+
+    console.log('resultList: ', resultList);
+
+
     return mapRecordsToShifts(resultList.items);
   } catch (error) {
     console.error("Error getting shifts: ", error);
