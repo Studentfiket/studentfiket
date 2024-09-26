@@ -12,12 +12,8 @@ import { Organisation, User } from './types';
 import Client from 'pocketbase';
 import { getOrganisationShifts } from './scheduling';
 
-const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
-
 export const loadPocketBase = async () => {
-  if (pb.authStore.isValid) {
-    return pb;
-  }
+  const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
   const cookieStore = cookies();
   const pb_auth = cookieStore.get('pb_auth');
@@ -28,9 +24,26 @@ export const loadPocketBase = async () => {
       // pb.authStore.isValid && await pb.collection('users').authRefresh()
       return pb;
     } catch (error) {
-
+      console.error("Error loading auth store from cookie", error)
+      return undefined;
     }
   }
+}
+
+export const userIsLoggedIn = async (): Promise<boolean> => {
+  const pb = await loadPocketBase();
+  return pb?.authStore.model ? true : false;
+}
+
+export const userIsAdmin = async (): Promise<boolean> => {
+  const pb = await loadPocketBase();
+  if (!pb?.authStore.model) {
+    console.error("No user logged in");
+    return false;
+  }
+
+  const user = pb.authStore.model;
+  return user.isAdmin;
 }
 
 export const userIsLoggedIn = async (): Promise<boolean> => {
@@ -113,6 +126,12 @@ async function generateAvatar(seed: string) {
 }
 
 export async function getAvatar(userId: string, fileName: string) {
+  const pb = await loadPocketBase();
+  if (!pb?.authStore.model) {
+    console.error("No user logged in");
+    return null;
+  }
+
   if (fileName == "")
     fileName = pb.authStore.model?.avatar;
 
@@ -145,6 +164,9 @@ export const getUser = async (pb?: Client, id: string = ""): Promise<User | null
     id = pb.authStore.model?.id;
   }
 
+  console.log("Getting user id: ",);
+
+
   try {
     const user = await pb.collection('users').getOne(id);
     const userOrganisations = await getUserOrganisations() || [];
@@ -169,6 +191,12 @@ export const getUser = async (pb?: Client, id: string = ""): Promise<User | null
 /// Login a user
 /// Uses implementation from https://github.com/heloineto/nextjs-13-pocketbase-auth-example
 export async function login(user: { username: string; password: string; }) {
+  const pb = await loadPocketBase();
+  if (!pb?.authStore.model) {
+    console.error("No user logged in");
+    return null;
+  }
+
   try {
     // Try to login the user with the provided credentials, if successful return true
     const { token, record: model } = await pb.collection('users').authWithPassword(user.username, user.password);
@@ -197,6 +225,9 @@ export async function login(user: { username: string; password: string; }) {
       sameSite: 'strict',
       httpOnly: false,
     });
+
+    console.log('Logged in as:', model.name);
+
 
     return "success";
   } catch (error) {
@@ -244,8 +275,9 @@ export async function signUp(user: { name: string; email: string; password: stri
 
 /// Sign out the current user
 export async function signOut() {
-  pb.collection('shifts').unsubscribe(); // remove all subscriptions in the collection
-  pb.authStore.clear();
+  const pb = await loadPocketBase();
+  pb?.collection('shifts').unsubscribe(); // remove all subscriptions in the collection
+  pb?.authStore.clear();
   cookies().delete('pb_auth');
   cookies().delete('pb_organisations');
   redirect('/');
