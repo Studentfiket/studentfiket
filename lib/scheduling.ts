@@ -75,18 +75,18 @@ export const getShifts = async (pbClient?: Client): Promise<Shift[] | undefined>
     return;
   }
 
-  // Get the date from the start of a week ago to the end of 3 weeks ahead
-  const periodStart = DateTime.now().minus({ weeks: 1 }).startOf('week').toISODate();
+  // Get the date from the start of this week to the end of 3 weeks ahead
+  const periodStart = DateTime.now().startOf('week').toISODate();
   const periodEnd = DateTime.now().plus({ weeks: 3 }).endOf('week').toISODate();
 
   try {
-    const resultList = await pb.collection('shifts').getList(1, 50, {
+    const resultList = await pb.collection('shifts').getList(1, 100, {
       sort: 'startTime',
       filter: `startTime >= "${periodStart} 00:00:00" && startTime <= "${periodEnd} 00:00:00"`,
       expand: 'workers,organisation',
     });
 
-    console.log('resultList: ', resultList);
+    console.log('Time: ', `startTime >= "${periodStart} 00:00:00" && startTime <= "${periodEnd} 00:00:00"`);
 
 
     return mapRecordsToShifts(resultList.items);
