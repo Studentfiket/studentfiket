@@ -109,6 +109,22 @@ export const getShiftRecordById = async (pb: Client, id: string): Promise<Record
   // return loadedShifts.find(shift => shift.id === id);
 }
 
+export const getNameFromId = async (id: string, collection: string): Promise<string> => {
+  const pb = await loadPocketBase();
+  if (!pb?.authStore.model) {
+    console.error("No user logged in");
+    return "";
+  }
+
+  try {
+    const record = await pb.collection(collection).getOne(id, { expand: 'name' });
+    return record.name;
+  } catch (error) {
+    console.error(`Error getting ${collection} name: `, error);
+    return "";
+  }
+}
+
 export const getShiftInfoById = async (id: string): Promise<{ organisation: string, workers: string[] } | null> => {
   const pb = await loadPocketBase();
   if (!pb?.authStore.model) {
