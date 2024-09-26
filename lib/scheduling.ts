@@ -96,23 +96,22 @@ export const getShifts = async (pbClient?: Client): Promise<Shift[] | undefined>
   }
 }
 
-export const getShiftRecordById = async (id: string) => {
+export const getShiftRecordById = async (id: string): Promise<RecordModel | null> => {
   const pb = await loadPocketBase();
   if (!pb?.authStore.model) {
     console.error("No user logged in");
-    return;
+    return null;
   }
 
   console.log('Getting shift: ', id);
 
-
   try {
-    const shift = await pb.collection('shifts').getOne(id, { expand: 'workers,organisation' });
-    console.log('Found shift: ', shift);
-    return shift;
+    const shiftRecord = await pb.collection('shifts').getOne(id, { expand: 'workers,organisation' });
+    console.log('Found shift: ', shiftRecord);
+    return shiftRecord;
   } catch (error) {
     console.error("Error getting shift: ", error);
-    return;
+    return null;
   }
 
   // return loadedShifts.find(shift => shift.id === id);
