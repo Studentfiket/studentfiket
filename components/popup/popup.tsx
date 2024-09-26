@@ -20,7 +20,6 @@ export default function Popup(props: Props) {
     closePopup();
   }
   const closePopup = () => {
-    console.log("closePopup");
     setShowConfirmation(false); // Reset the popup
     props.onCancel();           // Close the popup
   }
