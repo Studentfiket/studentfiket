@@ -10,6 +10,11 @@ const config: Config = {
 	theme: {
 		extend: {
 			colors: {
+				bright: '#F2F2F2',
+				dark: '#0D0D0D',
+				coffeeBright: '#8C533E',
+				coffeeDark: '##401C0F',
+				redAccent: '#A62F03',
 				grayedOut: '#cdcdcd',
 				shift: {
 					booked: '#2C331E',

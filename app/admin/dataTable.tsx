@@ -62,7 +62,7 @@ export default async function DataTable(props: Props) {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="sm:w-[120px] sm:block hidden">Namn</TableHead>
+          <TableHead className={`font-medium ${isUserData && 'sm:table-cell hidden'}`}>Namn</TableHead>
           {isUserData && <TableHead>LiuId</TableHead>}
           <TableHead className="text-right">Jobbade pass</TableHead>
         </TableRow>
@@ -70,7 +70,7 @@ export default async function DataTable(props: Props) {
       <TableBody>
         {tableData.map((data, index) => (
           <TableRow key={data.name} className={index % 2 === 0 ? "bg-gray-50" : ""}>
-            <TableCell className="font-medium sm:block hidden">{data.name}</TableCell>
+            <TableCell className={`font-medium ${isUserData && 'sm:block hidden'}`}>{data.name}</TableCell>
             {isUserData && <TableCell>{data.liuId}</TableCell>}
             <TableCell className="text-right">{data.nrOfShifts}</TableCell>
           </TableRow>
