@@ -17,7 +17,7 @@ export default async function DataTabs() {
     return [];
   }
 
-  const users = await getMultipleUsers(10)
+  const users = await getMultipleUsers(pb, 10)
 
   const organisations = await getOrganisations(pb, 10);
   console.log(organisations);
