@@ -30,11 +30,13 @@ export default function BookShiftPopup(props: Props) {
   const submit = (userIsBooking: boolean) => {
     try {
       setIsLoading(true);
-      if (props.shift)
+      if (props.shift) {
+        console.log(props.user);
         updateShift(props.shift.id, props.user, organisationId, userIsBooking).then(() => {
           props.changePopup(userIsBooking);
         }
         );
+      }
     } catch (error) {
       setIsLoading(false);
       console.error(error);

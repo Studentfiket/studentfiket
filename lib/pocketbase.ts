@@ -244,7 +244,6 @@ export async function signUp(user: { name: string; email: string; password: stri
 
 /// Sign out the current user
 export async function signOut() {
-  const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
   pb.collection('shifts').unsubscribe(); // remove all subscriptions in the collection
   pb.authStore.clear();
   cookies().delete('pb_auth');
