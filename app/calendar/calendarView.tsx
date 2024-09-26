@@ -11,7 +11,7 @@ import { useState } from "react";
 import { Event } from "@/lib/types";
 import Popup from "@/components/popup/popup";
 import PocketBase, { RecordModel } from 'pocketbase';
-import { getShiftInfoById } from "@/lib/scheduling";
+import { getNameFromId, getShiftInfoById } from "@/lib/scheduling";
 
 type Props = {
   loadedShifts: Shift[];
@@ -49,11 +49,11 @@ const updateShiftCollection = (loadedShifts: Shift[], updatedShift: Shift) => {
 }
 
 // Map the records from the database to the Shift type
-export const mapDataToShift = (record: RecordModel, updatedData: { organisation: string, workers: string[] }): Shift => {
+export const mapRecordToShift = async (record: RecordModel): Promise<Shift> => {
   return {
     id: record.id,
-    organisation: updatedData.organisation || "",
-    workers: updatedData.workers || [],
+    organisation: await getNameFromId(record.organisation, "organisations") || "",
+    workers: await Promise.all(record.workers.map(async (workerId: string) => await getNameFromId(workerId, "users"))),
     start: record.startTime,
     end: record.endTime
   };
@@ -79,17 +79,7 @@ function CalendarView(props: Props) {
       console.log("Event", e);
       if (e.action === 'update') {
 
-        // Fetch the updated record from PocketBase
-        const updatedShiftData = await getShiftInfoById(e.record.id);
-        console.log("Updated shift data", updatedShiftData);
-
-        if (!updatedShiftData) {
-          console.error("Failed to fetch updated record");
-          return;
-        }
-        console.log("Updated shift data", updatedShiftData);
-
-        const updatedShift = mapDataToShift(e.record as RecordModel, updatedShiftData);
+        const updatedShift = await mapRecordToShift(e.record as RecordModel);
         console.log("Shift mapped", updatedShift);
 
         // Check if the shift data has actually changed before updating state
