@@ -4,7 +4,7 @@
 
 import Client, { RecordModel } from 'pocketbase';
 import { loadPocketBase } from './pocketbase';
-import { Shift, User } from './types';
+import { Organisation, Shift, User } from './types';
 import { DateTime } from "luxon";
 
 // Map the records from the database to the Shift type
@@ -93,13 +93,7 @@ export const getShifts = async (pbClient?: Client): Promise<Shift[] | undefined>
   }
 }
 
-export const getShiftRecordById = async (id: string): Promise<RecordModel | null> => {
-  const pb = await loadPocketBase();
-  if (!pb?.authStore.model) {
-    console.error("No user logged in");
-    return null;
-  }
-
+export const getShiftRecordById = async (pb: Client, id: string): Promise<RecordModel | null> => {
   console.log('Getting shift: ', id);
 
   try {
@@ -112,6 +106,24 @@ export const getShiftRecordById = async (id: string): Promise<RecordModel | null
   }
 
   // return loadedShifts.find(shift => shift.id === id);
+}
+
+export const getShiftInfoById = async (id: string): Promise<{ organisation: Organisation, workers: string[] } | null> => {
+  const pb = await loadPocketBase();
+  if (!pb?.authStore.model) {
+    console.error("No user logged in");
+    return null;
+  }
+
+  const shiftRecord = await getShiftRecordById(pb, id);
+  if (shiftRecord) {
+    return {
+      organisation: shiftRecord.expand?.organisation || { id: "", name: "" },
+      workers: shiftRecord.expand?.workers?.map((worker: { name: string }) => worker.name) || []
+    }
+  }
+
+  return null;
 }
 
 export const getOrganisationShifts = async (pb: Client, orgId: string) => {
@@ -229,7 +241,7 @@ export const updateShift = async (shiftId: string, user: User, bookedOrganisatio
   }
 
   // Retrieve the current shift from the database, to make sure it is up to date
-  const shift = await getShiftRecordById(shiftId);
+  const shift = await getShiftRecordById(pb, shiftId);
   if (!shift) {
     console.error("Shift not found");
     return { message: "Shift not found" };

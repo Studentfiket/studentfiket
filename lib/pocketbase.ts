@@ -127,9 +127,6 @@ export const getUser = async (pb?: Client, id: string = ""): Promise<User | null
     id = pb.authStore.model?.id;
   }
 
-  console.log("Getting user id: ",);
-
-
   try {
     const user = await pb.collection('users').getOne(id);
     const userOrganisations = await getUserOrganisations() || [];

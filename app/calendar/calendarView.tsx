@@ -6,12 +6,13 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import EventContent from "@/components/eventContent";
-import { Shift, User } from "@/lib/types";
+import { Organisation, Shift, User } from "@/lib/types";
 import { useState } from "react";
 import { Event } from "@/lib/types";
 import Popup from "@/components/popup/popup";
 import PocketBase, { RecordModel } from 'pocketbase';
-import { getShiftRecordById } from "@/lib/scheduling";
+import { getShiftInfoById } from "@/lib/scheduling";
+import { loadPocketBase } from "@/lib/pocketbase";
 
 type Props = {
   loadedShifts: Shift[];
@@ -49,14 +50,14 @@ const updateShiftCollection = (loadedShifts: Shift[], updatedShift: Shift) => {
 }
 
 // Map the records from the database to the Shift type
-export const mapRecordsToShifts = (records: RecordModel[]): Shift[] => {
-  return records.map((record: RecordModel): Shift => ({
+export const mapDataToShift = (record: RecordModel, updatedData: { organisation: Organisation, workers: string[] }): Shift => {
+  return {
     id: record.id,
-    organisation: record.expand?.organisation?.name || "",
-    workers: record.expand?.workers?.map((worker: { name: string }) => worker.name) || [],
+    organisation: updatedData.organisation.name || "",
+    workers: updatedData.workers || [],
     start: record.startTime,
     end: record.endTime
-  }));
+  };
 }
 
 //#endregion
@@ -81,15 +82,14 @@ function CalendarView(props: Props) {
         console.log("Record updated", e.record);
 
         // Fetch the updated record from PocketBase
-        const updatedRecord = await getShiftRecordById(e.record.id);
-        console.log("Updated record", updatedRecord);
-        if (!updatedRecord) {
+        const updatedShiftData = await getShiftInfoById(e.record.id);
+        if (!updatedShiftData) {
           console.error("Failed to fetch updated record");
           return;
         }
-        console.log("Updated record", updatedRecord);
+        console.log("Updated shift data", updatedShiftData);
 
-        const updatedShift = mapRecordsToShifts([updatedRecord])[0];
+        const updatedShift = mapDataToShift(e.record as RecordModel, updatedShiftData);
         console.log("Shift mapped", updatedShift);
 
         // Check if the shift data has actually changed before updating state
