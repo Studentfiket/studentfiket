@@ -191,11 +191,7 @@ export const getUser = async (pb?: Client, id: string = ""): Promise<User | null
 /// Login a user
 /// Uses implementation from https://github.com/heloineto/nextjs-13-pocketbase-auth-example
 export async function login(user: { username: string; password: string; }) {
-  const pb = await loadPocketBase();
-  if (!pb?.authStore.model) {
-    console.error("No user logged in");
-    return null;
-  }
+  const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
   try {
     // Try to login the user with the provided credentials, if successful return true
@@ -257,6 +253,8 @@ export async function signUp(user: { name: string; email: string; password: stri
       organisations: [],
       isAdmin: false
     };
+
+    const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
     const createdUser = await pb.collection('users').create(data);
 
     // TODO: Add user to user_data collection
