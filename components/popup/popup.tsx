@@ -49,6 +49,7 @@ export default function Popup(props: Props) {
           :
           <ConfirmShiftPopup shift={props.shift} onCancel={closePopup} userIsBooking={userIsBooking} />
         }
+        {props.user.name}
       </Card>
     </div>
   );

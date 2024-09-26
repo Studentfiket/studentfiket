@@ -86,9 +86,6 @@ export const getShifts = async (pbClient?: Client): Promise<Shift[] | undefined>
       expand: 'workers,organisation',
     });
 
-    console.log('Time: ', `startTime >= "${periodStart} 00:00:00" && startTime <= "${periodEnd} 00:00:00"`);
-
-
     return mapRecordsToShifts(resultList.items);
   } catch (error) {
     console.error("Error getting shifts: ", error);
