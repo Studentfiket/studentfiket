@@ -49,9 +49,6 @@ export default function BookShiftPopup(props: Props) {
     return
   }
 
-  console.log("shift", props.shift);
-  console.log("user", props.user);
-
   const shiftIsBooked = (props.shift.workers[0] !== undefined && props.shift.workers[1] !== undefined) ? true : false;
 
   const shiftIsFree = (props.shift.workers[0] === undefined && props.shift.workers[1] === undefined) ? true : false;

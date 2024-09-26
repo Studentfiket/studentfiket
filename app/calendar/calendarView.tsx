@@ -82,7 +82,10 @@ function CalendarView(props: Props) {
 
         // Fetch the updated record from PocketBase
         const updatedRecord = await getShiftRecordById(e.record.id);
-        if (!updatedRecord) return;
+        if (!updatedRecord) {
+          console.error("Failed to fetch updated record");
+          return;
+        }
         console.log("Updated record", updatedRecord);
 
         const updatedShift = mapRecordsToShifts([updatedRecord])[0];
