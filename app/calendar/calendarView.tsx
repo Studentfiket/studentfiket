@@ -11,7 +11,7 @@ import { useState } from "react";
 import { Event } from "@/lib/types";
 import Popup from "@/components/popup/popup";
 import PocketBase, { RecordModel } from 'pocketbase';
-import { getNameFromId, getShiftInfoById } from "@/lib/scheduling";
+import { getNameFromId } from "@/lib/scheduling";
 
 type Props = {
   loadedShifts: Shift[];
