@@ -6,7 +6,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import EventContent from "@/components/eventContent";
-import { Organisation, Shift, User } from "@/lib/types";
+import { Shift, User } from "@/lib/types";
 import { useState } from "react";
 import { Event } from "@/lib/types";
 import Popup from "@/components/popup/popup";
@@ -49,10 +49,10 @@ const updateShiftCollection = (loadedShifts: Shift[], updatedShift: Shift) => {
 }
 
 // Map the records from the database to the Shift type
-export const mapDataToShift = (record: RecordModel, updatedData: { organisation: Organisation, workers: string[] }): Shift => {
+export const mapDataToShift = (record: RecordModel, updatedData: { organisation: string, workers: string[] }): Shift => {
   return {
     id: record.id,
-    organisation: updatedData.organisation.name || "",
+    organisation: updatedData.organisation || "",
     workers: updatedData.workers || [],
     start: record.startTime,
     end: record.endTime
@@ -82,6 +82,8 @@ function CalendarView(props: Props) {
 
         // Fetch the updated record from PocketBase
         const updatedShiftData = await getShiftInfoById(e.record.id);
+        console.log("Updated shift data", updatedShiftData);
+
         if (!updatedShiftData) {
           console.error("Failed to fetch updated record");
           return;

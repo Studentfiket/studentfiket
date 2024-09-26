@@ -4,8 +4,9 @@
 
 import Client, { RecordModel } from 'pocketbase';
 import { loadPocketBase } from './pocketbase';
-import { Organisation, Shift, User } from './types';
+import { Shift, User } from './types';
 import { DateTime } from "luxon";
+import { log } from 'console';
 
 // Map the records from the database to the Shift type
 export const mapRecordsToShifts = (records: RecordModel[]): Shift[] => {
@@ -108,7 +109,7 @@ export const getShiftRecordById = async (pb: Client, id: string): Promise<Record
   // return loadedShifts.find(shift => shift.id === id);
 }
 
-export const getShiftInfoById = async (id: string): Promise<{ organisation: Organisation, workers: string[] } | null> => {
+export const getShiftInfoById = async (id: string): Promise<{ organisation: string, workers: string[] } | null> => {
   const pb = await loadPocketBase();
   if (!pb?.authStore.model) {
     console.error("No user logged in");
@@ -116,9 +117,11 @@ export const getShiftInfoById = async (id: string): Promise<{ organisation: Orga
   }
 
   const shiftRecord = await getShiftRecordById(pb, id);
+  log('shiftRecord: ', shiftRecord);
+
   if (shiftRecord) {
     return {
-      organisation: shiftRecord.expand?.organisation || { id: "", name: "" },
+      organisation: shiftRecord.expand?.organisation?.name || "",
       workers: shiftRecord.expand?.workers?.map((worker: { name: string }) => worker.name) || []
     }
   }
