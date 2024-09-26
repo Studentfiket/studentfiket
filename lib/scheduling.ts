@@ -103,8 +103,12 @@ export const getShiftRecordById = async (id: string) => {
     return;
   }
 
+  console.log('Getting shift: ', id);
+
+
   try {
     const shift = await pb.collection('shifts').getOne(id, { expand: 'workers,organisation' });
+    console.log('Found shift: ', shift);
     return shift;
   } catch (error) {
     console.error("Error getting shift: ", error);
