@@ -12,7 +12,6 @@ import { Event } from "@/lib/types";
 import Popup from "@/components/popup/popup";
 import PocketBase, { RecordModel } from 'pocketbase';
 import { getShiftInfoById } from "@/lib/scheduling";
-import { loadPocketBase } from "@/lib/pocketbase";
 
 type Props = {
   loadedShifts: Shift[];
