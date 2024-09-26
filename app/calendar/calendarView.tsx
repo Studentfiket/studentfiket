@@ -96,9 +96,24 @@ function CalendarView(props: Props) {
           const updatedShifts = updateShiftCollection(prevShifts, updatedShift);
 
           // Compare updatedShifts with prevShifts to avoid unnecessary re-renders
-          if (JSON.stringify(prevShifts) !== JSON.stringify(updatedShifts)) {
+          const hasChanges = prevShifts.some((shift) => {
+            const updated = updatedShifts.find((s) => s.id === shift.id);
+            return (
+              updated &&
+              (shift.organisation !== updated.organisation ||
+                shift.start !== updated.start ||
+                shift.end !== updated.end ||
+                shift.workers.length !== updated.workers.length ||
+                shift.workers.some((worker, index) => worker !== updated.workers[index]))
+            );
+          });
+
+          if (hasChanges) {
+            console.log("Shifts updated", updatedShifts);
+
             if (selectedShift?.id === updatedShift.id)
               setSelectedShift(updatedShift);
+
             setEvents(mapShiftsToEvents(updatedShifts));
             return updatedShifts;
           }

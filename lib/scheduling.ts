@@ -155,7 +155,7 @@ export const createShift = async (startTime: string, isCreatingInBatch: boolean 
 
   // Calculate the end time of the shift (lunch shift is 1 hour, other shifts are 2 hours)
   const shiftLength = startHour === 12 ? 1 : 2;
-  const endTimeDate = DateTime.fromISO(startTime, { zone: "Europe/Paris" }).plus({ hours: shiftLength }).toISO();
+  const endTimeDate = DateTime.fromISO(startTime, { zone: "utc" }).plus({ hours: shiftLength }).toISO();
 
   const shift = {
     startTime: startTimeDate,
