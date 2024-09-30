@@ -6,8 +6,13 @@ import { setupScene } from './sceneSetup';
 export default function cupScene(renderElement: HTMLDivElement) {
   // Create materials
   function createMaterials() {
-    const lidMat = new THREE.MeshPhongMaterial({ color: 0x000000 });
-    const cupMat = new THREE.MeshPhongMaterial({ color: 0xffffff });
+    // Load and cup label texure (rotated 180 degrees to match the Blender model)
+    const labelTexture = new THREE.TextureLoader().load('textures/cup-label2.jpg');
+    labelTexture.center = new THREE.Vector2(0.5, 0.5);
+    labelTexture.rotation = Math.PI;
+
+    const lidMat = new THREE.MeshToonMaterial({ color: 0x000000 });
+    const cupMat = new THREE.MeshToonMaterial({ color: 0xA62F03, map: labelTexture, fog: false, toneMapped: false });
 
     const baseMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
     baseMat.onBeforeCompile = (shader) => {
@@ -97,19 +102,19 @@ export default function cupScene(renderElement: HTMLDivElement) {
     console.error(`Element not found`);
     return;
   }
-  const renderElementPosition = renderElement.getBoundingClientRect();
-  const renderElementCenterX = renderElementPosition.left + renderElementPosition.width / 2;
-  const renderElementCenterY = renderElementPosition.top + renderElementPosition.height / 2;
+  // const renderElementPosition = renderElement.getBoundingClientRect();
+  // const renderElementCenterX = renderElementPosition.left + renderElementPosition.width / 2;
+  // const renderElementCenterY = renderElementPosition.top + renderElementPosition.height / 2;
 
   // Get mouse position
-  const scaleX = 10;
-  const scaleY = 0.5;
-  window.addEventListener('mousemove', (event) => {
-    // const x = event.clientX / renderElementCenterX - 1;
-    // const y = event.clientY / renderElementCenterY - 1;
-    // leavesMat.uniforms['lightPosition'].value = new THREE.Vector3(mainLightPosition.x - x * scaleX * 2, mainLightPosition.y - y * scaleY * 2, mainLightPosition.z);
-    // scene.children[0].position.set(mainLightPosition.x - x * scaleX, mainLightPosition.y - y * scaleY, mainLightPosition.z);
-  });
+  // const scaleX = 10;
+  // const scaleY = 0.5;
+  // window.addEventListener('mousemove', (event) => {
+  //   // const x = event.clientX / renderElementCenterX - 1;
+  //   // const y = event.clientY / renderElementCenterY - 1;
+  //   // leavesMat.uniforms['lightPosition'].value = new THREE.Vector3(mainLightPosition.x - x * scaleX * 2, mainLightPosition.y - y * scaleY * 2, mainLightPosition.z);
+  //   // scene.children[0].position.set(mainLightPosition.x - x * scaleX, mainLightPosition.y - y * scaleY, mainLightPosition.z);
+  // });
 
   const mainLightPosition = new THREE.Vector3(4, 4, 4);
   // const start = Date.now();

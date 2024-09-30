@@ -1,4 +1,3 @@
-import Header from '@/components/header';
 import { Suspense } from 'react';
 import CalendarLoading from './calendarLoading';
 import CalendarContainer from './calendarContainer';
@@ -16,7 +15,6 @@ export const dynamicParams = true // or false, to 404 on unknown paths
 export default async function Home() {
   return (
     <div className='flex flex-col'>
-      <Header />
       <Suspense fallback={<CalendarLoading />}>
         <CalendarContainer />
       </Suspense>

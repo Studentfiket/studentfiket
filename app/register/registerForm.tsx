@@ -5,14 +5,14 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { signUp } from '@/lib/pocketbase'
-import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { LoaderCircle } from "lucide-react"
 
-export const RegisterForm = () => {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const callbackUrl = searchParams.get('callbackUrl') || '/calendar'
+type Props = {
+  confirmationCallback: () => void
+}
+
+export const RegisterForm = (props: Props) => {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -40,7 +40,7 @@ export const RegisterForm = () => {
         password
       })
       if (res) {
-        router.push(callbackUrl)
+        props.confirmationCallback()
       } else {
         setIsLoading(false)
         setError('Invalid email or password')

@@ -1,9 +1,10 @@
 // import Image from 'next/image';
 
 import ThreeScene from "@/components/scene";
+import { redirect } from "next/navigation";
 
 export default function Page() {
-  console.log("Hello from the home page")
+  redirect('/login');
   return (
     <main className='h-screen w-full'>
       <ThreeScene />

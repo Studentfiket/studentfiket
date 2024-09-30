@@ -33,6 +33,22 @@ export const loadPocketBase = async () => {
   }
 }
 
+export const userIsLoggedIn = async (): Promise<boolean> => {
+  const pb = await loadPocketBase();
+  return pb?.authStore.model ? true : false;
+}
+
+export const userIsAdmin = async (): Promise<boolean> => {
+  const pb = await loadPocketBase();
+  if (!pb?.authStore.model) {
+    console.error("No user logged in");
+    return false;
+  }
+
+  const user = pb.authStore.model;
+  return user.isAdmin;
+}
+
 export const getUserOrganisations = async (): Promise<Organisation[]> => {
   const cookieStore = cookies();
   const organisationsCookie = cookieStore.get('pb_organisations');
