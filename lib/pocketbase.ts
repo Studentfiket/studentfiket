@@ -59,10 +59,11 @@ export const getUserOrganisations = async (): Promise<Organisation[]> => {
   return organisations;
 }
 
-export const getOrganisations = async (pb: Client, limit: number): Promise<Organisation[] | null> => {
+export const getOrganisations = async (pb: Client, limit: number, nameSearch: string): Promise<Organisation[] | null> => {
   try {
     pb.autoCancellation(false);
     const organisation = await pb.collection('organisations').getList(1, limit, {
+      filter: `name ~ "${nameSearch}"`,
       sort: '-name'
     });
     const mappedOrganisations: Organisation[] = await Promise.all(organisation.items.map(async (record) => ({
@@ -78,9 +79,13 @@ export const getOrganisations = async (pb: Client, limit: number): Promise<Organ
   }
 }
 
-export const getMultipleUsers = async (limit: number): Promise<User[] | null> => {
+export const getMultipleUsers = async (limit: number, nameSearch: string): Promise<User[] | null> => {
   try {
-    const users = await pb.collection('users').getList(1, limit);
+    const users = await pb.collection('users').getList(1, limit, {
+      filter: `name ~ "${nameSearch}" || username ~ "${nameSearch}"`,
+      sort: 'name'
+    }
+    );
 
     const mappedUsers: User[] = users.items.map((record) => ({
       id: record.id,

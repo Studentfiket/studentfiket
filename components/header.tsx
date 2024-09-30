@@ -9,7 +9,6 @@ function Header() {
   const [showLogOut, setShowLogOut] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
 
-  // TODO: This is a stupid solution, but it works for now.
   useEffect(() => {
     userIsLoggedIn().then((res) => {
       if (res) {
@@ -17,6 +16,7 @@ function Header() {
       }
     });
 
+    // Show the admin button if the user is an admin and not on the admin page
     if (typeof window !== 'undefined') {
       if (!window.location.href.includes('/admin')) {
         userIsAdmin().then((res) => {

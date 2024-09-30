@@ -68,6 +68,11 @@ export default async function DataTable(props: Props) {
         </TableRow>
       </TableHeader>
       <TableBody>
+        {tableData && tableData.length === 0 && (
+          <TableRow>
+            <TableCell colSpan={isUserData ? 3 : 2} className="bg-gray-50 font-medium">Inga resultat</TableCell>
+          </TableRow>
+        )}
         {tableData.map((data, index) => (
           <TableRow key={data.name} className={index % 2 === 0 ? "bg-gray-50" : ""}>
             <TableCell className={`font-medium ${isUserData && 'sm:block hidden'}`}>{data.name}</TableCell>

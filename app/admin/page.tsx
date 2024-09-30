@@ -10,7 +10,12 @@ import GeneratePeriod from "./generatePeriod";
 import DataContainer from "./dataContainer";
 
 
-function AdminPage() {
+function AdminPage({
+  searchParams,
+}: {
+  params: { slug: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
 
 
   return (
@@ -35,7 +40,7 @@ function AdminPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <DataContainer />
+          <DataContainer searchParam={Array.isArray(searchParams?.s) ? searchParams.s.join(",") : searchParams?.s || ""} />
         </CardContent>
       </Card>
     </div>
