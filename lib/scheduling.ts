@@ -125,25 +125,25 @@ export const getNameFromId = async (id: string, collection: string): Promise<str
   }
 }
 
-export const getShiftInfoById = async (id: string): Promise<{ organisation: string, workers: string[] } | null> => {
-  const pb = await loadPocketBase();
-  if (!pb?.authStore.model) {
-    console.error("No user logged in");
-    return null;
-  }
+// export const getShiftInfoById = async (id: string): Promise<{ organisation: string, workers: string[] } | null> => {
+//   const pb = await loadPocketBase();
+//   if (!pb?.authStore.model) {
+//     console.error("No user logged in");
+//     return null;
+//   }
 
-  const shiftRecord = await getShiftRecordById(pb, id);
-  log('shiftRecord: ', shiftRecord);
+//   const shiftRecord = await getShiftRecordById(pb, id);
+//   log('shiftRecord: ', shiftRecord);
 
-  if (shiftRecord) {
-    return {
-      organisation: shiftRecord.expand?.organisation?.name || "",
-      workers: shiftRecord.expand?.workers?.map((worker: { name: string }) => worker.name) || []
-    }
-  }
+//   if (shiftRecord) {
+//     return {
+//       organisation: shiftRecord.expand?.organisation?.name || "",
+//       workers: shiftRecord.expand?.workers?.map((worker: { name: string }) => worker.name) || []
+//     }
+//   }
 
-  return null;
-}
+//   return null;
+// }
 
 export const getOrganisationShifts = async (pb: Client, orgId: string) => {
 

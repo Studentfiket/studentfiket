@@ -1,3 +1,5 @@
+'use server'
+
 import {
   Tabs,
   TabsContent,
@@ -33,9 +35,11 @@ export default async function DataTabs(props: Props) {
           <TabsTrigger value="users">Användare</TabsTrigger>
         </TabsList>
         <TabsContent value="org">
+          {/* @ts-expect-error Server Component */}
           <DataTable dataContent={organisations} />
         </TabsContent>
         <TabsContent value="users">
+          {/* @ts-expect-error Server Component */}
           <DataTable dataContent={users} />
         </TabsContent>
       </Tabs>

@@ -26,7 +26,7 @@ export default async function DataTable(props: Props) {
 
   const { dataContent } = props;
   if (!dataContent) {
-    return null
+    return <div />
   }
 
   const assignData = async (dataContent: User[] | Organisation[]): Promise<accountData[]> => {
