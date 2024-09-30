@@ -123,7 +123,7 @@ function CalendarView(props: Props) {
 
 
   return (
-    <div className="w-full">
+    <div className="w-full h-[92vh]">
       <Popup onCancel={closePopup} shift={selectedShift} user={props.user} />
       {/* <BookShiftPopup shift={selectedShift} user={props.user} onCancel={closePopup} /> */}
       <FullCalendar
