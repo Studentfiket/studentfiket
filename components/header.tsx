@@ -6,13 +6,14 @@ import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 
 function Header() {
-  const [showLogOut, setShowLogOut] = useState(false);
-  const [showAdmin, setShowAdmin] = useState(false);
+  const [showLogOutBtn, setShowLogOutBtn] = useState(false);
+  const [showAdminBtn, setShowAdminBtn] = useState(false);
+  const [showCalendarBtn, setShowCalendarBtn] = useState(false);
 
   useEffect(() => {
     userIsLoggedIn().then((res) => {
       if (res) {
-        setShowLogOut(true);
+        setShowLogOutBtn(true);
       }
     });
 
@@ -21,9 +22,12 @@ function Header() {
       if (!window.location.href.includes('/admin')) {
         userIsAdmin().then((res) => {
           if (res) {
-            setShowAdmin(true);
+            setShowAdminBtn(true);
           }
         });
+      }
+      else if (window.location.href.includes('/admin')) {
+        setShowCalendarBtn(true);
       }
     }
 
@@ -33,15 +37,17 @@ function Header() {
   return (
     <header className="top-0 left-0 right-0 text-white bg-primary px-4 h-[8vh] mb-2">
       <div className="flex w-full h-full justify-between items-center">
-        <h1 className="text-2xl">STUDENTFIKET</h1>
+        <h1 className="text-2xl">STUDENTFIKET <span className='text-red-500'>[BETA]</span></h1>
         <div className='flex items-center gap-x-4'>
-          {showAdmin && (
+          {showCalendarBtn && (
+            <Button variant={'outline'}><a href="/calendar">Kalender</a></Button>
+          )}
+          {showAdminBtn && (
             <Button variant={'outline'}><a href="/admin">Admin</a></Button>
           )}
-          {showLogOut && (
+          {showLogOutBtn && (
             <form action={signOut}>
               <LogOut onClick={() => signOut()} />
-              {/* <button type="submit">Logga ut</button> */}
             </form>
           )}
         </div>

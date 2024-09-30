@@ -22,14 +22,13 @@ export default function SearchDB() {
   };
 
   return (
-    <form className="flex flex-row gap-2" onSubmit={(e) => { e.preventDefault(); handleSearchClick(); }}>
+    <form className="flex flex-col sm:flex-row mb-4" onSubmit={(e) => { e.preventDefault(); handleSearchClick(); }}>
       <Input
         placeholder="Sök"
-        className="mb-4"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      <Button type="submit" className="btn btn-primary">
+      <Button type="submit" className='mt-4 sm:mt-0 sm:ml-4 py-4 flex justify-center'>
         Sök
       </Button>
     </form>

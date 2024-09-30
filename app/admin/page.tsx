@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card"
 import GeneratePeriod from "./generatePeriod";
 import DataContainer from "./dataContainer";
+import NollePSwitch from "./nollePSwitch";
 
 
 function AdminPage({
@@ -19,7 +20,7 @@ function AdminPage({
 
 
   return (
-    <div className="flex flex-col gap-y-4 w-screen" style={{ padding: '20px' }}>
+    <main className="flex flex-col gap-y-4 w-full" style={{ padding: '20px' }}>
       <h1>
         Admin Dashboard
       </h1>
@@ -36,6 +37,16 @@ function AdminPage({
       <Card>
         <CardHeader>
           <CardTitle>
+            NolleP mode - [UNDER UTVECKLING]
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <NollePSwitch />
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>
             Jobbade pass
           </CardTitle>
         </CardHeader>
@@ -43,7 +54,7 @@ function AdminPage({
           <DataContainer searchParam={Array.isArray(searchParams?.s) ? searchParams.s.join(",") : searchParams?.s || ""} />
         </CardContent>
       </Card>
-    </div>
+    </main>
   );
 };
 

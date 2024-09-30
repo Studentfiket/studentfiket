@@ -1,11 +1,17 @@
+import Link from "next/link";
+
 export default function Footer() {
   return (
-    <div />
-    // <footer className="h-[10vh] py-2">
-    //   <form action={signOut}>
-    //     <button type="submit">Logga ut</button>
-    //   </form>
-    //   <a href="/admin">Admin</a>
-    // </footer>
+    <footer className="bottom-0 left-0 right-0 text-white bg-primary px-4 h-[10vh]">
+      <div className="container mx-auto flex justify-between items-center h-full">
+        <div className="flex flex-col">
+          <p>&copy; {new Date().getFullYear()} Albin Kjellberg</p>
+          <p>Utvecklat av studenter för studenter</p>
+        </div>
+        <ul className="flex space-x-4">
+          <li><Link href="mailto:info@studentfiket.com" className="hover:underline">Kontakta oss</Link></li>
+        </ul>
+      </div>
+    </footer>
   );
 }

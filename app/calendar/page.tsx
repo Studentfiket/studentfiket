@@ -18,7 +18,6 @@ export default async function Home() {
       <Suspense fallback={<CalendarLoading />}>
         <CalendarContainer />
       </Suspense>
-      <Footer />
     </div>
   );
 }

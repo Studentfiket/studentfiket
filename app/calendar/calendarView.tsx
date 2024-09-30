@@ -78,15 +78,12 @@ function CalendarView(props: Props) {
     const updateShift2 = async (e: { action: string; record: { id: string } }) => {
       console.log("Event", e);
       if (e.action === 'update') {
-        console.log("Record updated", e.record);
 
         // Fetch the updated record from PocketBase
         const updatedRecord = await getShiftRecordById(e.record.id);
         if (!updatedRecord) return;
-        console.log("Updated record", updatedRecord);
 
         const updatedShift = mapRecordsToShifts([updatedRecord])[0];
-        console.log("Shift mapped", updatedShift);
 
         // Check if the shift data has actually changed before updating state
         setLoadedShifts((prevShifts) => {
@@ -114,7 +111,7 @@ function CalendarView(props: Props) {
 
 
   return (
-    <div className="w-screen">
+    <div className="w-full">
       <Popup onCancel={closePopup} shift={selectedShift} user={props.user} />
       {/* <BookShiftPopup shift={selectedShift} user={props.user} onCancel={closePopup} /> */}
       <FullCalendar
