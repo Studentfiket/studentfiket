@@ -6,7 +6,6 @@ import Client, { RecordModel } from 'pocketbase';
 import { loadPocketBase } from './pocketbase';
 import { Shift, User } from './types';
 import { DateTime } from "luxon";
-import { log } from 'console';
 
 // Map the records from the database to the Shift type
 export const mapRecordsToShifts = (records: RecordModel[]): Shift[] => {

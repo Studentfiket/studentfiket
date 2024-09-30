@@ -121,6 +121,12 @@ export async function getAvatar(userId: string, fileName: string) {
     return null;
   }
 
+  const pb = await loadPocketBase();
+  if (!pb?.authStore.model) {
+    console.error("No user logged in");
+    return null;
+  }
+
   if (fileName == "")
     fileName = pb.authStore.model?.avatar;
 
@@ -179,6 +185,8 @@ export const getUser = async (pb?: Client, id: string = ""): Promise<User | null
 export async function login(user: { username: string; password: string; }) {
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
+  const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
+
   try {
     // Try to login the user with the provided credentials, if successful return true
     const { token, record: model } = await pb.collection('users').authWithPassword(user.username, user.password);
@@ -207,6 +215,9 @@ export async function login(user: { username: string; password: string; }) {
       sameSite: 'strict',
       httpOnly: false,
     });
+
+    console.log('Logged in as:', model.name);
+
 
     console.log('Logged in as:', model.name);
 
