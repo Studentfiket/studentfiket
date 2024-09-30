@@ -1,7 +1,6 @@
 import { Suspense } from 'react';
 import CalendarLoading from './calendarLoading';
 import CalendarContainer from './calendarContainer';
-import Footer from '@/components/footer';
 
 // Next.js will invalidate the cache when a
 // request comes in, at most once every second.
