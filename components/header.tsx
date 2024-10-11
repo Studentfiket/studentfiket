@@ -11,26 +11,26 @@ function Header() {
   const [showCalendarBtn, setShowCalendarBtn] = useState(false);
 
   useEffect(() => {
-    userIsLoggedIn().then((res) => {
-      if (res) {
+
+    const checkUserStatus = async () => {
+      const isLoggedIn = await userIsLoggedIn();
+      console.log('isLoggedIn', isLoggedIn);
+      if (isLoggedIn)
         setShowLogOutBtn(true);
-      }
-    });
 
-    // Show the admin button if the user is an admin and not on the admin page
-    if (typeof window !== 'undefined') {
-      if (!window.location.href.includes('/admin')) {
-        userIsAdmin().then((res) => {
-          if (res) {
-            setShowAdminBtn(true);
-          }
-        });
-      }
-      else if (window.location.href.includes('/admin')) {
+      if (typeof window === 'undefined')
+        return;
+
+      if (window.location.href.includes('/admin')) {
         setShowCalendarBtn(true);
+      } else {
+        const isAdmin = await userIsAdmin();
+        if (isAdmin)
+          setShowAdminBtn(true);
       }
-    }
+    };
 
+    checkUserStatus();
   }, []);
 
 
@@ -47,7 +47,7 @@ function Header() {
           )}
           {showLogOutBtn && (
             <form action={signOut}>
-              <LogOut onClick={() => signOut()} />
+              <LogOut className='hover:cursor-pointer' onClick={() => signOut()} />
             </form>
           )}
         </div>
