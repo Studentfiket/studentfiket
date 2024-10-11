@@ -4,34 +4,44 @@ import { signOut, userIsLoggedIn, userIsAdmin } from '@/lib/pocketbase';
 import { LogOut } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
+import { usePathname } from 'next/navigation';
 
 function Header() {
   const [showLogOutBtn, setShowLogOutBtn] = useState(false);
   const [showAdminBtn, setShowAdminBtn] = useState(false);
   const [showCalendarBtn, setShowCalendarBtn] = useState(false);
 
-  useEffect(() => {
+  // Make the useEffect depend on the URL, so that the buttons can change based on what page the user is on
+  const pathname = usePathname()
 
+  useEffect(() => {
     const checkUserStatus = async () => {
       const isLoggedIn = await userIsLoggedIn();
-      console.log('isLoggedIn', isLoggedIn);
-      if (isLoggedIn)
-        setShowLogOutBtn(true);
+      isLoggedIn ? setShowLogOutBtn(true) : setShowLogOutBtn(false);
 
+      // If we're not in the browser, we can't check the URL (makes typescript happy)
       if (typeof window === 'undefined')
         return;
 
-      if (window.location.href.includes('/admin')) {
-        setShowCalendarBtn(true);
-      } else {
-        const isAdmin = await userIsAdmin();
-        if (isAdmin)
-          setShowAdminBtn(true);
+      const isAdmin = await userIsAdmin();
+      switch (pathname) {
+        case '/admin':
+          setShowAdminBtn(false);
+          setShowCalendarBtn(true);
+          break;
+        case '/calendar':
+          isAdmin && setShowAdminBtn(true);
+          setShowCalendarBtn(false);
+          break;
+        default:
+          setShowAdminBtn(false);
+          setShowCalendarBtn(false);
+          break;
       }
     };
 
     checkUserStatus();
-  }, []);
+  }, [pathname]);
 
 
   return (
