@@ -37,8 +37,11 @@ h1 {
 .fc-event-title-container {
   @apply grid grid-cols-1 content-center pb-5;
 }
+.fc-button-group {
+  @apply bg-primary rounded-lg
+}
 .fc-button {
-  @apply bg-primary border-none transition-all !important;
+  @apply bg-primary border-none transition-all rounded-lg !important;
 }
 .fc-button:hover {
   @apply scale-105 shadow-md !important;
@@ -47,10 +50,10 @@ h1 {
   @apply opacity-100 !important;
 }
 .fc-timeGridWeek-button {
-  @apply opacity-80;
+  @apply opacity-40;
 }
 .fc-timeGridDay-button {
-  @apply opacity-80;
+  @apply opacity-40;
 }
 
 .fc-header-toolbar {
