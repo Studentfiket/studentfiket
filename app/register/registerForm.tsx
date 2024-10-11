@@ -45,7 +45,7 @@ export const RegisterForm = (props: Props) => {
         setIsLoading(false)
         setError('Invalid email or password')
       }
-    } catch (err: Error | unknown) {
+    } catch (error: unknown) {
       setIsLoading(false)
     }
   }

@@ -45,7 +45,7 @@ function Header() {
 
 
   return (
-    <header className="top-0 left-0 right-0 text-white bg-primary px-4 h-[8vh] mb-2">
+    <header className="top-0 left-0 right-0 text-white bg-primary px-4 h-[8vh]">
       <div className="flex w-full h-full justify-between items-center">
         <h1 className="text-2xl">STUDENTFIKET <span className='text-red-500'>[BETA]</span></h1>
         <div className='flex items-center gap-x-4'>
