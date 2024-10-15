@@ -5,6 +5,7 @@ import { LogOut, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
 
 function Header() {
   const [showControlBtns, setShowControlBtns] = useState(false);
@@ -53,7 +54,9 @@ function Header() {
   return (
     <header className="top-0 left-0 right-0 text-white bg-primary px-4 h-[8vh]">
       <div className="flex w-full h-full justify-between items-center">
-        <h1 className="text-2xl">STUDENTFIKET <span className='text-red-500'>[BETA]</span></h1>
+        <Link href={"/"}>
+          <h1 className="text-2xl">STUDENTFIKET <span className='text-red-500'>[BETA]</span></h1>
+        </Link>
         <div className='flex items-center gap-x-2'>
           {showCalendarBtn && (
             <Button variant={'outline'} onClick={() => redirect("/calendar")}>Kalender</Button>

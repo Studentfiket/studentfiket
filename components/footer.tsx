@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 export default function Footer() {
   return (
     <footer className="bottom-0 left-0 right-0 text-white bg-primary px-4 h-[10vh]">
@@ -10,8 +8,8 @@ export default function Footer() {
         </ul>
 
         <ul className="flex flex-col text-right">
-          <li><Link href="https://www.facebook.com/studentfiket/?locale=sv_SE" className="hover:underline">Facebook</Link></li>
-          <li><Link href="mailto:info@studentfiket.com" className="hover:underline">Kontakta oss</Link></li>
+          <li><a href="https://www.facebook.com/studentfiket/?locale=sv_SE" className="hover:underline">Facebook</a></li>
+          <li><a href="mailto:info@studentfiket.com" className="hover:underline">Kontakta oss</a></li>
         </ul>
       </div>
     </footer>

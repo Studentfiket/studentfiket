@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { Button } from "../../components/ui/button";
-import Link from "next/link";
 
 export default function ConfirmationMessage() {
   return (
@@ -11,7 +10,7 @@ export default function ConfirmationMessage() {
         godkänna ditt konto innan du kan logga in. (I regel inom 24 timmar).<br />
         <br />
         {/* TODO: Fix mailto */}
-        Om du vill kontakta oss så kan du göra det <Link className="text-indigo-500 hover:underline" href="mailto:info@studentfiket.com">här</Link>.
+        Om du vill kontakta oss så kan du göra det <a className="text-indigo-500 hover:underline" href="mailto:info@studentfiket.com">här</a>.
       </p>
       <div className="w-full flex justify-center">
         <Button size="lg" onClick={() => redirect('/login')}>
