@@ -34,7 +34,7 @@ export default function ShiftInformation(props: Props) {
       <div className="flex flex-col space-y-2 w-full">
         <div className="flex flex-col w-full">
           <p className="text-md text-muted-foreground">{getWeekday(shiftDateStart)} {getDateDay(shiftDateStart)} {getMonth(shiftDateStart, false)}</p>
-          <p className="text-4xl font-light">
+          <p className="sm:text-4xl text-3xl font-light">
             {shiftDateStart.toISOString().substring(11, 16)}
             &nbsp;-&nbsp;
             {shiftDateEnd.toISOString().substring(11, 16)}
