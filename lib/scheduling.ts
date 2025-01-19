@@ -155,7 +155,7 @@ export const getOrganisationShifts = async (pb: Client, orgId: string) => {
 
 export const getUsersShifts = async (pb: Client, user: User) => {
   const records = await pb.collection('shifts').getFullList({
-    filter: `workers ~ "${user.id}" && startTime <= "${DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss')}" && organisation = null`,
+    filter: `workers ~ "${user.id}" && startTime <= "${DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss')}"`,
   });
   return mapRecordsToShifts(records);
 }

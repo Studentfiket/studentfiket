@@ -100,8 +100,6 @@ function CalendarView(props: Props) {
           });
 
           if (hasChanges) {
-            console.log("Shifts updated", updatedShifts);
-
             if (selectedShift?.id === updatedShift.id)
               setSelectedShift(updatedShift);
 

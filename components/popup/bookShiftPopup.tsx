@@ -13,9 +13,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import {
+  Alert,
+  AlertDescription,
+} from "@/components/ui/alert"
 import { User, Shift } from "@/lib/types";
 import ShiftInformation from "../shiftInformation";
-import { CalendarHeart } from "lucide-react"
+import { CalendarHeart, Terminal } from "lucide-react"
 import { useState } from "react";
 import { updateShift } from "@/lib/scheduling";
 
@@ -26,7 +30,7 @@ type Props = {
   changePopup: (isBooking: boolean) => void;
 }
 
-export default function BookShiftPopup(props: Props) {
+export default function BookShiftPopup(props: Readonly<Props>) {
   const submit = (userIsBooking: boolean) => {
     try {
       setIsLoading(true);
@@ -45,17 +49,18 @@ export default function BookShiftPopup(props: Props) {
 
   const [organisationId, setOrganisationId] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showIdAlert, setShowIdAlert] = useState<boolean>(false);
 
   if (!props.shift) {
     return
   }
 
-  const shiftIsBooked = (props.shift.workers[0] !== undefined && props.shift.workers[1] !== undefined) ? true : false;
+  const shiftIsBooked = !!((props.shift.workers[0] !== undefined && props.shift.workers[1] !== undefined));
 
-  const shiftIsFree = (props.shift.workers[0] === undefined && props.shift.workers[1] === undefined) ? true : false;
-  const shiftIsPrivate = (props.shift.organisation === "") ? true : false;
+  const shiftIsFree = !!((props.shift.workers[0] === undefined && props.shift.workers[1] === undefined));
+  const shiftIsPrivate = (props.shift.organisation === "");
   const shiftHasPassed = new Date(props.shift.start) < new Date();
-  const userIsParticipating = (props.shift.workers[0] === props.user.name || props.shift.workers[1] === props.user.name) ? true : false;
+  const userIsParticipating = !!((props.shift.workers[0] === props.user.name || props.shift.workers[1] === props.user.name));
 
   // Check if the user is in the organisation of the shift
   const isUserInOrganisation = (shift: Shift, user: User) => {
@@ -92,12 +97,26 @@ export default function BookShiftPopup(props: Props) {
   };
 
   const footer = () => {
+    const copyIdButton = () => {
+      return (
+        props.user.isAdmin && (
+          <Button variant={'outline'} onClick={() => {
+            navigator.clipboard.writeText(props.shift?.id ?? '');
+            setShowIdAlert(true);
+          }}>Kopiera ID</Button>
+        )
+      );
+    }
+
     if (shiftHasPassed) {
       // The shift has passed, show back button
       return (
-        <Button variant="outline" onClick={props.onCancel}>
-          Tillbaka
-        </Button>
+        <div className="flex flex-row justify-start gap-5">
+          <Button variant="outline" onClick={props.onCancel}>
+            Tillbaka
+          </Button>
+          {copyIdButton()}
+        </div>
       )
     }
     if (userIsParticipating) {
@@ -107,6 +126,7 @@ export default function BookShiftPopup(props: Props) {
           <Button variant="outline" onClick={props.onCancel}>
             Tillbaka
           </Button>
+          {copyIdButton()}
           <Button variant="destructive" onClick={() => submit(false)} >Avboka</Button>
         </div>
       )
@@ -114,9 +134,12 @@ export default function BookShiftPopup(props: Props) {
     if (shiftIsBooked || (!shiftIsPrivate && props.shift && !isUserInOrganisation(props.shift, props.user))) {
       // The shift is booked or the user is not in the organisation of the shift, show back button
       return (
-        <Button variant="outline" onClick={props.onCancel}>
-          Tillbaka
-        </Button>
+        <div className="flex flex-row justify-start gap-5">
+          <Button variant="outline" onClick={props.onCancel}>
+            Tillbaka
+          </Button>
+          {copyIdButton()}
+        </div>
       )
     }
 
@@ -125,6 +148,7 @@ export default function BookShiftPopup(props: Props) {
         <Button variant="outline" onClick={props.onCancel}>
           Tillbaka
         </Button>
+        {copyIdButton()}
         <input type="hidden" name="shift-action" value="book-shift" />
         {shiftIsFree && organisationId === "" ?
           <Button disabled>Boka</Button>
@@ -137,7 +161,7 @@ export default function BookShiftPopup(props: Props) {
 
   return (
     <div className={(shiftHasPassed ? "bg-gray-200 rounded-xl" : "")}>
-      <CardHeader className="flex items-center text-2xl pb-2 mx-6 px-0 mb-2">
+      <CardHeader className="flex items-center text-2xl pb-2 mx-6 px-0 mb-2" >
         {header()}
       </CardHeader>
       <CardContent>
@@ -160,7 +184,7 @@ export default function BookShiftPopup(props: Props) {
               <SelectContent className="text-xl">
                 {/* Render the organisations as items to select (in alphabetical order) */}
                 {props.user.organisations
-                  .sort((a, b) => a.name.localeCompare(b.name))
+                  .toSorted((a, b) => a.name.localeCompare(b.name))
                   .map((organisation) => (
                     <SelectItem key={organisation.id} value={organisation.id}>{organisation.name}</SelectItem>
                   ))}
@@ -173,6 +197,22 @@ export default function BookShiftPopup(props: Props) {
       <CardFooter className="w-full">
         {footer()}
       </CardFooter>
-    </div>
+
+      {/* ID copy alert */}
+      {props.user.isAdmin && showIdAlert && (
+        <Alert className="absolute top-5 w-96" variant="filled">
+          <div className="flex items-center">
+            <Terminal className="h-4 w-4 mr-2" />
+            ID: <em>{props.shift?.id}</em>&nbsp;är kopierat till urklipp.
+          </div>
+          <AlertDescription className="mt-2">
+
+            <div className="mt-4 flex justify-start">
+              <Button variant="outline" onClick={() => setShowIdAlert(false)}>Stäng</Button>
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
+    </div >
   )
 }

@@ -10,6 +10,8 @@ import {
 import { loadPocketBase, getUser, getUserOrganisations } from "@/lib/pocketbase";
 import { getUsersShifts } from "@/lib/scheduling";
 import DataTable from "./dataTable";
+import LogOutCard from "./logOutCard";
+import { Shift } from "@/lib/types";
 
 
 async function ProfilePage() {
@@ -35,21 +37,18 @@ async function ProfilePage() {
     return <div>Loading...</div>;
   }
   // const userAvatar: string = await getAvatar(user.id, user.avatar) ?? '';
-  const userShifts = await getUsersShifts(pb, user);
+  const allUsersShifts = await getUsersShifts(pb, user);
+  const userShifts: Shift[] = [];
   const organisations = await getUserOrganisations();
 
+  for (const org of organisations) {
+    org.nrOfShifts = userShifts.filter(shift => shift.organisation === org.id).length;
+  }
 
   return (
     <main className="flex flex-col gap-y-4 w-full h-[82vh]" style={{ padding: '20px' }}>
       <Card className="sm:w-[600px]">
         <CardHeader>
-          {/* {userAvatar}
-          <Image
-            src={userAvatar}
-            alt="avatar"
-            width={50}
-            height={50}
-          /> */}
           <CardTitle className="text-4xl tabular-nums">
             {user.name}
           </CardTitle>
@@ -59,13 +58,13 @@ async function ProfilePage() {
         <CardHeader>
           <CardDescription>Du har jobbat</CardDescription>
           <CardTitle className="text-4xl tabular-nums">
-            {userShifts?.length}
+            {/* {userShifts?.length}
             <span className="font-sans text-sm font-normal tracking-normal text-muted-foreground ml-1">
               pass
-            </span>
+            </span> */}
           </CardTitle>
           <CardDescription>
-            {getShiftMessage(userShifts?.length)}
+            {getShiftMessage(allUsersShifts?.length)}
           </CardDescription>
         </CardHeader>
       </Card>
@@ -79,6 +78,7 @@ async function ProfilePage() {
           <DataTable dataContent={organisations} />
         </CardContent>
       </Card>
+      <LogOutCard />
     </main>
   );
 };
