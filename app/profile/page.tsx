@@ -11,7 +11,6 @@ import { loadPocketBase, getUser, getUserOrganisations } from "@/lib/pocketbase"
 import { getUsersShifts } from "@/lib/scheduling";
 import DataTable from "./dataTable";
 import LogOutCard from "./logOutCard";
-// import { Shift } from "@/lib/types";
 
 
 async function ProfilePage() {
@@ -36,7 +35,6 @@ async function ProfilePage() {
   if (!user || !pb) {
     return <div>Loading...</div>;
   }
-  // const userAvatar: string = await getAvatar(user.id, user.avatar) ?? '';
   const allUsersShifts = await getUsersShifts(pb, user);
   const userShifts: { name: string, nrOfShifts: number }[] = [];
   const userOrganisations = await getUserOrganisations();

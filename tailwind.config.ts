@@ -25,6 +25,7 @@ const config: Config = {
 				},
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
+				foregroundLight: '#2f2f2f',
 				card: {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
@@ -35,7 +36,7 @@ const config: Config = {
 				},
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					foreground: 'hsl(var(--primary-foreground))',
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',

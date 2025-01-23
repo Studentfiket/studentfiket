@@ -10,10 +10,10 @@ export default function Footer() {
         </ul>
 
         <div className="flex flex-row items-center text-left gap-x-4">
-          <button className="bg-primary shadow-lg p-1 rounded  hover:bg-muted-foreground">
+          <button className="bg-primary shadow-lg p-1 rounded transition-all hover:bg-foregroundLight">
             <a href="https://www.facebook.com/studentfiket/?locale=sv_SE" className="hover:underline"><Facebook size={32} /></a>
           </button>
-          <button className="bg-primary shadow-lg p-1 rounded hover:bg-secondary">
+          <button className="bg-primary shadow-lg p-1 rounded transition-all hover:bg-foregroundLight">
             <a href="mailto:info@studentfiket.com" className="hover:underline"><Mail size={32} /></a>
           </button>
         </div>

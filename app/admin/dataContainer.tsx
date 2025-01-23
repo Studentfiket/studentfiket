@@ -14,7 +14,7 @@ type Props = {
   searchParam: string;
 }
 
-export default async function DataTabs(props: Props) {
+export default async function DataTabs(props: Readonly<Props>) {
   const pb = await loadPocketBase();
   if (!pb) {
     console.error("Failed to load PocketBase");

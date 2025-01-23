@@ -13,10 +13,10 @@ import NollePSwitch from "./nollePSwitch";
 
 function AdminPage({
   searchParams,
-}: {
+}: Readonly<{
   params: { slug: string };
   searchParams?: { [key: string]: string | string[] | undefined };
-}) {
+}>) {
 
 
   return (
@@ -51,7 +51,7 @@ function AdminPage({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <DataContainer searchParam={Array.isArray(searchParams?.s) ? searchParams.s.join(",") : searchParams?.s || ""} />
+          <DataContainer searchParam={Array.isArray(searchParams?.s) ? searchParams.s.join(",") : searchParams?.s ?? ""} />
         </CardContent>
       </Card>
     </main>
