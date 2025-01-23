@@ -11,7 +11,7 @@ import { loadPocketBase, getUser, getUserOrganisations } from "@/lib/pocketbase"
 import { getUsersShifts } from "@/lib/scheduling";
 import DataTable from "./dataTable";
 import LogOutCard from "./logOutCard";
-import { Shift } from "@/lib/types";
+// import { Shift } from "@/lib/types";
 
 
 async function ProfilePage() {
@@ -38,15 +38,27 @@ async function ProfilePage() {
   }
   // const userAvatar: string = await getAvatar(user.id, user.avatar) ?? '';
   const allUsersShifts = await getUsersShifts(pb, user);
-  const userShifts: Shift[] = [];
-  const organisations = await getUserOrganisations();
+  const userShifts: { name: string, nrOfShifts: number }[] = [];
+  const userOrganisations = await getUserOrganisations();
+  console.log(allUsersShifts);
 
-  for (const org of organisations) {
-    org.nrOfShifts = userShifts.filter(shift => shift.organisation === org.id).length;
-  }
+  // Add private shifts to userShifts
+  userShifts.push({
+    name: "privat",
+    nrOfShifts: allUsersShifts.filter(shift => shift.organisation === "").length,
+  });
+
+  // Add organisation shifts to userShifts
+  userOrganisations.forEach(org => {
+    userShifts.push({
+      name: org.name,
+      nrOfShifts: allUsersShifts.filter(shift => shift.organisation === org.name).length,
+    });
+  });
+
 
   return (
-    <main className="flex flex-col gap-y-4 w-full h-[82vh]" style={{ padding: '20px' }}>
+    <main className="flex flex-col gap-y-4 w-full min-h-[82vh]" style={{ padding: '20px' }}>
       <Card className="sm:w-[600px]">
         <CardHeader>
           <CardTitle className="text-4xl tabular-nums">
@@ -56,13 +68,16 @@ async function ProfilePage() {
       </Card>
       <Card className="sm:w-[600px]">
         <CardHeader>
-          <CardDescription>Du har jobbat</CardDescription>
-          <CardTitle className="text-4xl tabular-nums">
-            {/* {userShifts?.length}
-            <span className="font-sans text-sm font-normal tracking-normal text-muted-foreground ml-1">
-              pass
-            </span> */}
-          </CardTitle>
+          <CardTitle>Du har jobbat</CardTitle>
+          <CardDescription>
+            {userShifts.map((organisation) => (
+              <span key={organisation.name} className="flex items-end">
+                <span className="text-3xl font-semibold text-black mr-1">{organisation.nrOfShifts} </span>
+                pass {organisation.name !== 'privat' && "för "}
+                <span className="font-semibold text-black ml-1">{organisation.name}</span>
+              </span>
+            ))}
+          </CardDescription>
           <CardDescription>
             {getShiftMessage(allUsersShifts?.length)}
           </CardDescription>
@@ -75,7 +90,7 @@ async function ProfilePage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <DataTable dataContent={organisations} />
+          <DataTable dataContent={userOrganisations} />
         </CardContent>
       </Card>
       <LogOutCard />

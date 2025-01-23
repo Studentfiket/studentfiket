@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer className="bottom-0 left-0 right-0 text-white bg-primary px-4 h-[10vh]">
+    <footer className="left-0 right-0 text-white bg-primary px-4 h-[10vh]">
       <div className="container mx-auto flex justify-between items-center h-full">
         <ul className="flex flex-col">
           <li>&copy; {new Date().getFullYear()} Albin Kjellberg</li>

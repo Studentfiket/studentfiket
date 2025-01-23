@@ -1,9 +1,18 @@
 'use client'
 
 import { userIsLoggedIn, userIsAdmin } from '@/lib/pocketbase';
-import { User } from 'lucide-react';
+import { User, Calendar, ShieldCheck, Menu } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetClose
+} from "@/components/ui/sheet"
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 
@@ -48,6 +57,13 @@ function Header() {
     checkUserStatus();
   }, [pathname]);
 
+  const MobileButtons = ({ children, onClick, index }: { children: React.ReactNode, onClick: () => void, index: number }) => (
+    <SheetClose>
+      <Button className="w-full py-2 flex justify-start gap-2 text-xl" variant={pageIndex == index ? 'default' : 'link'} onClick={onClick}>
+        {children}
+      </Button>
+    </SheetClose>
+  );
 
   return (
     <header className="top-0 left-0 right-0 text-white bg-primary px-4 h-[8vh]">
@@ -55,26 +71,49 @@ function Header() {
         <Link href={"/"}>
           <h1 className="text-2xl">STUDENTFIKET <span className='text-red-500'>[BETA]</span></h1>
         </Link>
-        {!loading && (
-          <div className='flex items-center gap-x-2'>
-            {/* {showCalendarBtn && ( */}
-            <Button variant={pageIndex == 0 ? 'secondary' : 'outline'} onClick={() => redirect("/calendar")}>Kalender</Button>
-            {/* )} */}
-            {showAdminBtn && (
-              <Button variant={pageIndex == 1 ? 'secondary' : 'outline'} onClick={() => redirect("/admin")}>Admin</Button>
-            )}
-            {showControlBtns && (
-              <div className='flex gap-x-2'>
-                <Button className='px-[0.35rem]' variant={pageIndex == 2 ? 'secondary' : 'outline'} onClick={() => redirect("/profile")}><User /></Button>
-                {/* <form action={signOut}>
-                  <Button className='px-[0.35rem]' variant={'outline'} onClick={() => signOut()}><LogOut /></Button>
-                </form> */}
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    </header>
+        <div className='hidden md:flex items-center gap-x-2'>
+          {!loading && (
+            <div className='flex items-center gap-x-2'>
+              {/* {showCalendarBtn && ( */}
+              <Button variant={pageIndex == 0 ? 'secondary' : 'outline'} onClick={() => redirect("/calendar")}>Kalender</Button>
+              {/* )} */}
+              {showControlBtns && (
+                <div className='flex gap-x-2'>
+                  {showAdminBtn && (
+                    <Button variant={pageIndex == 1 ? 'secondary' : 'outline'} onClick={() => redirect("/admin")}>Admin</Button>
+                  )}
+                  <Button className='px-[0.35rem]' variant={pageIndex == 2 ? 'secondary' : 'outline'} onClick={() => redirect("/profile")}><User /></Button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+        <div className='md:hidden'>
+          <Sheet>
+            <SheetTrigger><Menu /></SheetTrigger>
+            <SheetContent className='bg-slate-50'>
+              <SheetHeader>
+                <SheetTitle className='text-left text-xl'>
+                  {["Hej där!", "Hallå där!", "Välkommen hit!", "Hej igen!", "Kul att se dig!", "Trevligt att träffas!", "Välkommen tillbaka!", "Hur mår du idag?"][Math.floor(Math.random() * 8)]}
+                </SheetTitle>
+                <SheetDescription className='flex flex-col gap-y-2'>
+                  <MobileButtons onClick={() => redirect("/calendar")} index={0}>
+                    <Calendar /> Kalender
+                  </MobileButtons>
+                  <MobileButtons onClick={() => redirect("/admin")} index={1}>
+                    <ShieldCheck />Admin
+                  </MobileButtons>
+                  <MobileButtons onClick={() => redirect("/profile")} index={2}>
+                    <User /> Användare
+                  </MobileButtons>
+                </SheetDescription>
+              </SheetHeader>
+            </SheetContent>
+          </Sheet>
+        </div>
+
+      </div >
+    </header >
   );
 }
 

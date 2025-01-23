@@ -22,7 +22,7 @@ type accountData = {
   nrOfShifts: number;
 }
 
-export default async function DataTable(props: Props) {
+export default async function DataTable(props: Readonly<Props>) {
 
   const { dataContent } = props;
   if (!dataContent) {
