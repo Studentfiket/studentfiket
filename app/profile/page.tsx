@@ -83,7 +83,7 @@ async function ProfilePage() {
           </CardDescription>
         </CardHeader>
       </Card>
-      <Card className="sm:w-[700px]">
+      <Card className="md:w-[700px]">
         <CardHeader>
           <CardTitle>
             Dina föreningar

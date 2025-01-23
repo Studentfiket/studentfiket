@@ -27,7 +27,7 @@ export default async function DataTabs(props: Props) {
   const defaultValues = (organisations && organisations.length > 0) ? "org" : "users";
 
   return (
-    <div className="sm:w-[600px]">
+    <div className="md:w-[600px]">
       <SearchDB />
       <Tabs defaultValue={defaultValues} className="w-full">
         <TabsList className="grid w-full grid-cols-2">

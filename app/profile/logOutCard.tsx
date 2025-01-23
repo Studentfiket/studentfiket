@@ -12,7 +12,7 @@ import { signOut } from "@/lib/pocketbase";
 
 export default function LogOutCard() {
   return (
-    <Card className="sm:w-[700px]">
+    <Card className="md:w-[700px]">
       <CardHeader>
         <CardTitle>
           Inställningar
