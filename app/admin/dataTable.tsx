@@ -39,11 +39,15 @@ export default async function DataTable(props: Readonly<Props>) {
 
     pb.autoCancellation(false);
     if (isUserData) {
-      const userData = await Promise.all((dataContent as User[]).map(async (user) => ({
-        name: user.name,
-        liuId: user.username,
-        nrOfShifts: (await getUsersShifts(pb, user))?.length || 0,
-      })));
+      const userData = await Promise.all((dataContent as User[]).map(async (user) => {
+        const shifts = await getUsersShifts(pb, user);
+        const privateShifts = shifts?.filter(shift => shift.organisation != '') || [];  // Only get private shifts
+        return {
+          name: user.name,
+          liuId: user.username,
+          nrOfShifts: privateShifts.length,
+        };
+      }));
       pb?.autoCancellation(true);
       return userData;
     } else {
@@ -64,7 +68,7 @@ export default async function DataTable(props: Readonly<Props>) {
         <TableRow>
           <TableHead className={`font-medium ${isUserData && 'sm:table-cell hidden'}`}>Namn</TableHead>
           {isUserData && <TableHead>LiuId</TableHead>}
-          <TableHead className="text-right">Jobbade pass</TableHead>
+          <TableHead className="text-right">Jobbade pass{isUserData && " (privat)"}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
