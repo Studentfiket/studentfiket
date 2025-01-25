@@ -61,7 +61,7 @@ h1 {
 }
 
 .event-container h3 {
-  @apply font-bold text-lg leading-none;
+  @apply font-bold text-base leading-none sm:text-lg;
 }
 
 .booked-shift {

@@ -81,16 +81,18 @@ async function ProfilePage() {
           </CardDescription>
         </CardHeader>
       </Card>
-      <Card className="md:w-[700px]">
-        <CardHeader>
-          <CardTitle>
-            Dina föreningar
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <DataTable dataContent={userOrganisations} />
-        </CardContent>
-      </Card>
+      {userOrganisations.length > 0 && (
+        <Card className="md:w-[700px]">
+          <CardHeader>
+            <CardTitle>
+              Dina föreningar
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <DataTable dataContent={userOrganisations} />
+          </CardContent>
+        </Card>
+      )}
       <LogOutCard />
     </main>
   );

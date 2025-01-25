@@ -113,7 +113,7 @@ export default function BookShiftPopup(props: Readonly<Props>) {
           <Button variant={'outline'} onClick={() => {
             navigator.clipboard.writeText(props.shift?.id ?? '');
             setShowIdAlert(true);
-          }}>Kopiera ID</Button>
+          }}><span className="hidden sm:block">Kopiera </span>ID</Button>
         )
       );
     }
