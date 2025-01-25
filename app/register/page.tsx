@@ -10,7 +10,7 @@ export default function RegisterPage() {
     setShowConfirmation(true)
   }
 
-  const [showConfirmation, setShowConfirmation] = useState(false)
+  const [showConfirmation, setShowConfirmation] = useState(true)
 
   return (
     <div className="h-[92vh] w-full flex justify-center items-center bg-slate-100">
