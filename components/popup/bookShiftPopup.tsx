@@ -71,24 +71,32 @@ export default function BookShiftPopup(props: Readonly<Props>) {
     }
   }
 
+  // Check if the shift is bookable
+  const isBookable = (shiftIsFree && !shiftHasPassed && !userIsParticipating);
+
 
   const header = () => {
     if (shiftHasPassed) {
+      // The shift has passed, shows back button
       return <CardTitle className="font-normal">Detta pass har redan passerat</CardTitle>;
     }
     if (userIsParticipating) {
+      // The user is participating in the shift, shows back and cancel button
       return <CardTitle className="font-normal">Du jobbar detta pass</CardTitle>;
     }
 
     if (!shiftIsPrivate && props.shift && !isUserInOrganisation(props.shift, props.user)) {
+      // The user is not in the organisation of the shift, shows back button
       return <CardTitle className="font-normal">Detta pass kan inte bokas</CardTitle>;
     }
 
     if (shiftIsBooked) {
+      // The shift is booked, shows back button
       return <CardTitle className="font-normal">Detta pass är bokat</CardTitle>;
     }
 
     return (
+      // The shift is free, shows booking button
       <div className="flex items-center">
         <CalendarHeart className="h-full mt-1 mr-2" />
         <CardTitle className="font-normal">Boka Pass</CardTitle>
@@ -96,7 +104,9 @@ export default function BookShiftPopup(props: Readonly<Props>) {
     );
   };
 
+  /// Footer of the popup
   const footer = () => {
+    /// Show the copy ID button if the user is an admin
     const copyIdButton = () => {
       return (
         props.user.isAdmin && (
@@ -143,6 +153,7 @@ export default function BookShiftPopup(props: Readonly<Props>) {
       )
     }
 
+    // The shift is free, show booking button
     return (
       <div className="flex flex-row justify-around w-full">
         <Button variant="outline" onClick={props.onCancel}>
@@ -157,6 +168,12 @@ export default function BookShiftPopup(props: Readonly<Props>) {
         }
       </div>
     )
+  }
+
+  // If the shift is not bookable or the user is not in any organisation, set organisation to private
+  if (isBookable && props.user.organisations.length === 0 && organisationId !== "private") {
+    setOrganisationId("private");
+    console.log("Shift is not bookable or user is not in any organisation, setting organisation to private");
   }
 
   return (
@@ -174,13 +191,14 @@ export default function BookShiftPopup(props: Readonly<Props>) {
             )}
           isLoading={isLoading}
         />
-        {(!shiftHasPassed && shiftIsFree && props.user.organisations.length > 0) && (
+        {/* If the shift is bookable and the user is in at least 1 organisation; they get to choose */}
+        {(isBookable && props.user.organisations.length > 0) && (
           <Card className="mt-6 items-center p-4 w-full">
             <p className="text-md text-muted-foreground">Jag vill jobba som</p>
             <Select value={organisationId} onValueChange={setOrganisationId} >
               <SelectTrigger className="text-xl py-6 mt-1">
                 <SelectValue placeholder="Välj förening" />
-              </SelectTrigger >
+              </SelectTrigger>
               <SelectContent className="text-xl">
                 {/* Render the organisations as items to select (in alphabetical order) */}
                 {props.user.organisations
