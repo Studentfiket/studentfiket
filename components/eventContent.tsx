@@ -61,13 +61,18 @@ const EventContent = (props: Props) => {
   return (
     <div className={'event-container w-auto box-content h-full py-1 overflow-hidden rounded-lg cursor-pointer ' +
       'sm:ml-1 sm:mr-2 hover:scale-105 transition-transform ease-in-out ' + checkAvailability(shift) + (shiftHasPassed && ' grayscale')}>
-      <div className="h-full grid grid-rows-2">
-        <div>
-          <div>
+      <div className="h-full flex flex-col">
+        {startHour === 12 ?
+          <div className="flex flex-col h-full items-center justify-center">
+            <p className="hidden sm:block">{props.eventTime}</p>
+            <h3>{getTitle(shift)}</h3>
+          </div>
+          :
+          <div className="flex flex-col justify-start items-center">
             <p>{props.eventTime}</p>
             <h3>{getTitle(shift)}</h3>
           </div>
-        </div>
+        }
         {startHour !== 12 && (
           <div>
             <p className="hidden sm:block">{shift.workers[0]}</p>
