@@ -56,6 +56,7 @@ function Header() {
     checkUserStatus();
   }, [pathname]);
 
+  // TODO: Fix hydration error
   return (
     <header className="top-0 left-0 right-0 text-white bg-primary px-4 h-[8vh]">
       <div className="flex w-full h-full justify-between items-center">
@@ -93,14 +94,14 @@ function Header() {
                     <Calendar /> Kalender
                   </MobileButtons>
                   {showControlBtns && (
-                    <div className='flex flex-col gap-y-2'>
+                    <span className='flex flex-col gap-y-2'>
                       <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/admin")} index={1}>
                         <ShieldCheck />Admin
                       </MobileButtons>
                       <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/profile")} index={2}>
                         <User /> Användare
                       </MobileButtons>
-                    </div>
+                    </span>
                   )}
                 </SheetDescription>
               </SheetHeader>
