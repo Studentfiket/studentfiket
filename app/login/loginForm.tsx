@@ -31,7 +31,7 @@ export const LoginForm = () => {
       } else {
         if (loginMessage === "bad credentials") {
           setIsLoading(false)
-          setError('Invalid email or password')
+          setError('Ogiltig e-post eller lösenord')
         }
       }
     } catch (err: Error | unknown) {
@@ -49,7 +49,9 @@ export const LoginForm = () => {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           id="username"
-          type="username"
+          type="text"
+          inputMode="email"
+          autoCapitalize="none"
         />
       </div>
       <div className="grid w-full items-center gap-1.5">
@@ -63,10 +65,10 @@ export const LoginForm = () => {
           type="password"
         />
       </div>
-      {error && <Alert>{error}</Alert>}
 
       {/* Login button */}
       <div className="w-full">
+        {error && <Alert variant={"destructive"} className='mb-3'>{error}</Alert>}
         {!isLoading ? (
           <Button className="w-full" size="lg">
             Logga in
