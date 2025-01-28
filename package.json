@@ -12,6 +12,7 @@
     "@babel/preset-react": "^7.24.7",
     "@dicebear/collection": "^9.2.2",
     "@dicebear/core": "^9.2.2",
+    "@fullcalendar/core": "^6.1.15",
     "@fullcalendar/daygrid": "5.11.3",
     "@fullcalendar/interaction": "5.11.3",
     "@fullcalendar/react": "5.11.2",

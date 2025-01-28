@@ -17,6 +17,9 @@ importers:
       '@dicebear/core':
         specifier: ^9.2.2
         version: 9.2.2
+      '@fullcalendar/core':
+        specifier: ^6.1.15
+        version: 6.1.15
       '@fullcalendar/daygrid':
         specifier: 5.11.3
         version: 5.11.3

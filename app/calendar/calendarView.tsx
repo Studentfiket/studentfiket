@@ -1,17 +1,16 @@
 'use client'
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import EventContent from "@/components/eventContent";
-import { Shift, User } from "@/lib/types";
-import { useState } from "react";
-import { Event } from "@/lib/types";
+import { Shift, User, Event } from "@/lib/types";
 import Popup from "@/components/popup/popup";
 import PocketBase, { RecordModel } from 'pocketbase';
 import { getNameFromId } from "@/lib/scheduling";
+import svLocale from '@fullcalendar/core/locales/sv';
 
 type Props = {
   loadedShifts: Shift[];
@@ -125,6 +124,7 @@ function CalendarView(props: Props) {
       <Popup onCancel={closePopup} shift={selectedShift} user={props.user} />
       {/* <BookShiftPopup shift={selectedShift} user={props.user} onCancel={closePopup} /> */}
       <FullCalendar
+        locale={svLocale}
         timeZone="UTC"
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="timeGridWeek"
@@ -132,7 +132,7 @@ function CalendarView(props: Props) {
         slotLabelFormat={{ hour: "2-digit", minute: "2-digit", meridiem: false, hour12: false }}
         headerToolbar={{
           left: "timeGridWeek,timeGridDay",
-          right: "prev,next",
+          right: "prev,next"
         }}
         weekends={false}
         displayEventEnd={false}
