@@ -61,7 +61,7 @@ export const mapRecordToShift = async (record: RecordModel): Promise<Shift> => {
 //#endregion
 
 
-function CalendarView(props: Props) {
+function CalendarView(props: Readonly<Props>) {
   const closePopup = () => {
     setSelectedShift(null);
   }
@@ -82,33 +82,35 @@ function CalendarView(props: Props) {
         console.log("Shift mapped", updatedShift);
 
         // Check if the shift data has actually changed before updating state
-        setLoadedShifts((prevShifts) => {
-          const updatedShifts = updateShiftCollection(prevShifts, updatedShift);
-
-          // Compare updatedShifts with prevShifts to avoid unnecessary re-renders
-          const hasChanges = prevShifts.some((shift) => {
-            const updated = updatedShifts.find((s) => s.id === shift.id);
-            return (
-              updated &&
-              (shift.organisation !== updated.organisation ||
-                shift.start !== updated.start ||
-                shift.end !== updated.end ||
-                shift.workers.length !== updated.workers.length ||
-                shift.workers.some((worker, index) => worker !== updated.workers[index]))
-            );
-          });
-
-          if (hasChanges) {
-            if (selectedShift?.id === updatedShift.id)
-              setSelectedShift(updatedShift);
-
-            setEvents(mapShiftsToEvents(updatedShifts));
-            return updatedShifts;
-          }
-
-          return prevShifts; // Don't update state if no actual changes
-        });
+        setLoadedShifts((prevShifts) => handleShiftUpdate(prevShifts, updatedShift));
       }
+    };
+
+    const handleShiftUpdate = (prevShifts: Shift[], updatedShift: Shift) => {
+      const updatedShifts = updateShiftCollection(prevShifts, updatedShift);
+
+      // Compare updatedShifts with prevShifts to avoid unnecessary re-renders
+      const hasChanges = prevShifts.some((shift) => {
+        const updated = updatedShifts.find((s) => s.id === shift.id);
+        return (
+          updated &&
+          (shift.organisation !== updated.organisation ||
+            shift.start !== updated.start ||
+            shift.end !== updated.end ||
+            shift.workers.length !== updated.workers.length ||
+            shift.workers.some((worker, index) => worker !== updated.workers[index]))
+        );
+      });
+
+      if (hasChanges) {
+        if (selectedShift?.id === updatedShift.id)
+          setSelectedShift(updatedShift);
+
+        setEvents(mapShiftsToEvents(updatedShifts));
+        return updatedShifts;
+      }
+
+      return prevShifts; // Don't update state if no actual changes
     };
 
     pb.collection('shifts').subscribe('*', updateShift2);

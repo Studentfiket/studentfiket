@@ -12,7 +12,7 @@ import { Lock } from "lucide-react"
 export const LoginForm = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const callbackUrl = searchParams.get('callbackUrl') || '/calendar'
+  const callbackUrl = searchParams.get('callbackUrl') ?? '/calendar'
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
