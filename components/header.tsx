@@ -10,9 +10,9 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
-  SheetClose
+  SheetTrigger
 } from "@/components/ui/sheet"
+import MobileButtons from '@/components/ui/custom/mobileButton';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 
@@ -26,7 +26,6 @@ function Header() {
   const redirect = (url: string) => {
     router.push(url);
   }
-
 
   // Make the useEffect depend on the URL, so that the buttons can change based on what page the user is on
   const pathname = usePathname()
@@ -57,26 +56,17 @@ function Header() {
     checkUserStatus();
   }, [pathname]);
 
-  const MobileButtons = ({ children, onClick, index }: { children: React.ReactNode, onClick: () => void, index: number }) => (
-    <SheetClose>
-      <Button className="w-full py-2 flex justify-start gap-2 text-xl" variant={pageIndex == index ? 'default' : 'link'} onClick={onClick}>
-        {children}
-      </Button>
-    </SheetClose>
-  );
-
   return (
     <header className="top-0 left-0 right-0 text-white bg-primary px-4 h-[8vh]">
       <div className="flex w-full h-full justify-between items-center">
-        <Link href={"/"}>
-          <h1 className="text-2xl">STUDENTFIKET <span className='text-red-500'>[BETA]</span></h1>
+        <Link className='flex' href={"/"}>
+          <h1 className="text-2xl">STUDENTFIKET</h1>
+          <h1 className='text-red-500 text-sm ml-1'>[BETA]</h1>
         </Link>
         <div className='hidden md:flex items-center gap-x-2'>
           {!loading && (
             <div className='flex items-center gap-x-2'>
-              {/* {showCalendarBtn && ( */}
               <Button variant={pageIndex == 0 ? 'secondary' : 'outline'} onClick={() => redirect("/calendar")}>Kalender</Button>
-              {/* )} */}
               {showControlBtns && (
                 <div className='flex gap-x-2'>
                   {showAdminBtn && (
@@ -88,24 +78,30 @@ function Header() {
             </div>
           )}
         </div>
-        <div className='md:hidden'>
+        {/* Mobile burger menu */}
+        <div className='flex items-center md:hidden'>
           <Sheet>
             <SheetTrigger><Menu /></SheetTrigger>
             <SheetContent className='bg-slate-50'>
               <SheetHeader>
                 <SheetTitle className='text-left text-xl'>
+                  {/* Random welcome message */}
                   {["Hej där!", "Hallå där!", "Välkommen hit!", "Hej igen!", "Kul att se dig!", "Trevligt att träffas!", "Välkommen tillbaka!", "Hur mår du idag?"][Math.floor(Math.random() * 8)]}
                 </SheetTitle>
                 <SheetDescription className='flex flex-col gap-y-2'>
-                  <MobileButtons onClick={() => redirect("/calendar")} index={0}>
+                  <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/calendar")} index={0}>
                     <Calendar /> Kalender
                   </MobileButtons>
-                  <MobileButtons onClick={() => redirect("/admin")} index={1}>
-                    <ShieldCheck />Admin
-                  </MobileButtons>
-                  <MobileButtons onClick={() => redirect("/profile")} index={2}>
-                    <User /> Användare
-                  </MobileButtons>
+                  {showControlBtns && (
+                    <div className='flex flex-col gap-y-2'>
+                      <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/admin")} index={1}>
+                        <ShieldCheck />Admin
+                      </MobileButtons>
+                      <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/profile")} index={2}>
+                        <User /> Användare
+                      </MobileButtons>
+                    </div>
+                  )}
                 </SheetDescription>
               </SheetHeader>
             </SheetContent>

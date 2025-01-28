@@ -19,6 +19,7 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // Redirect to /calendar if user is logged in and tries to access /login or /register
   if (request.nextUrl.pathname.startsWith("/login") || request.nextUrl.pathname.startsWith("/register")) {
     if (pb.authStore.isValid) {
       const redirect_to = new URL("/calendar", request.url);
@@ -26,19 +27,23 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  if (request.nextUrl.pathname.startsWith("/calendar")) {
+  // Redirect to /login if user is not logged in and tries to access /calendar or /profile
+  if (request.nextUrl.pathname.startsWith("/calendar") || request.nextUrl.pathname.startsWith("/profile")) {
     if (!pb.authStore.isValid) {
       const redirect_to = new URL("/login", request.url);
       return NextResponse.redirect(redirect_to);
     }
   }
 
+  // Redirect to /calendar if user is not admin and tries to access /admin
   if (request.nextUrl.pathname.startsWith("/admin")) {
+    // Check if user is logged in
     if (!pb.authStore.isValid) {
       const redirect_to = new URL("/login", request.url);
       return NextResponse.redirect(redirect_to);
     }
 
+    // Check if user is admin
     if (!pb.authStore.model?.isAdmin) {
       const redirect_to = new URL("/calendar", request.url);
       return NextResponse.redirect(redirect_to);
