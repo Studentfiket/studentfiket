@@ -1,5 +1,5 @@
 import { Shift } from "@/lib/types";
-import { EventApi } from "@fullcalendar/react";
+import { EventApi } from "@fullcalendar/core";
 
 type Props = {
   event: EventApi;

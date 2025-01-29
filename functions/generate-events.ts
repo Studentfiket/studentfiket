@@ -1,5 +1,5 @@
 import { Shift } from "../lib/types";
-import { EventInput } from "@fullcalendar/react";
+import { EventInput } from "@fullcalendar/core";
 
 // Takes the shift data from the database and generates events for the calendar.
 function generateEvents(data: Shift[]): EventInput[] {
