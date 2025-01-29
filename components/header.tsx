@@ -56,7 +56,6 @@ function Header() {
     checkUserStatus();
   }, [pathname]);
 
-  // TODO: Fix hydration error
   return (
     <header className="top-0 left-0 right-0 text-white bg-primary px-4 h-[8vh]">
       <div className="flex w-full h-full justify-between items-center">

@@ -25,14 +25,15 @@ export const mapRecordsToShifts = (records: RecordModel[]): Shift[] => {
 /// @returns A promise that resolves to a message when the shifts have been generated.
 export const generateNewPeriod = async (startDate: Date, endDate: Date): Promise<string> => {
   async function generateNewDay(date: DateTime) {
-    console.log('Generating shifts for: ', date.toFormat('dd-MM-yyyy'), date.weekday);
+    // console.log('Generating shifts for: ', date.toFormat('dd-MM-yyyy'), date.weekday);
 
     // TODO: remove this check for the weekend days
     if (date.weekday !== 6 && date.weekday !== 7) {
       // Generate shifts for the day
       for (let i = 8; i <= 15; i += 2) {
         // Adjust the time for the lunch shift
-        const shiftHour = i === 14 ? 13 : i;
+        i === 14 && i--;
+        const shiftHour = i
         // Create the shift, using the Swedish timezone
         const shiftStartTime = DateTime.fromObject({ ...date.toObject(), hour: shiftHour, minute: 0, second: 0, millisecond: 0 }, { zone: "utc" }).toISO();
         if (!shiftStartTime) {

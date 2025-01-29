@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { DatePickerWithRange } from '@/components/datePickerWithRange';
 import { generateNewPeriod } from '@/lib/scheduling';
 import { Progress } from '@/components/ui/progress';
+import { Alert } from '@/components/ui/alert';
 
 export default function GeneratePeriod() {
   const handleSubmit = () => {
@@ -17,14 +18,20 @@ export default function GeneratePeriod() {
       return;
     }
 
-    setIsLoading(true); // Start loading
+    // Start loading and hide confirmation
+    setShowConfirmation(false);
+    setIsLoading(true);
     generateNewPeriod(date?.from, date?.to).then(() => {
-      setIsLoading(false); // Start loading
+      // Stop loading and show confirmation
+      setIsLoading(false);
+      setShowConfirmation(true);
     });
   };
 
-  const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  // const [shiftsCreated, setShiftsCreated] = useState(0);
   const [date, setDate] = React.useState<DateRange | undefined>(() => {
     const now = new Date();
     const startOfNextWeek = new Date(now.setDate(now.getDate() + (7 - now.getDay())));
@@ -79,7 +86,8 @@ export default function GeneratePeriod() {
       <div className='flex flex-row'>
         <div className='flex flex-col gap-4 sm:flex-row'>
           <DatePickerWithRange date={date} setDate={setDate} />
-          {progress > 0 && <Progress value={progress} />}
+          {isLoading && <Progress value={progress} />}
+          {showConfirmation && <Alert className='bg-shift-free text-white font-semibold'>Skift genererade</Alert>}
           <Button
             className='sm:mt-0 sm:ml-4 py-4 flex justify-center'
             onClick={handleSubmit}
