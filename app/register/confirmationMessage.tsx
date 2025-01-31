@@ -14,7 +14,7 @@ export default function ConfirmationMessage() {
         För att förhindra att obehöriga skapar konton så kommer vi behöva
         godkänna ditt konto innan du kan logga in. (I regel inom 24 timmar).<br />
         <br />
-        Om du vill kontakta oss så kan du göra det <a className="text-indigo-500 hover:underline" href="mailto:info@studentfiket.com">här</a>.
+        Om du vill kontakta oss så kan du göra det <a className="text-indigo-500 hover:underline" href="mailto:styrelsen@studentfiket.com">här</a>.
       </p>
       <div className="w-full flex justify-center">
         <Button size="lg" onClick={() => redirect('/login')}>

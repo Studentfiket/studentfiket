@@ -15,7 +15,7 @@ export default function Footer() {
             <a href="https://www.facebook.com/studentfiket/?locale=sv_SE" className="hover:underline"><SiFacebook size={30} /></a>
           </button>
           <button className="bg-primary shadow-lg p-1 rounded transition-all hover:bg-foregroundLight">
-            <a href="mailto:info@studentfiket.com" className="hover:underline"><IoMdMail size={36} /></a>
+            <a href="mailto:styrelsen@studentfiket.com" className="hover:underline"><IoMdMail size={36} /></a>
           </button>
         </div>
       </div>
