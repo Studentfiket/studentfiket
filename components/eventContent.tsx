@@ -59,8 +59,8 @@ const EventContent = (props: Props) => {
   const shiftHasPassed = new Date(props.event.startStr) < new Date();
 
   return (
-    <div className={'event-container w-auto box-content h-full py-1 overflow-hidden rounded-lg cursor-pointer ' +
-      'sm:ml-1 sm:mr-2 hover:scale-105 transition-transform ease-in-out ' + checkAvailability(shift) + (shiftHasPassed && ' grayscale')}>
+    <div className={'event-container w-auto box-content h-full py-1 overflow-hidden rounded-lg cursor-pointer z-50 ' +
+      'sm:ml-1 sm:mr-2 hover:scale-105 transition-transform ease-in-out hover:shadow-xl ' + checkAvailability(shift) + (shiftHasPassed && ' grayscale')}>
       <div className="h-full flex flex-col">
         {startHour === 12 ?
           <div className="flex flex-col h-full items-center justify-center">

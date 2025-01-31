@@ -28,6 +28,9 @@ h1 {
 .fc-timegrid-event {
   @apply bg-transparent my-1 border-none !important;
 }
+.fc-timegrid-event-harness-inset {
+  @apply hover:z-50 !important;
+}
 .fc-timegrid-col-events { /* needs to be same precedence */
   @apply text-center w-full;
 }

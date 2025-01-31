@@ -134,7 +134,7 @@ function CalendarView(props: Readonly<Props>) {
         slotLabelFormat={{ hour: "2-digit", minute: "2-digit", meridiem: false, hour12: false }}
         headerToolbar={{
           left: "timeGridWeek,timeGridDay",
-          right: "prev,next"
+          right: "today prev,next"
         }}
         weekends={false}
         displayEventEnd={false}
