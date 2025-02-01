@@ -16,7 +16,7 @@ export default function RegisterPage() {
     <div className="h-[92vh] w-full flex justify-center sm:items-center bg-slate-100">
       <div className="sm:shadow-xl px-8 pt-12 sm:pb-8 sm:bg-white rounded-xl space-y-12">
         <h1 className="font-semibold text-2xl">Skapa konto</h1>
-        {showConfirmation ?
+        {!showConfirmation ?
           <RegisterForm confirmationCallback={confirmationCallback} /> :
           <ConfirmationMessage />
         }
