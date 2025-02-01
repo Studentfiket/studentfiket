@@ -11,6 +11,7 @@ import { getNextjsCookie } from "@/utils/server-cookie";
 import { Organisation, User } from './types';
 import Client from 'pocketbase';
 import { getOrganisationShifts } from './scheduling';
+import { getLunchShifts } from '@/utils/sharedFunctions';
 
 export const loadPocketBase = async () => {
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
@@ -63,11 +64,14 @@ export const getOrganisations = async (pb: Client, limit: number, nameSearch: st
       filter: `name ~ "${nameSearch}"`,
       sort: '-name'
     });
-    const mappedOrganisations: Organisation[] = await Promise.all(organisation.items.map(async (record) => ({
-      id: record.id,
-      name: record.name,
-      nrOfShifts: (await getOrganisationShifts(pb, record.id)).length
-    })));
+    const mappedOrganisations: Organisation[] = await Promise.all(organisation.items.map(async (record) => {
+      const organisationShifts = (await getOrganisationShifts(pb, record.id));
+      return {
+        id: record.id,
+        name: record.name,
+        nrOfShifts: organisationShifts.length - getLunchShifts(organisationShifts)  // Subtract 0.5 for every lunch shift
+      };
+    }));
     pb.autoCancellation(true);
     return mappedOrganisations;
   } catch (error) {

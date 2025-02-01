@@ -11,6 +11,7 @@ import {
 import { getOrganisationShifts } from "@/lib/scheduling";
 import { loadPocketBase } from "@/lib/pocketbase";
 import { Organisation } from "@/lib/types"
+import { getLunchShifts } from "@/utils/sharedFunctions";
 
 type Props = {
   dataContent: Organisation[];
@@ -25,10 +26,13 @@ export default async function DataTable(props: Props) {
   }
 
   const organisations = await Promise.all(
-    props.dataContent.map(async (organisation) => ({
-      name: organisation.name,
-      nrOfShifts: (await getOrganisationShifts(pb, organisation.id)).length || 0
-    }))
+    props.dataContent.map(async (organisation) => {
+      const organisationShifts = (await getOrganisationShifts(pb, organisation.id));
+      return {
+        name: organisation.name,
+        nrOfShifts: organisationShifts.length - getLunchShifts(organisationShifts) || 0 // Subtract 0.5 for every lunch shift
+      };
+    })
   );
 
   return (

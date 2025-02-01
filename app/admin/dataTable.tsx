@@ -11,6 +11,7 @@ import {
 import { User, Organisation } from "@/lib/types"
 import { loadPocketBase } from "@/lib/pocketbase"
 import { getUsersShifts } from "@/lib/scheduling"
+import { getLunchShifts } from "@/utils/sharedFunctions"
 
 type Props = {
   dataContent: User[] | Organisation[] | null;
@@ -41,11 +42,12 @@ export default async function DataTable(props: Readonly<Props>) {
     if (isUserData) {
       const userData = await Promise.all((dataContent as User[]).map(async (user) => {
         const shifts = await getUsersShifts(pb, user);
-        const privateShifts = shifts?.filter(shift => shift.organisation != '') || [];  // Only get private shifts
+        const privateShifts = shifts?.filter(shift => shift.organisation === '') || [];  // Only get private shifts
+
         return {
           name: user.name,
           liuId: user.username,
-          nrOfShifts: privateShifts.length,
+          nrOfShifts: privateShifts.length - getLunchShifts(privateShifts),
         };
       }));
       pb?.autoCancellation(true);
@@ -88,3 +90,4 @@ export default async function DataTable(props: Readonly<Props>) {
     </Table>
   )
 }
+

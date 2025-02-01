@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/alert"
 import { User, Shift } from "@/lib/types";
 import ShiftInformation from "../shiftInformation";
-import { CalendarHeart, CircleAlert, Terminal } from "lucide-react"
+import { CalendarHeart, Terminal } from "lucide-react"
 import { useState } from "react";
 import { updateShift } from "@/lib/scheduling";
 import { isCancellationAllowed } from "@/utils/sharedFunctions";

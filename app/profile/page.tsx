@@ -11,6 +11,7 @@ import { loadPocketBase, getUser, getUserOrganisations } from "@/lib/pocketbase"
 import { getUsersShifts } from "@/lib/scheduling";
 import DataTable from "./dataTable";
 import LogOutCard from "./logOutCard";
+import { getLunchShifts } from "@/utils/sharedFunctions";
 
 
 async function ProfilePage() {
@@ -38,19 +39,21 @@ async function ProfilePage() {
   const allUsersShifts = await getUsersShifts(pb, user);
   const userShifts: { name: string, nrOfShifts: number }[] = [];
   const userOrganisations = await getUserOrganisations();
-  console.log(allUsersShifts);
+
+  const privateShifts = allUsersShifts.filter(shift => shift.organisation === '');  // Only get private shifts
 
   // Add private shifts to userShifts
   userShifts.push({
     name: "privat",
-    nrOfShifts: allUsersShifts.filter(shift => shift.organisation === "").length,
+    nrOfShifts: privateShifts.length - getLunchShifts(privateShifts),
   });
 
   // Add organisation shifts to userShifts
   userOrganisations.forEach(org => {
+    const organisationShifts = allUsersShifts.filter(shift => shift.organisation === org.name);
     userShifts.push({
       name: org.name,
-      nrOfShifts: allUsersShifts.filter(shift => shift.organisation === org.name).length,
+      nrOfShifts: organisationShifts.length - getLunchShifts(organisationShifts),
     });
   });
 
@@ -77,7 +80,7 @@ async function ProfilePage() {
             ))}
           </CardDescription>
           <CardDescription>
-            {getShiftMessage(allUsersShifts?.length)}
+            {getShiftMessage(allUsersShifts?.length - getLunchShifts(allUsersShifts))}
           </CardDescription>
         </CardHeader>
       </Card>
