@@ -1,14 +1,14 @@
 // import Image from 'next/image';
 
-import ThreeScene from "@/components/scene";
+// import ThreeScene from "@/components/scene";
 import { redirect } from "next/navigation";
 
 export default function Page() {
   redirect('/login');
   return (
     <main className='h-screen w-full'>
-      <ThreeScene />
-      <div className="h-full flex items-center px-10">
+      {/* <ThreeScene /> */}
+      <div className="h-full flex items-center px-10 bg-gradient-to-b from-redAccentBackground-start to-redAccentBackground-end">
         <h1 className="text-8xl">STUDENTFIKET</h1>
       </div>
     </main>

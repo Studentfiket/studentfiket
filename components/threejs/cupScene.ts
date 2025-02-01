@@ -7,12 +7,12 @@ export default function cupScene(renderElement: HTMLDivElement) {
   // Create materials
   function createMaterials() {
     // Load and cup label texure (rotated 180 degrees to match the Blender model)
-    const labelTexture = new THREE.TextureLoader().load('textures/cup-label2.jpg');
+    const labelTexture = new THREE.TextureLoader().load('textures/cup-label3.jpg');
     labelTexture.center = new THREE.Vector2(0.5, 0.5);
     labelTexture.rotation = Math.PI;
 
     const lidMat = new THREE.MeshToonMaterial({ color: 0x000000 });
-    const cupMat = new THREE.MeshToonMaterial({ color: 0xA62F03, map: labelTexture, fog: false, toneMapped: false });
+    const cupMat = new THREE.MeshToonMaterial({ map: labelTexture, fog: false, toneMapped: false });
 
     const baseMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
     baseMat.onBeforeCompile = (shader) => {

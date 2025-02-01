@@ -1,7 +1,7 @@
 'use client'
 
 import { userIsLoggedIn, userIsAdmin } from '@/lib/pocketbase';
-import { User, Calendar, ShieldCheck, Menu } from 'lucide-react';
+import { User, Calendar, ShieldCheck, Menu, Home } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import {
@@ -45,9 +45,13 @@ function Header() {
 
       // To mark the active page
       const pageMap: { [key: string]: number } = {
-        '/calendar': 0,
-        '/admin': 1,
-        '/profile': 2,
+        '/': 0,
+        'home': 0,
+        '/calendar': 1,
+        '/login': 1,
+        '/register': 1,
+        '/admin': 2,
+        '/profile': 3,
       };
 
       setPageIndex(pageMap[pathname] ?? 0);
@@ -66,13 +70,14 @@ function Header() {
         <div className='hidden md:flex items-center gap-x-2'>
           {!loading && (
             <div className='flex items-center gap-x-2'>
-              <Button variant={pageIndex == 0 ? 'secondary' : 'outline'} onClick={() => redirect("/calendar")}>Kalender</Button>
+              <Button variant={pageIndex == 0 ? 'secondary' : 'outline'} onClick={() => redirect("/home")}>Hem</Button>
+              <Button variant={pageIndex == 1 ? 'secondary' : 'outline'} onClick={() => redirect("/calendar")}>Kalender</Button>
               {showControlBtns && (
                 <div className='flex gap-x-2'>
                   {showAdminBtn && (
-                    <Button variant={pageIndex == 1 ? 'secondary' : 'outline'} onClick={() => redirect("/admin")}>Admin</Button>
+                    <Button variant={pageIndex == 2 ? 'secondary' : 'outline'} onClick={() => redirect("/admin")}>Admin</Button>
                   )}
-                  <Button className='px-[0.35rem]' variant={pageIndex == 2 ? 'secondary' : 'outline'} onClick={() => redirect("/profile")}><User /></Button>
+                  <Button className='px-[0.35rem]' variant={pageIndex == 3 ? 'secondary' : 'outline'} onClick={() => redirect("/profile")}><User /></Button>
                 </div>
               )}
             </div>
@@ -89,17 +94,20 @@ function Header() {
                   {["Hej där!", "Hallå där!", "Välkommen hit!", "Hej igen!", "Kul att se dig!", "Trevligt att träffas!", "Välkommen tillbaka!", "Hur mår du idag?"][Math.floor(Math.random() * 8)]}
                 </SheetTitle>
                 <SheetDescription className='flex flex-col gap-y-2'>
-                  <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/calendar")} index={0}>
+                  <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/home")} index={0}>
+                    <Home /> Hem
+                  </MobileButtons>
+                  <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/calendar")} index={1}>
                     <Calendar /> Kalender
                   </MobileButtons>
                   {showControlBtns && (
                     <span className='flex flex-col gap-y-2'>
                       {showAdminBtn && (
-                        <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/admin")} index={1}>
+                        <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/admin")} index={2}>
                           <ShieldCheck />Admin
                         </MobileButtons>
                       )}
-                      <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/profile")} index={2}>
+                      <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/profile")} index={3}>
                         <User /> Användare
                       </MobileButtons>
                     </span>
