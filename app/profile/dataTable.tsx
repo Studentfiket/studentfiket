@@ -17,7 +17,7 @@ type Props = {
   dataContent: Organisation[];
 }
 
-export default async function DataTable(props: Props) {
+export default async function DataTable(props: Readonly<Props>) {
 
   const { dataContent } = props;
   const pb = await loadPocketBase();

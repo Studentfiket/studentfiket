@@ -19,7 +19,6 @@ export const mapRecordsToShifts = (records: RecordModel[]): Shift[] => {
   }));
 }
 
-// TODO: fix the batch creation, without overloading the server
 /// Generates new shifts for a given period.
 /// @param startDate - The start date of the period.
 /// @param endDate - The end date of the period.
@@ -27,12 +26,12 @@ export const mapRecordsToShifts = (records: RecordModel[]): Shift[] => {
 export const generateNewPeriod = async (startDate: Date, endDate: Date): Promise<string> => {
   async function generateNewDay(date: DateTime) {
 
-    // TODO: remove this check for the weekend days
+    // TODO: maybe remove this check for the weekend days
     if (date.weekday !== 6 && date.weekday !== 7) {
       // Generate shifts for the day
       for (let i = 8; i <= 15; i += 2) {
         // Adjust the time for the lunch shift
-        i === 14 && i--;
+        i === 14 && i--;    // It's alright to modify the loop variable here, since it's only used for the shift hour
         const shiftHour = i
         // Create the shift, using the Swedish timezone
         const shiftStartTime = DateTime.fromObject({ ...date.toObject(), hour: shiftHour, minute: 0, second: 0, millisecond: 0 }, { zone: "utc" }).toISO();
@@ -40,7 +39,7 @@ export const generateNewPeriod = async (startDate: Date, endDate: Date): Promise
           console.error("Error creating shift start time");
           return;
         }
-        pb && await createShift(shiftStartTime, true, pb);
+        pb && await createShift(shiftStartTime, pb, true);
       }
     }
     else {
@@ -145,7 +144,7 @@ export const getUsersShifts = async (pb: Client, user: User) => {
 }
 //#endregion
 
-export const createShift = async (startTime: string, isCreatingInBatch: boolean = false, pb: Client) => {
+export const createShift = async (startTime: string, pb: Client, isCreatingInBatch: boolean = false) => {
 
   if (!pb?.authStore.model) {
     console.error("No user logged in");

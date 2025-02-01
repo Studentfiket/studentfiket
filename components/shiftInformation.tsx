@@ -9,7 +9,7 @@ type Props = {
   isLoading?: boolean;
 }
 
-export default function ShiftInformation(props: Props) {
+export default function ShiftInformation(props: Readonly<Props>) {
   const shiftDateStart = new Date(props.shift.start);
   const shiftDateEnd = new Date(props.shift.end);
   const shiftHasPassed = new Date() > shiftDateEnd;

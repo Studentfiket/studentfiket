@@ -3,13 +3,13 @@
 // Handles the PocketBase instance and user handling
 
 import PocketBase from 'pocketbase';
+import type Client from 'pocketbase';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { createAvatar } from '@dicebear/core';
 import { botttsNeutral } from '@dicebear/collection';
 import { getNextjsCookie } from "@/utils/server-cookie";
 import { Organisation, User } from './types';
-import Client from 'pocketbase';
 import { getOrganisationShifts } from './scheduling';
 import { getLunchShifts } from '@/utils/sharedFunctions';
 
@@ -33,7 +33,7 @@ export const loadPocketBase = async () => {
 
 export const userIsLoggedIn = async (): Promise<boolean> => {
   const pb = await loadPocketBase();
-  return pb?.authStore.model ? true : false;
+  return !!pb?.authStore.model;
 }
 
 export const userIsAdmin = async (): Promise<boolean> => {
