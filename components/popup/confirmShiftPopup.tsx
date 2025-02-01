@@ -6,8 +6,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Heart, CalendarMinus } from "lucide-react"
+import { Heart, CalendarMinus, CircleAlert } from "lucide-react"
 import ShiftInformation from "../shiftInformation";
+import { Alert } from "../ui/alert";
 
 type Props = {
   shift: Shift | null;
@@ -33,7 +34,15 @@ export default function ConfirmShiftPopup(props: Props) {
       <CardContent>
         <ShiftInformation shift={props.shift} isGrayedOut={false} />
       </CardContent>
-      <CardFooter className="w-full">
+      <CardFooter className="w-full flex flex-col items-start">
+        {props.userIsBooking &&
+          <Alert className="mb-4 items-center p-4 w-full rounded-md">
+            <div className="text-md text-muted-foreground flex items-center">
+              <CircleAlert size={42} className="mr-4" />
+              <p>Du kan avboka passet <span className="underline">senast 3 dagar</span> innan passet börjar.</p>
+            </div>
+          </Alert>
+        }
         <Button variant="outline" onClick={props.onCancel}>
           Tillbaka
         </Button>

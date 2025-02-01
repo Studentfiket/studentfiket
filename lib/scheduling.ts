@@ -6,6 +6,7 @@ import Client, { RecordModel } from 'pocketbase';
 import { loadPocketBase } from './pocketbase';
 import { Shift, User } from './types';
 import { DateTime } from "luxon";
+import { isCancellationAllowed } from '@/utils/sharedFunctions';
 
 // Map the records from the database to the Shift type
 export const mapRecordsToShifts = (records: RecordModel[]): Shift[] => {
@@ -25,7 +26,6 @@ export const mapRecordsToShifts = (records: RecordModel[]): Shift[] => {
 /// @returns A promise that resolves to a message when the shifts have been generated.
 export const generateNewPeriod = async (startDate: Date, endDate: Date): Promise<string> => {
   async function generateNewDay(date: DateTime) {
-    // console.log('Generating shifts for: ', date.toFormat('dd-MM-yyyy'), date.weekday);
 
     // TODO: remove this check for the weekend days
     if (date.weekday !== 6 && date.weekday !== 7) {
@@ -108,7 +108,6 @@ export const getShiftRecordById = async (pb: Client, id: string): Promise<Record
     return null;
   }
 
-  // return loadedShifts.find(shift => shift.id === id);
 }
 
 export const getNameFromId = async (id: string, collection: string): Promise<string> => {
@@ -126,26 +125,6 @@ export const getNameFromId = async (id: string, collection: string): Promise<str
     return "";
   }
 }
-
-// export const getShiftInfoById = async (id: string): Promise<{ organisation: string, workers: string[] } | null> => {
-//   const pb = await loadPocketBase();
-//   if (!pb?.authStore.model) {
-//     console.error("No user logged in");
-//     return null;
-//   }
-
-//   const shiftRecord = await getShiftRecordById(pb, id);
-//   log('shiftRecord: ', shiftRecord);
-
-//   if (shiftRecord) {
-//     return {
-//       organisation: shiftRecord.expand?.organisation?.name || "",
-//       workers: shiftRecord.expand?.workers?.map((worker: { name: string }) => worker.name) || []
-//     }
-//   }
-
-//   return null;
-// }
 
 export const getOrganisationShifts = async (pb: Client, orgId: string) => {
 
@@ -167,8 +146,6 @@ export const getUsersShifts = async (pb: Client, user: User) => {
 //#endregion
 
 export const createShift = async (startTime: string, isCreatingInBatch: boolean = false, pb: Client) => {
-
-  // const pb = await loadPocketBase();
 
   if (!pb?.authStore.model) {
     console.error("No user logged in");
@@ -288,6 +265,12 @@ export const updateShift = async (shiftId: string, user: User, bookedOrganisatio
   }
   else {
     // User is canceling the shift
+    // Validate that the date still allows for canceling the shift (at least 3 days before the shift)
+    if (!isCancellationAllowed(shift.startTime)) {
+      console.error("Too late to cancel the shift");
+      return { message: "Too late to cancel the shift" };
+    }
+
     // Remove the user from the shift
     const userIndex = shift.workers.indexOf(pb.authStore.model.id);
     if (userIndex > -1) {

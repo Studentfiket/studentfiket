@@ -19,9 +19,11 @@ import {
 } from "@/components/ui/alert"
 import { User, Shift } from "@/lib/types";
 import ShiftInformation from "../shiftInformation";
-import { CalendarHeart, Terminal } from "lucide-react"
+import { CalendarHeart, CircleAlert, Terminal } from "lucide-react"
 import { useState } from "react";
 import { updateShift } from "@/lib/scheduling";
+import { isCancellationAllowed } from "@/utils/sharedFunctions";
+import { NotCancellableAlert } from "../ui/custom/notCancellableAlert";
 
 type Props = {
   shift: Shift | null;
@@ -50,6 +52,7 @@ export default function BookShiftPopup(props: Readonly<Props>) {
   const [organisationId, setOrganisationId] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showIdAlert, setShowIdAlert] = useState<boolean>(false);
+  const [showNotCancellableAlert, setShowNotCancellableAlert] = useState<boolean>(false);
 
   if (!props.shift) {
     return
@@ -57,10 +60,12 @@ export default function BookShiftPopup(props: Readonly<Props>) {
 
   const shiftIsBooked = !!((props.shift.workers[0] !== undefined && props.shift.workers[1] !== undefined));
 
+  const shiftHasPassed = new Date(props.shift.start) < new Date();
   const shiftIsFree = !!((props.shift.workers[0] === undefined && props.shift.workers[1] === undefined));
   const shiftIsPrivate = (props.shift.organisation === "");
-  const shiftHasPassed = new Date(props.shift.start) < new Date();
   const userIsParticipating = !!((props.shift.workers[0] === props.user.name || props.shift.workers[1] === props.user.name));
+  const shiftIsCancellable = isCancellationAllowed(props.shift.start);
+  console.log("Shift is cancellable: ", shiftIsCancellable);
 
   // Check if the user is in the organisation of the shift
   const isUserInOrganisation = (shift: Shift, user: User) => {
@@ -137,7 +142,10 @@ export default function BookShiftPopup(props: Readonly<Props>) {
             Tillbaka
           </Button>
           {copyIdButton()}
-          <Button variant="destructive" onClick={() => submit(false)} >Avboka</Button>
+          {shiftIsCancellable ?
+            <Button variant="destructive" onClick={() => submit(false)}>Avboka</Button>
+            :
+            <Button variant="destructive" className="opacity-50" onClick={() => setShowNotCancellableAlert(true)}>Avboka</Button>}
         </div>
       )
     }
@@ -193,7 +201,7 @@ export default function BookShiftPopup(props: Readonly<Props>) {
         />
         {/* If the shift is bookable and the user is in at least 1 organisation; they get to choose */}
         {(isBookable && props.user.organisations.length > 0) && (
-          <Card className="mt-6 items-center p-4 w-full">
+          <Card className="mt-6 items-center p-4 w-full rounded-md">
             <p className="text-md text-muted-foreground">Jag vill jobba som</p>
             <Select value={organisationId} onValueChange={setOrganisationId} >
               <SelectTrigger className="text-xl py-6 mt-1">
@@ -212,7 +220,9 @@ export default function BookShiftPopup(props: Readonly<Props>) {
           </Card>
         )}
       </CardContent>
-      <CardFooter className="w-full">
+      <CardFooter className="w-full flex flex-col">
+        {/* Show the not cancellable alert */}
+        {showNotCancellableAlert && <NotCancellableAlert variant={"destructive"} />}
         {footer()}
       </CardFooter>
 
