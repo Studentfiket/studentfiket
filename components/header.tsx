@@ -94,9 +94,11 @@ function Header() {
                   </MobileButtons>
                   {showControlBtns && (
                     <span className='flex flex-col gap-y-2'>
-                      <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/admin")} index={1}>
-                        <ShieldCheck />Admin
-                      </MobileButtons>
+                      {showAdminBtn && (
+                        <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/admin")} index={1}>
+                          <ShieldCheck />Admin
+                        </MobileButtons>
+                      )}
                       <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/profile")} index={2}>
                         <User /> Användare
                       </MobileButtons>
