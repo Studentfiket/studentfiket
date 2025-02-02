@@ -1,5 +1,5 @@
 import { SiFacebook } from "react-icons/si";
-import { IoMdMail } from "react-icons/io";
+import { IoMdMail, IoIosBug } from "react-icons/io";
 
 export default function Footer() {
   return (
@@ -16,6 +16,9 @@ export default function Footer() {
           </button>
           <button className="bg-primary shadow-lg p-1 rounded transition-all hover:bg-foregroundLight">
             <a href="mailto:styrelsen@studentfiket.com" className="hover:underline"><IoMdMail size={36} /></a>
+          </button>
+          <button className="bg-primary shadow-lg p-1 rounded transition-all hover:bg-foregroundLight">
+            <a href="/feedback" className="hover:underline"><IoIosBug size={34} /></a>
           </button>
         </div>
       </div>

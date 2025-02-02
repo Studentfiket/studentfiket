@@ -28,7 +28,11 @@ export async function middleware(request: NextRequest) {
   }
 
   // Redirect to /login if user is not logged in and tries to access /calendar or /profile
-  if (request.nextUrl.pathname.startsWith("/calendar") || request.nextUrl.pathname.startsWith("/profile")) {
+  if (
+    request.nextUrl.pathname.startsWith("/calendar") ||
+    request.nextUrl.pathname.startsWith("/profile") ||
+    request.nextUrl.pathname.startsWith("/feedback")
+  ) {
     if (!pb.authStore.isValid) {
       const redirect_to = new URL("/login", request.url);
       return NextResponse.redirect(redirect_to);
