@@ -7,7 +7,7 @@ export default function Page() {
       <div className="h-full flex flex-col justify-center items-center gap-y-8 bg-gradient-to-b from-backgroundGradient-start to-backgroundGradient-end">
         <h1 className="text-4xl text-center font-light md:text-8xl">UNDER KONSTRUKTION</h1>
         <hr className="w-44 h-px bg-black border-black border-t" />
-        <div className="text-xl ml-6 text-center md:text-2xl">
+        <div className="text-xl text-center md:text-2xl">
           Studentfikets startsida är tyvärr inte färdig än. <br className='hidden md:block' />
           Titta gärna in senare!
         </div>
