@@ -42,7 +42,7 @@ export default function Popup(props: Props) {
   }
 
   return (
-    <div onClick={handleClick} className="absolute inset-0 w-screen h-screen z-20 grid place-items-center bg-[rgba(0,0,0,0.4)]">
+    <div onClick={handleClick} className="absolute inset-0 w-full h-screen z-20 grid place-items-center bg-[rgba(0,0,0,0.4)]">
       <Card className={"w-11/12 sm:w-[400px] mx-auto"}>
         {!showConfirmation ?
           <BookShiftPopup shift={props.shift} user={props.user} onCancel={closePopup} changePopup={changePopup} />
