@@ -110,6 +110,10 @@ export const getShiftRecordById = async (pb: Client, id: string): Promise<Record
 }
 
 export const getNameFromId = async (id: string, collection: string): Promise<string> => {
+  // The shift is private
+  if (id === "")
+    return "";
+
   const pb = await loadPocketBase();
   if (!pb?.authStore.model) {
     console.error("No user logged in");
