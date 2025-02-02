@@ -65,12 +65,14 @@ const EventContent = (props: Props) => {
         {startHour === 12 ?
           <div className="flex flex-col h-full items-center justify-center">
             <p className="hidden sm:block">{props.eventTime}</p>
-            <h3>{getTitle(shift)}</h3>
+            <h3 className="block sm:hidden">{getTitle(shift).length > 6 ? `${getTitle(shift).slice(0, 5)}..` : getTitle(shift)}</h3>
+            <h3 className="hidden sm:block">{getTitle(shift)}</h3>
           </div>
           :
           <div className="flex flex-col justify-start items-center">
             <p>{props.eventTime}</p>
-            <h3>{getTitle(shift)}</h3>
+            <h3 className="block sm:hidden">{getTitle(shift).length > 6 ? `${getTitle(shift).slice(0, 5)}..` : getTitle(shift)}</h3>
+            <h3 className="hidden sm:block">{getTitle(shift)}</h3>
           </div>
         }
         {startHour !== 12 && (

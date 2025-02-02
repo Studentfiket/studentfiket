@@ -1,4 +1,3 @@
-// import dynamic from 'next/dynamic';
 import { getUser, getUserOrganisations } from '@/lib/pocketbase';
 import { getShifts } from '@/lib/scheduling';
 import { redirect } from "next/navigation";
