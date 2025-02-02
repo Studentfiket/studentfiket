@@ -6,6 +6,9 @@ import Footer from "@/components/footer";
 export const metadata: Metadata = {
   title: "Studentfiket",
   description: "Studentfiket på Campus Norrköping",
+  icons: {
+    icon: './icon.png',
+  },
 };
 
 export default function RootLayout({

@@ -65,7 +65,7 @@ function Header() {
       <div className="flex w-full h-full justify-between items-center">
         <Link className='flex' href={"/"}>
           <h1 className="text-2xl">STUDENTFIKET</h1>
-          <h1 className='text-red-500 text-sm ml-1'>[BETA]</h1>
+          <h1 className='text-red-700 text-sm ml-1'>[BETA]</h1>
         </Link>
         <div className='hidden md:flex items-center gap-x-2'>
           {!loading && (

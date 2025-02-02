@@ -14,7 +14,7 @@ const config: Config = {
 				dark: '#0D0D0D',
 				coffeeBright: '#8C533E',
 				coffeeDark: '##401C0F',
-				redAccent: '#A62F03',
+				redAccent: '#7a2100',
 				backgroundGradient: { start: '#f1f5f9', end: '#dfe8f1' },
 				grayedOut: '#cdcdcd',
 				shift: {
