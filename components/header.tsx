@@ -2,6 +2,7 @@
 
 import { userIsLoggedIn, userIsAdmin } from '@/lib/pocketbase';
 import { User, Calendar, ShieldCheck, Menu, Home } from 'lucide-react';
+import { IoIosBug } from "react-icons/io";
 import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import {
@@ -54,7 +55,7 @@ function Header() {
         '/profile': 3,
       };
 
-      setPageIndex(pageMap[pathname] ?? 0);
+      setPageIndex(pageMap[pathname] ?? -1);
     };
 
     checkUserStatus();
@@ -93,25 +94,32 @@ function Header() {
                   {/* Random welcome message */}
                   {["Hej där!", "Hallå där!", "Välkommen hit!", "Hej igen!", "Kul att se dig!", "Trevligt att träffas!", "Välkommen tillbaka!", "Hur mår du idag?"][Math.floor(Math.random() * 8)]}
                 </SheetTitle>
-                <SheetDescription className='flex flex-col gap-y-2'>
-                  <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/home")} index={0}>
-                    <Home /> Hem
-                  </MobileButtons>
-                  <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/calendar")} index={1}>
-                    <Calendar /> Kalender
-                  </MobileButtons>
-                  {showControlBtns && (
-                    <span className='flex flex-col gap-y-2'>
-                      {showAdminBtn && (
-                        <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/admin")} index={2}>
-                          <ShieldCheck />Admin
+                <SheetDescription className='flex flex-col'>
+                  <span className='flex flex-col gap-y-2'>
+                    <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/home")} index={0}>
+                      <Home /> Hem
+                    </MobileButtons>
+                    <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/calendar")} index={1}>
+                      <Calendar /> Kalender
+                    </MobileButtons>
+                    {showControlBtns && (
+                      <span className='flex flex-col gap-y-2'>
+                        {showAdminBtn && (
+                          <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/admin")} index={2}>
+                            <ShieldCheck />Admin
+                          </MobileButtons>
+                        )}
+                        <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/profile")} index={3}>
+                          <User /> Användare
                         </MobileButtons>
-                      )}
-                      <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/profile")} index={3}>
-                        <User /> Användare
-                      </MobileButtons>
-                    </span>
-                  )}
+                      </span>
+                    )}
+                  </span>
+                  <div className='absolute bottom-0 left-0 p-6 w-full'>
+                    <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/feedback")} index={4}>
+                      <IoIosBug className='mr-1' /> Skicka feedback
+                    </MobileButtons>
+                  </div>
                 </SheetDescription>
               </SheetHeader>
             </SheetContent>

@@ -81,11 +81,11 @@ const FeedbackPage = () => {
                   id="description"
                 />
               </div>
-              <div className="w-full flex flex-col items-center gap-2">
+              <div className="w-full flex flex-col items-center gap-3">
                 <Button type="submit" className='w-80' size="lg">
                   Skicka
                 </Button>
-                <Button size="lg" variant={'secondary'} onClick={() => redirect("/calendar")}>
+                <Button size="lg" variant={'ghost'} onClick={() => redirect("/calendar")}>
                   Tillbaka
                 </Button>
               </div>
