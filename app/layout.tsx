@@ -1,4 +1,4 @@
-// import { Suspense } from "react";
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/header";
@@ -21,7 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased">
         <Header />
-        {/* <Suspense fallback={
+        <Suspense fallback={
           <div className="h-[92vh] relative w-full flex justify-center  gap-2 sm:items-center bg-slate-100">
             {Array.from({ length: 5 }).map((_, index) => {
               const size = Math.random() * 50 + 10;
@@ -40,9 +40,9 @@ export default function RootLayout({
               );
             })}
           </div>
-        }> */}
-        {children}
-        {/* </Suspense> */}
+        }>
+          {children}
+        </Suspense>
         <Footer />
       </body>
     </html>
