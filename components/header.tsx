@@ -33,6 +33,19 @@ function Header() {
 
   useEffect(() => {
     const checkUserStatus = async () => {
+      // To mark the active page
+      const pageMap: { [key: string]: number } = {
+        '/': 0,
+        '/home': 0,
+        '/calendar': 1,
+        '/login': 1,
+        '/register': 1,
+        '/admin': 2,
+        '/profile': 3,
+      };
+
+      setPageIndex(pageMap[pathname] ?? -1);
+
       const isLoggedIn = await userIsLoggedIn();
       setLoading(false);
       isLoggedIn ? setShowControlBtns(true) : setShowControlBtns(false);
@@ -44,18 +57,6 @@ function Header() {
       const isAdmin = await userIsAdmin();
       isAdmin && setShowAdminBtn(true);
 
-      // To mark the active page
-      const pageMap: { [key: string]: number } = {
-        '/': 0,
-        'home': 0,
-        '/calendar': 1,
-        '/login': 1,
-        '/register': 1,
-        '/admin': 2,
-        '/profile': 3,
-      };
-
-      setPageIndex(pageMap[pathname] ?? -1);
     };
 
     checkUserStatus();

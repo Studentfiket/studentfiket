@@ -18,9 +18,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased min-h-screen">
+      <body className="antialiased relative">
         <Header />
-        {children}
+        <main className="min-h-[92vh]">
+          {children}
+        </main>
         <Footer />
       </body>
     </html>

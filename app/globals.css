@@ -13,6 +13,7 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: "Open Sans", "Times New Roman", Helvetica, sans-serif;
+  min-height: 100vh;
 }
 
 h1 {
