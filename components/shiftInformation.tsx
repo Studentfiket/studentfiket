@@ -47,9 +47,9 @@ export default function ShiftInformation(props: Readonly<Props>) {
             <p className="text-md text-muted-foreground">Detta pass {shiftHasPassed ? "jobbade" : "jobbar"}</p>
             <p className="text-4xl font-light">{props.shift.workers[0]}</p>
             <p className="text-4xl font-light">{props.shift.workers[1]}</p>
-            {(props.shift.workers[0] || props.shift.workers[1]) ? (
+            {!isPrivate && (props.shift.workers[0] || props.shift.workers[1]) ? (
               <p className="text-muted-foreground">från <span className="font-bold">{props.shift.organisation}</span></p>
-            ) : (
+            ) : !isPrivate && (
               <p className="text-muted-foreground font-bold text-xl">{props.shift.organisation}</p>
             )}
           </div>
