@@ -10,15 +10,15 @@ export default function Footer() {
           <li>Denna hemsida är byggd av studenter vid LiU</li>
         </ul>
 
-        <div className="flex flex-row items-center text-left gap-x-4">
-          <button className="bg-primary shadow-lg p-1 rounded transition-all hover:bg-foregroundLight">
-            <a href="https://www.facebook.com/studentfiket/?locale=sv_SE" className="hover:underline"><SiFacebook size={30} /></a>
+        <div className="flex flex-row items-center gap-x-4">
+          <button className="flex justify-center items-center bg-primary shadow-lg p-1 w-11 h-11 rounded-xl  transition-all hover:bg-foregroundLight">
+            <a href="https://www.facebook.com/studentfiket/?locale=sv_SE"><SiFacebook size={30} /></a>
           </button>
-          <button className="bg-primary shadow-lg p-1 rounded transition-all hover:bg-foregroundLight">
-            <a href="mailto:styrelsen@studentfiket.com" className="hover:underline"><IoMdMail size={36} /></a>
+          <button className="flex justify-center items-center bg-primary shadow-lg p-1 w-11 h-11 rounded-xl  transition-all hover:bg-foregroundLight">
+            <a href="mailto:styrelsen@studentfiket.com"><IoMdMail size={36} /></a>
           </button>
-          <button className="bg-primary shadow-lg p-1 rounded transition-all hover:bg-foregroundLight">
-            <a href="/feedback" className="hover:underline"><IoIosBug size={34} /></a>
+          <button className="flex justify-center items-center bg-secondary shadow-lg w-10 h-10 rounded-xl transition-all hover:bg-foregroundLight">
+            <a href="/feedback" className="flex justify-center items-center hover:invert w-full h-full"><IoIosBug size={34} color="#18181b" /></a>
           </button>
         </div>
       </div>
