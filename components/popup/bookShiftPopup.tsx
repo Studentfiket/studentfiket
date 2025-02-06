@@ -61,11 +61,10 @@ export default function BookShiftPopup(props: Readonly<Props>) {
   const shiftIsBooked = !!((props.shift.workers[0] !== undefined && props.shift.workers[1] !== undefined));
 
   const shiftHasPassed = new Date(props.shift.start) < new Date();
-  const shiftIsFree = !!((props.shift.workers[0] === undefined && props.shift.workers[1] === undefined));
+  const shiftIsFree = !!((props.shift.workers[0] === undefined && props.shift.workers[1] === undefined) && props.shift.organisation === "");
   const shiftIsPrivate = (props.shift.organisation === "");
   const userIsParticipating = !!((props.shift.workers[0] === props.user.name || props.shift.workers[1] === props.user.name));
   const shiftIsCancellable = isCancellationAllowed(props.shift.start);
-  console.log("Shift is cancellable: ", shiftIsCancellable);
 
   // Check if the user is in the organisation of the shift
   const isUserInOrganisation = (shift: Shift, user: User) => {
