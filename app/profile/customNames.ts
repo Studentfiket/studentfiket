@@ -18,7 +18,8 @@ const customNames: { [key: string]: string | (() => string) } = {
   'oscfy612': "Borren 'Maskinen' Fyrk",
   'moyhj795': "Muuuuu Mjölkfrid",
   'alipa233': "Pelle ”Pelle” Pälverinne",
-  // Övrigt
+
+  'armab790': "123ArmenAbedi 456GimmeAKiss",
   'svega741': generateSvenGard,
 };
 
