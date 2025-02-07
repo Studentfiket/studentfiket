@@ -13,7 +13,7 @@ const customNames: { [key: string]: string | (() => string) } = {
   'emial133': "Lord Kurtinator",
   'ellbe420': "BINGSTRÖM",
   'jossp703': "Jossan Maggan Spångan",
-  'sofwa005': "Tayla Schwifty",
+  'sofwa005': "Tayla Schwift",
   'guskr150': "Ginkus 'KG' Kronholm",
   'oscfy612': "Borren 'Maskinen' Fyrk",
   'moyhj795': "Muuuuu Mjölkfrid",
