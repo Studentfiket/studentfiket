@@ -17,6 +17,7 @@ const customNames: { [key: string]: string | (() => string) } = {
   'guskr150': "Ginkus 'KG' Kronholm",
   'oscfy612': "Borren 'Maskinen' Fyrk",
   'moyhj795': "Muuuuu Mjölkfrid",
+  'alipa233': "Pelle ”Pelle” Pälverinne",
   // Övrigt
   'svega741': generateSvenGard,
 };
