@@ -21,6 +21,7 @@ const customNames: { [key: string]: string | (() => string) } = {
 
   'armab790': "123ArmenAbedi 456GimmeAKiss",
   'svega741': generateSvenGard,
+  'ottli370': "Stuvsta!"
 };
 
 export function getCustomName(user: User): string {
