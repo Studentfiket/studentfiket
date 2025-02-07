@@ -12,6 +12,7 @@ import { getUsersShifts } from "@/lib/scheduling";
 import DataTable from "./dataTable";
 import LogOutCard from "./logOutCard";
 import { getLunchShifts } from "@/utils/sharedFunctions";
+import { getCustomName } from "./customNames";
 
 
 async function ProfilePage() {
@@ -63,7 +64,8 @@ async function ProfilePage() {
       <Card className="sm:w-[600px]">
         <CardHeader>
           <CardTitle className="text-4xl tabular-nums">
-            {user.name}
+            {getCustomName(user)}
+            {/* {user.name} */}
           </CardTitle>
         </CardHeader>
       </Card>
