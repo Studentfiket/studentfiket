@@ -110,14 +110,17 @@ export default function BookShiftPopup(props: Readonly<Props>) {
 
   /// Footer of the popup
   const footer = () => {
+    const idOnClick = () => {
+      navigator.clipboard.writeText(props.shift?.id ?? '');
+      setShowIdAlert(true);
+      setTimeout(() => setShowIdAlert(false), 4000);
+    }
+
     /// Show the copy ID button if the user is an admin
     const copyIdButton = () => {
       return (
         props.user.isAdmin && (
-          <Button variant={'outline'} onClick={() => {
-            navigator.clipboard.writeText(props.shift?.id ?? '');
-            setShowIdAlert(true);
-          }}><span className="hidden sm:block">Kopiera </span>ID</Button>
+          <Button variant={'outline'} onClick={idOnClick}><span className="hidden sm:block">Kopiera&nbsp;</span>ID</Button>
         )
       );
     }
@@ -227,17 +230,16 @@ export default function BookShiftPopup(props: Readonly<Props>) {
 
       {/* ID copy alert */}
       {props.user.isAdmin && showIdAlert && (
-        <Alert className="absolute top-5 w-96" variant="filled">
+        <Alert className="absolute top-16 w-11/12 sm:w-[400px] fade-out" variant="filled">
           <div className="flex items-center">
             <Terminal className="h-4 w-4 mr-2" />
-            ID: <em>{props.shift?.id}</em>&nbsp;är kopierat till urklipp.
+            ID:&nbsp;<em>{props.shift?.id}</em>&nbsp;är kopierat till urklipp.
           </div>
-          <AlertDescription className="mt-2">
-
+          {/* <AlertDescription className="mt-2">
             <div className="mt-4 flex justify-start">
               <Button variant="outline" onClick={() => setShowIdAlert(false)}>Stäng</Button>
             </div>
-          </AlertDescription>
+          </AlertDescription> */}
         </Alert>
       )}
     </div >

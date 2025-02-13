@@ -20,6 +20,20 @@ h1 {
   @apply font-semibold text-4xl;
 }
 
+.fade-out {
+  animation: fadeOut 2.5s ease-in forwards;
+  animation-delay: 1.5s;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
