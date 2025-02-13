@@ -8,7 +8,7 @@ type Props = {
 
 const EventContent = (props: Props) => {
   const interactiveClass = "shadow-lg";
-  const bookedClass = "bg-shift-booked opacity-30 shadow-inner"
+  const bookedClass = "bg-shift-booked shadow-inner"
 
   // Generate the title of the shift (Organisation name, Private or Book)
   const getTitle = (shift: Shift) => {

@@ -18,7 +18,7 @@ const config: Config = {
 				backgroundGradient: { start: '#f1f5f9', end: '#dfe8f1' },
 				grayedOut: '#cdcdcd',
 				shift: {
-					booked: '#2C331E',
+					booked: '#313131',
 					reserved: '#E69F35',
 					reservedLight: '#F0B74A',
 					free: '#7bae10',
