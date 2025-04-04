@@ -63,12 +63,16 @@ function Header() {
   }, [pathname]);
 
   return (
-    <header className="top-0 left-0 right-0 text-white bg-primary px-4 h-[8vh]">
+    <header className={`top-0 left-0 right-0 text-white px-4 h-[8vh] ${pageIndex == 0 ? 'bg-transparent' : 'bg-primary'}`}>
       <div className="flex w-full h-full justify-between items-center">
-        <Link className='flex' href={"/"}>
-          <h1 className="text-2xl">STUDENTFIKET</h1>
-          <h1 className='text-red-700 text-sm ml-1'>[BETA]</h1>
-        </Link>
+        {pageIndex != 0 ? (
+          <Link className='flex' href={"/"}>
+            <h1 className="text-2xl">STUDENTFIKET</h1>
+            <h1 className='text-red-700 text-sm ml-1'>[BETA]</h1>
+          </Link>
+        ) : (
+          <div />
+        )}
         <div className='hidden md:flex items-center gap-x-2'>
           {!loading && (
             <div className='flex items-center gap-x-2'>
