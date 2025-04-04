@@ -13,6 +13,10 @@ import { Organisation, User } from './types';
 import { getOrganisationShifts } from './scheduling';
 import { getLunchShifts } from '@/utils/sharedFunctions';
 
+export const loadClient = async () => {
+  return new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
+}
+
 export const loadPocketBase = async () => {
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 

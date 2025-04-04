@@ -12,6 +12,7 @@ const config: Config = {
 			colors: {
 				bright: '#F2F2F2',
 				dark: '#0D0D0D',
+				coffee: '#673813',
 				coffeeBright: '#8C533E',
 				coffeeDark: '##401C0F',
 				redAccent: '#7a2100',

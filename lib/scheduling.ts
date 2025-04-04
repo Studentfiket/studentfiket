@@ -95,6 +95,30 @@ export const getShifts = async (pbClient?: Client): Promise<Shift[] | undefined>
   }
 }
 
+export const getTodaysShifts = async (pbClient: Client): Promise<Shift[] | undefined> => {
+  const pb = pbClient;
+
+  // Get the date from the start of the day until start of day tomorrow
+  const periodStart = DateTime.now().startOf('day').toISODate();
+  const periodEnd = DateTime.now().plus({ days: 1 }).endOf('day').toISODate();
+
+  console.log(periodStart, periodEnd);
+
+
+  try {
+    const resultList = await pb.collection('shifts').getList(1, 100, {
+      sort: 'startTime',
+      filter: `startTime >= "${periodStart} 00:00:00" && startTime <= "${periodEnd} 00:00:00"`,
+      expand: 'workers,organisation',
+    });
+
+    return mapRecordsToShifts(resultList.items);
+  } catch (error) {
+    console.error("Error getting shifts: ", error);
+    return [];
+  }
+}
+
 export const getShiftRecordById = async (pb: Client, id: string): Promise<RecordModel | null> => {
   console.log('Getting shift: ', id);
 
@@ -292,8 +316,6 @@ export const updateShift = async (shiftId: string, user: User, bookedOrganisatio
 
 
   try {
-    console.log('shift: ', shift);
-
     // TODO: Maybe dont need to return the updated shift. Should be taken care of by the subscription
     const updatedShift = await pb.collection('shifts').update(shift.id, shift);
     return { message: "Shift updated successfully", shift: mapRecordsToShifts([updatedShift])[0] };
