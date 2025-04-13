@@ -1,12 +1,23 @@
 import { SiFacebook } from "react-icons/si";
-import { IoMdMail, IoIosBug } from "react-icons/io";
+import { IoMdMail, IoIosBug, IoMdLink } from "react-icons/io";
 
 export default function Footer() {
   return (
     <footer className="left-0 right-0 bottom-0 text-white bg-primary px-4 sm:h-[10vh] py-5">
       <div className="container mx-auto flex flex-col-reverse sm:flex-row justify-between items-start h-full sm:items-center">
         <ul className="text-sm sm:text-md flex flex-col items-start sm:items-start mt-4 sm:mt-0">
-          <li>&copy;{new Date().getFullYear()} Albin Kjellberg</li>
+          <li>
+            <a href="http://www.kjellbergalbin.se" target="_blank" rel="noopener noreferrer" className="flex items-center gap-x-2">
+              &copy;{new Date().getFullYear()} Albin Kjellberg
+              <IoMdLink size={16} className="text-white" />
+            </a>
+          </li>
+          <li>
+            <a href="https://ivargavve.github.io/AeroCapture/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-x-2">
+              Drönarfilm av AeroCapture
+              <IoMdLink size={16} className="text-white" />
+            </a>
+          </li>
           <li>Denna hemsida är byggd av studenter vid LiU</li>
         </ul>
 

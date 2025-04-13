@@ -1,19 +1,43 @@
+'use client'
+import { useEffect } from "react";
 import { Card } from "./ui/card";
 import { Shift } from "@/lib/types";
 import { DateTime } from "luxon";
+import { useState } from "react";
 
 interface Props {
   todaysShifts: Shift[];
 }
 
-export default async function HomeEventContent(props: Props) {
-  console.log('props.todaysShifts', props.todaysShifts);
-  const now = DateTime.now().setZone("Europe/Stockholm").toISO();
-  console.log('now', now);
+function getNow(): string {
+  return DateTime.now().setZone("Europe/Stockholm").toISO() || "";
+}
 
+function formatTime(dateString: string): string {
+  const date = DateTime.fromISO(dateString).setZone('utc');
+  return date.toFormat("HH:mm");
+}
+
+export default function HomeEventContent(props: Props) {
+  const [now, setNow] = useState(getNow());
+
+
+  useEffect(() => {
+    // Update current time
+    setNow(getNow());
+
+    // Set up interval to update time every minute
+    const interval = setInterval(() => {
+      setNow(getNow());
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Find current shift
   const currentShift = props.todaysShifts.find(shift => {
-    const start = DateTime.fromJSDate(new Date(shift.start)).toUTC().toISO();
-    const end = DateTime.fromJSDate(new Date(shift.end)).toUTC().toISO();
+    const start = new Date(shift.start).toISOString();
+    const end = new Date(shift.end).toISOString();
 
     if (!start || !end || !now) {
       return false;
@@ -22,33 +46,52 @@ export default async function HomeEventContent(props: Props) {
     return now >= start && now < end;
   });
 
+  // Get upcoming shifts
+  const upcomingShifts = props.todaysShifts
+    .filter(shift => shift.organisation && shift.start > now)
+    .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
 
   return (
-    <div className="items-center">
-      <div className="w-full flex flex-col items-start">
+    <div className="items-center md:items-start w-full flex flex-col md:max-w-[600px]">
+      {/* Current Status */}
+      <Card className="rounded-lg p-6 mb-6 w-full">
         {currentShift ? (
           <div>
-            <h1 className="text-white text-left text-4xl md:text-8xl font-light">
-              Just nu jobbar <span className="font-bold">{currentShift.organisation}</span>
-            </h1>
+            <div className="text-xl">Just nu jobbar</div>
+            <div className="text-4xl md:text-6xl font-bold">{currentShift.organisation}</div>
+            <div className="text-xl">
+              {formatTime(currentShift.start)} - {formatTime(currentShift.end)}
+            </div>
           </div>
         ) : (
-          <h1 className="text-white text-4xl md:text-8xl font-light">Vi har just nu stängt</h1>
+          <div className="text-4xl md:text-6xl font-light">Vi har just nu stängt</div>
         )}
-        {props.todaysShifts.length > 0 && (
-          <div className="text-white text-4xl md:text-6xl font-light">
-            <ul className="mt-2">
-              {props.todaysShifts
-                .filter(shift => shift.organisation && new Date(shift.start).toISOString() > now)
-                .map((shift, index) => (
-                  <li key={index} className="text-2xl md:text-4xl font-light">
-                    {shift.organisation} : {new Date(shift.start).toLocaleString("sv-SE", { timeZone: "Europe/Stockholm", hour: "2-digit", minute: "2-digit" })} - {new Date(shift.end).toLocaleString("sv-SE", { timeZone: "Europe/Stockholm", hour: "2-digit", minute: "2-digit" })}
-                  </li>
-                ))}
-            </ul>
+      </Card>
+
+      {/* Upcoming Shifts */}
+      {upcomingShifts.length > 0 && (
+        <div className="mt-8 w-full lg:max-w-[600px]">
+          <h2 className="text-2xl mb-4 text-white">Kommande pass</h2>
+
+          <div className="space-y-2">
+            {upcomingShifts.map((shift, index) => (
+              <Card
+                key={index}
+                className={`rounded-lg px-6 py-3 w-full`}
+                style={{
+                  width: `${100 - index * 8}%`,
+                  maxWidth: "100%",
+                }}
+              >
+                <div className="font-bold text-xl">{shift.organisation}</div>
+                <div className="opacity-90">
+                  {formatTime(shift.start)} - {formatTime(shift.end)}
+                </div>
+              </Card>
+            ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

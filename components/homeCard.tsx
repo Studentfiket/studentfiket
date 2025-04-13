@@ -8,22 +8,9 @@ export default function HomeCard({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // const [marginTop, setMarginTop] = useState(-64);
-
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     const scrollY = window.scrollY;
-  //     const newMarginTop = Math.max(-64, -64 + scrollY * 0.07); // Adjust the multiplier for desired effect
-  //     setMarginTop(newMarginTop);
-  //   };
-
-  //   window.addEventListener("scroll", handleScroll);
-  //   return () => window.removeEventListener("scroll", handleScroll);
-  // }, []);
-
   return (
     <Card
-      className="relative flex-grow mt-0 px-4 items-center shadow-lg rounded-none rounded-t-[2rem]"
+      className="relative flex-grow mt-0 px-4 items-center rounded-b-none shadow-lg"
     >
       <div>
         <Image
