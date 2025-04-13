@@ -2,6 +2,7 @@
 // import { redirect } from "next/navigation";
 
 import HomeEventContent from "@/components/homeEventContent";
+import { redirect } from 'next/navigation'
 import { IconWithText } from "@/components/homepageButton";
 import { loadClient } from "@/lib/pocketbase";
 import { getTodaysShifts } from "@/lib/scheduling";
@@ -180,6 +181,7 @@ export default async function Page() {
                     boka ett pass och bli en del av Studentfiket.
                   </p>
                 }
+                url={"/login"}
               />
             </div>
 
