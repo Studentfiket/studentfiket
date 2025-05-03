@@ -14,7 +14,7 @@ export const IconWithText: React.FC<IconWithTextProps> = ({ icon, title, descrip
   return (
     // TODO: Fix onclick
     <button className="flex items-center text-left" onClick={() => { url && redirect(url) }}>
-      <div className="bg-primary p-3 rounded-full mr-4">{icon}</div>
+      <div className="bg-latteDark p-3 rounded-full mr-4">{icon}</div>
       <div>
         <h3 className="font-bold">{title}</h3>
         <div className="text-sm">{description}</div>

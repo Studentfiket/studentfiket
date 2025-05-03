@@ -3,7 +3,7 @@ import { IoMdMail, IoIosBug, IoMdLink } from "react-icons/io";
 
 export default function Footer() {
   return (
-    <footer className="left-0 right-0 bottom-0 text-white bg-primary px-4 sm:h-[10vh] py-5">
+    <footer className="left-0 right-0 bottom-0 text-white bg-primary px-4 sm:h-[12vh] py-5">
       <div className="container mx-auto flex flex-col-reverse sm:flex-row justify-between items-start h-full sm:items-center">
         <ul className="text-sm sm:text-md flex flex-col items-start sm:items-start mt-4 sm:mt-0">
           <li>
