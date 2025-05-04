@@ -4,6 +4,7 @@ import { Card } from "./ui/card";
 import { Shift } from "@/lib/types";
 import { DateTime } from "luxon";
 import { useState } from "react";
+import Link from "next/link";
 
 interface Props {
   todaysShifts: Shift[];
@@ -53,55 +54,39 @@ export default function HomeEventContent(props: Props) {
     .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
 
   return (
-    <div className="items-center md:items-start w-full flex flex-col gap-y-6 md:max-w-[600px]">
+    <Link href={"/calendar"} className="items-center md:items-start w-full flex flex-col gap-y-6">
       {/* Current Status */}
-      <Card className="rounded-2xl p-4 w-full bg-[#e7d9cc]">
+      <Card className="p-4 w-full bg-latteBright lg:h-[150px]">
         {currentShift ? (
           <div className="flex flex-row gap-4">
-            <div className="text-3xl md:text-6xl font-bold rounded-2xl bg-white px-4 py-8 w-min flex items-center">ÖPPET</div>
-            <div className="rounded-2xl bg-white p-4 flex flex-col w-full">
-              <div className="text-2xl md:text-5xl font-bold">{currentShift.organisation}</div>
+            <Card className="text-3xl md:text-5xl font-bold bg-white px-4 py-8 w-min flex items-center">ÖPPET</Card>
+            <Card className=" bg-white p-4 flex flex-col justify-center w-full">
+              <div className="text-2xl md:text-4xl font-bold">{currentShift.organisation}</div>
               <div className="text-xl">
                 {formatTime(currentShift.start)} - {formatTime(currentShift.end)}
               </div>
-            </div>
+            </Card>
           </div>
         ) : (
-          <div className="flex flex-row gap-4">
-            <div className="text-2xl md:text-6xl font-bold rounded-2xl text-white bg-shift-booked px-4 py-8 w-min flex items-center">STÄNGT</div>
-            <div className="rounded-2xl bg-shift-booked text-white p-4 flex items-center w-full text-xl">
-              Kom gärna tillbaka imorgon!
-            </div>
+          <div className="flex flex-row gap-4 h-full">
+            <Card className="p-4 flex items-center w-full text-xl">
+              Vi har just nu stängt. <br className="lg:hidden" />
+              Kom gärna tillbaka senare!
+            </Card>
           </div>
         )}
-
-
-        {/* {currentShift ? (
-          <div>
-            <div className="text-xl">Just nu jobbar</div>
-            <div className="text-4xl md:text-6xl font-bold">{currentShift.organisation}</div>
-            <div className="text-xl">
-              {formatTime(currentShift.start)} - {formatTime(currentShift.end)}
-            </div>
-          </div>
-        ) : (
-          <div>
-            <div className="text-2xl md:text-4xl font-light">Vi har just nu</div>
-            <div className="text-4xl md:text-6xl font-bold">STÄNGT</div>
-          </div>
-        )} */}
       </Card>
 
       {/* Upcoming Shifts */}
       {upcomingShifts.length > 0 && (
         <div className="w-full bg-latteBright shadow-xl rounded-2xl p-4 lg:max-w-[600px]">
-          <h2 className="text-2xl mb-4">Kommande pass</h2>
+          <h2 className="text-2xl mb-4 font-bold">Kommande pass</h2>
 
           <div className="space-y-2">
             {upcomingShifts.map((shift, index) => (
               <Card
                 key={index}
-                className={`rounded-lg px-6 py-3 w-full text-white`}
+                className={`px-6 py-3 w-full text-white border-none`}
                 style={{
                   backgroundColor: upcomingShiftColors[index],
                   width: `${100 - index * 8}%`,
@@ -117,6 +102,6 @@ export default function HomeEventContent(props: Props) {
           </div>
         </div>
       )}
-    </div>
+    </Link>
   );
 }

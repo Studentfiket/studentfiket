@@ -63,7 +63,7 @@ function Header() {
   }, [pathname]);
 
   return (
-    <header className={`top-0 left-0 right-0 text-white px-4 h-[8vh] z-20 ${pageIndex == 0 ? 'bg-transparent' : 'bg-primary'}`}>
+    <header className={`top-0 left-0 right-0 text-white px-4 h-[8vh] z-20 ${pageIndex == 0 ? 'bg-latte' : 'bg-primary'}`}>
       <div className="flex w-full h-full justify-between items-center">
         {pageIndex != 0 ? (
           <Link className='flex' href={"/"}>
