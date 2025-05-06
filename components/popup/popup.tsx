@@ -8,6 +8,7 @@ type Props = {
   shift: Shift | null;
   user: User;
   onCancel: () => void;
+  isNolleP: boolean;
 }
 
 export default function Popup(props: Props) {
@@ -45,7 +46,7 @@ export default function Popup(props: Props) {
     <div onClick={handleClick} className="absolute inset-0 w-full h-screen z-20 grid place-items-center bg-[rgba(0,0,0,0.4)]">
       <Card className={"w-11/12 sm:w-[400px] mx-auto"}>
         {!showConfirmation ?
-          <BookShiftPopup shift={props.shift} user={props.user} onCancel={closePopup} changePopup={changePopup} />
+          <BookShiftPopup shift={props.shift} user={props.user} onCancel={closePopup} changePopup={changePopup} isNolleP={props.isNolleP} />
           :
           <ConfirmShiftPopup shift={props.shift} onCancel={closePopup} userIsBooking={userIsBooking} />
         }

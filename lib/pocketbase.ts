@@ -13,11 +13,11 @@ import { Organisation, User } from './types';
 import { getOrganisationShifts } from './scheduling';
 import { getLunchShifts } from '@/utils/sharedFunctions';
 
-export const loadClient = async () => {
+export const loadClient = async (): Promise<PocketBase> => {
   return new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 }
 
-export const loadPocketBase = async (): Promise<PocketBase | undefined> => {
+export const loadPocketBase = async (): Promise<PocketBase> => {
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
   const cookieStore = cookies();
   const pb_auth = cookieStore.get('pb_auth');
@@ -28,8 +28,7 @@ export const loadPocketBase = async (): Promise<PocketBase | undefined> => {
     try {
       pb.authStore.loadFromCookie(cookie);
     } catch (error) {
-      console.error("Error loading auth store from cookie", error);
-      return undefined;
+      throw new Error("Error loading auth store from cookie");
     }
   }
 
@@ -40,13 +39,27 @@ export const loadPocketBase = async (): Promise<PocketBase | undefined> => {
       await pb.collection('users').authRefresh();
     } catch (e) {
       console.error("Auth refresh failed", e);
-      // optionally clear auth store
+      // Clear auth store
       pb.authStore.clear();
     }
   }
 
   return pb;
 };
+
+export const checkNollep = async (): Promise<boolean> => {
+  const pb = await loadClient();
+
+  try {
+    const record = await pb.collection('states').getFirstListItem('name="NOLLE_P"');
+    return record.isActive;
+  } catch (error) {
+    // If the record is not found, something has gone wrong.
+    // Default to true if it happens to currently be Nolle-P
+    console.error("Error getting Nolle-P state: ", error);
+    return true;
+  }
+}
 
 
 export const userIsLoggedIn = async (): Promise<boolean> => {

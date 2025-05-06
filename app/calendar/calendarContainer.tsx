@@ -1,4 +1,4 @@
-import { getUser, getUserOrganisations } from '@/lib/pocketbase';
+import { checkNollep as checkNolleP, getUser, getUserOrganisations } from '@/lib/pocketbase';
 import { getShifts } from '@/lib/scheduling';
 import { redirect } from "next/navigation";
 import CalendarView from './calendarView';
@@ -23,11 +23,14 @@ export default async function CalendarContainer() {
   }
   user.organisations = await getUserOrganisations();
 
+  // Check if it it Nolle-P
+  const isNolleP = await checkNolleP()
+
   if (!loadedShifts) {
     return <div>Loading...</div>;
   }
 
   return (
-    <CalendarView loadedShifts={loadedShifts} user={user} />
+    <CalendarView loadedShifts={loadedShifts} user={user} isNolleP={isNolleP} />
   );
 }

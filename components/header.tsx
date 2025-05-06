@@ -75,6 +75,7 @@ function Header() {
               width={193}
               height={167}
               className="h-[1.3rem] ml-[0.1rem] w-auto"
+              priority
             />
             <h1 className="text-2xl">DENTFIKET</h1>
           </Link>

@@ -37,7 +37,7 @@ function AdminPage({
       <Card>
         <CardHeader>
           <CardTitle>
-            NolleP mode - [UNDER UTVECKLING]
+            Nolle-P mode
           </CardTitle>
         </CardHeader>
         <CardContent>

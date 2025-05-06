@@ -7,6 +7,7 @@ type Props = {
   shift: Shift;
   isGrayedOut?: boolean;
   isLoading?: boolean;
+  isNolleP: boolean;
 }
 
 export default function ShiftInformation(props: Readonly<Props>) {
@@ -45,13 +46,23 @@ export default function ShiftInformation(props: Readonly<Props>) {
           <div>
             <Separator className="mb-2 " />
             <p className="text-md text-muted-foreground">Detta pass {shiftHasPassed ? "jobbade" : "jobbar"}</p>
-            <p className="text-4xl font-light">{props.shift.workers[0]}</p>
-            <p className="text-4xl font-light">{props.shift.workers[1]}</p>
-            {!isPrivate && (props.shift.workers[0] || props.shift.workers[1]) ? (
-              <p className="text-muted-foreground">från <span className="font-bold">{props.shift.organisation}</span></p>
-            ) : !isPrivate && (
-              <p className="text-muted-foreground font-bold text-xl">{props.shift.organisation}</p>
-            )}
+            {/* Only show the organisation name if its currently Nolle-P */}
+            {props.isNolleP && !isPrivate ?
+              (
+                <div>
+                  <p className="text-4xl font-light">{props.shift.organisation}</p>
+                </div>
+              ) : (
+                <div>
+                  <p className="text-4xl font-light">{props.shift.workers[0]}</p>
+                  <p className="text-4xl font-light">{props.shift.workers[1]}</p>
+                  {!isPrivate && (props.shift.workers[0] || props.shift.workers[1]) ? (
+                    <p className="text-muted-foreground">från <span className="font-bold">{props.shift.organisation}</span></p>
+                  ) : !isPrivate && (
+                    <p className="text-muted-foreground font-bold text-xl">{props.shift.organisation}</p>
+                  )}
+                </div>
+              )}
           </div>
         }
       </div>
