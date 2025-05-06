@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import BackgroundColorWrapper from "@/components/backgroundColorWrapper";
+
 
 export const metadata: Metadata = {
   title: "Studentfiket",
@@ -16,14 +18,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html lang="en">
       <body className="antialiased relative">
-        <Header />
-        <main className="min-h-[92vh]">
-          {children}
-        </main>
-        <Footer />
+        <BackgroundColorWrapper>
+          <Header />
+          <main className="min-h-[92vh]">
+            {children}
+          </main>
+          <Footer />
+        </BackgroundColorWrapper>
       </body>
     </html>
   );

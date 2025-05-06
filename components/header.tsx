@@ -76,7 +76,7 @@ function Header() {
         <div className='hidden md:flex items-center gap-x-2'>
           {!loading && (
             <div className='flex items-center gap-x-2'>
-              <Button variant={pageIndex == 0 ? 'secondary' : 'outline'} onClick={() => redirect("/home")}>Hem</Button>
+              <Button variant={pageIndex == 0 ? 'secondary' : 'outline'} onClick={() => redirect("/")}>Hem</Button>
               <Button variant={pageIndex == 1 ? 'secondary' : 'outline'} onClick={() => redirect("/calendar")}>Kalender</Button>
               {showControlBtns && (
                 <div className='flex gap-x-2'>
@@ -101,7 +101,7 @@ function Header() {
                 </SheetTitle>
                 <SheetDescription className='flex flex-col'>
                   <span className='flex flex-col gap-y-2'>
-                    <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/home")} index={0}>
+                    <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/")} index={0}>
                       <Home /> Hem
                     </MobileButtons>
                     <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/calendar")} index={1}>

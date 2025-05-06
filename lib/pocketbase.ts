@@ -17,23 +17,37 @@ export const loadClient = async () => {
   return new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 }
 
-export const loadPocketBase = async () => {
+export const loadPocketBase = async (): Promise<PocketBase | undefined> => {
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
-
   const cookieStore = cookies();
   const pb_auth = cookieStore.get('pb_auth');
-  const cookie = await getNextjsCookie(pb_auth)
+  const cookie = await getNextjsCookie(pb_auth);
+
+  // Check if the auth cookie is present and load it into the auth store
   if (cookie) {
     try {
-      pb.authStore.loadFromCookie(cookie)
-      // pb.authStore.isValid && await pb.collection('users').authRefresh()
-      return pb;
+      pb.authStore.loadFromCookie(cookie);
     } catch (error) {
-      console.error("Error loading auth store from cookie", error)
+      console.error("Error loading auth store from cookie", error);
       return undefined;
     }
   }
-}
+
+  // Check if the auth store is valid and refresh the token if it is
+  // Used to keep the user logged in
+  if (pb.authStore.isValid) {
+    try {
+      await pb.collection('users').authRefresh();
+    } catch (e) {
+      console.error("Auth refresh failed", e);
+      // optionally clear auth store
+      pb.authStore.clear();
+    }
+  }
+
+  return pb;
+};
+
 
 export const userIsLoggedIn = async (): Promise<boolean> => {
   const pb = await loadPocketBase();

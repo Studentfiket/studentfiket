@@ -92,7 +92,7 @@ export default async function Page() {
       <div className='w-full min-h-[92vh] max-w-[1300px] flex flex-col md:items-start md:pt-8 px-6 md:px-20 pb-6 gap-y-6 md:gap-x-12'>
         {/* Hero and schedule */}
         <div className="flex flex-col gap-4 lg:flex-row">
-          <div className="flex flex-col gap-6 text-center lg:bg-latteBright p-4 pt-0 rounded-xl">
+          <div className="flex flex-col gap-6 text-center lg:bg-latteBright rounded-xl">
             <div className="h-[150px] flex justify-center items-center">
               <Image
                 src="/images/logo.png"
@@ -103,7 +103,7 @@ export default async function Page() {
               />
             </div>
 
-            <Card className="p-4 h-full hidden lg:block">
+            <Card className="p-4 mx-4 h-full hidden lg:block">
               <h3 className="font-bold mb-3">Ditt studentfik på Campus Norrköping</h3>
               <p>
                 Studentfiket är ett café som drivs av studenter för studenter på Campus Norrköping.

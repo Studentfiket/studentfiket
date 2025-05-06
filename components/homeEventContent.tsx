@@ -58,9 +58,9 @@ export default function HomeEventContent(props: Props) {
       {/* Current Status */}
       <Card className="p-4 w-full bg-latteBright lg:h-[150px]">
         {currentShift ? (
-          <div className="flex flex-row gap-4">
-            <Card className="text-3xl md:text-5xl font-bold bg-white px-4 py-8 w-min flex items-center">ÖPPET</Card>
-            <Card className=" bg-white p-4 flex flex-col justify-center w-full">
+          <div className="flex flex-col gap-4 sm:flex-row">
+            <Card className="text-3xl md:text-5xl font-bold bg-white px-4 py-6 sm:py-8 w-full sm:w-min flex items-center">ÖPPET</Card>
+            <Card className="bg-white p-4 flex flex-col justify-center w-full">
               <div className="text-2xl md:text-4xl font-bold">{currentShift.organisation}</div>
               <div className="text-xl">
                 {formatTime(currentShift.start)} - {formatTime(currentShift.end)}
