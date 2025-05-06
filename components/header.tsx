@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image';
 import { userIsLoggedIn, userIsAdmin } from '@/lib/pocketbase';
 import { User, Calendar, ShieldCheck, Menu, Home } from 'lucide-react';
 import { IoIosBug } from "react-icons/io";
@@ -66,9 +67,16 @@ function Header() {
     <header className={`top-0 left-0 right-0 text-white px-4 h-[8vh] z-20 ${pageIndex == 0 ? 'bg-latte' : 'bg-primary'}`}>
       <div className="flex w-full h-full justify-between items-center">
         {pageIndex != 0 ? (
-          <Link className='flex' href={"/"}>
-            <h1 className="text-2xl">STUDENTFIKET</h1>
-            <h1 className='text-red-700 text-sm ml-1'>[BETA]</h1>
+          <Link className='flex items-center h-full' href={"/"}>
+            <h1 className="text-2xl">ST</h1>
+            <Image
+              src="/images/cup.png"
+              alt="Cup"
+              width={193}
+              height={167}
+              className="h-[1.3rem] ml-[0.1rem] w-auto"
+            />
+            <h1 className="text-2xl">DENTFIKET</h1>
           </Link>
         ) : (
           <div />

@@ -98,7 +98,7 @@ export default async function Page() {
                 src="/images/logo.png"
                 alt="Logo"
                 width={2000}
-                height={619}
+                height={580}
                 className="object-contain h-full"
               />
             </div>
