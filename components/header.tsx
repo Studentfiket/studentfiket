@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image';
-import { userIsLoggedIn, userIsAdmin } from '@/lib/pocketbase';
+import { userIsAdmin, getLoggedInUser } from '@/lib/pocketbase';
 import { User, Calendar, ShieldCheck, Menu, Home } from 'lucide-react';
 import { IoIosBug } from "react-icons/io";
 import { useEffect, useState } from 'react';
@@ -47,17 +47,14 @@ function Header() {
 
       setPageIndex(pageMap[pathname] ?? -1);
 
-      const isLoggedIn = await userIsLoggedIn();
+      const user = await getLoggedInUser();
+      const isLoggedIn = user !== null;
+      const isAdmin = user?.isAdmin || false;
+
       setLoading(false);
-      isLoggedIn ? setShowControlBtns(true) : setShowControlBtns(false);
 
-      // If we're not in the browser, we can't check the URL (makes typescript happy)
-      if (typeof window === 'undefined')
-        return;
-
-      const isAdmin = await userIsAdmin();
-      isAdmin && setShowAdminBtn(true);
-
+      setShowControlBtns(isLoggedIn); // Show the control buttons if the user is logged in
+      setShowAdminBtn(isAdmin); // If the user is logged in, show the admin button if they are an admin
     };
 
     checkUserStatus();

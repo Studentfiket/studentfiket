@@ -79,7 +79,7 @@ export default function HomeEventContent(props: Props) {
 
       {/* Upcoming Shifts */}
       {upcomingShifts.length > 0 && (
-        <div className="w-full bg-latteBright shadow-xl rounded-2xl p-4 lg:max-w-[600px]">
+        <div className="w-full bg-latteBright shadow-xl rounded-2xl p-4 lg:max-w-[600px] lg:h-full">
           <h2 className="text-2xl mb-4 font-bold">Kommande pass</h2>
 
           <div className="space-y-2">

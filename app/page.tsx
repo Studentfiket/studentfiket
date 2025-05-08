@@ -92,7 +92,7 @@ export default async function Page() {
       <div className='w-full min-h-[92vh] max-w-[1300px] flex flex-col md:items-start md:pt-8 px-6 md:px-20 pb-6 gap-y-6 md:gap-x-12'>
         {/* Hero and schedule */}
         <div className="flex flex-col gap-4 lg:flex-row">
-          <div className="flex flex-col gap-6 text-center lg:bg-latteBright rounded-xl">
+          <div className="flex flex-col gap-6 text-center lg:pb-4 lg:bg-latteBright rounded-xl">
             <div className="h-[150px] flex justify-center items-center">
               <Image
                 src="/images/logo.png"
