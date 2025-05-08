@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image';
-import { userIsAdmin, getLoggedInUser } from '@/lib/pocketbase';
+import { getLoggedInUser } from '@/lib/pocketbase';
 import { User, Calendar, ShieldCheck, Menu, Home } from 'lucide-react';
 import { IoIosBug } from "react-icons/io";
 import { useEffect, useState } from 'react';

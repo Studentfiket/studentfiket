@@ -1,10 +1,11 @@
 'use server'
 
-import { loadPocketBase, userIsAdmin } from '@/lib/pocketbase';
+import { getLoggedInUser, loadPocketBase } from '@/lib/pocketbase';
 
 export async function toggleFlag(name: string, newValue: boolean): Promise<boolean> {
   const pb = await loadPocketBase();
-  const isAdmin = await userIsAdmin();
+  const user = await getLoggedInUser();
+  const isAdmin = user?.isAdmin || false;
 
   // Check if the user is logged in and is admin
   if (!isAdmin) {
