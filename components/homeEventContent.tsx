@@ -11,7 +11,7 @@ interface Props {
 }
 
 function getNow(): string {
-  return DateTime.now().setZone("Europe/Stockholm").toISO() || "";
+  return DateTime.now().setZone("Europe/Stockholm").toISO() ?? "";
 }
 
 function formatTime(dateString: string): string {
@@ -85,7 +85,7 @@ export default function HomeEventContent(props: Readonly<Props>) {
           <div className="space-y-2">
             {upcomingShifts.map((shift, index) => (
               <Card
-                key={index}
+                key={shift.id}
                 className={`px-6 py-3 w-full text-white border-none`}
                 style={{
                   backgroundColor: upcomingShiftColors[index],

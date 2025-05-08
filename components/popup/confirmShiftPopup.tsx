@@ -16,7 +16,7 @@ type Props = {
   onCancel: () => void;
 }
 
-export default function ConfirmShiftPopup(props: Props) {
+export default function ConfirmShiftPopup(props: Readonly<Props>) {
   if (!props.shift) {
     return null;
   }
@@ -32,7 +32,7 @@ export default function ConfirmShiftPopup(props: Props) {
         </div>
       </CardHeader>
       <CardContent>
-        <ShiftInformation shift={props.shift} isGrayedOut={false} />
+        <ShiftInformation shift={props.shift} isGrayedOut={false} isNolleP={false} />
       </CardContent>
       <CardFooter className="w-full flex flex-col items-start">
         {props.userIsBooking &&

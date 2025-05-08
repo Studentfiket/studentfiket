@@ -12,8 +12,8 @@ import { isCancellationAllowed } from '@/utils/sharedFunctions';
 export const mapRecordsToShifts = (records: RecordModel[]): Shift[] => {
   return records.map((record: RecordModel): Shift => ({
     id: record.id,
-    organisation: record.expand?.organisation?.name || "",
-    workers: record.expand?.workers?.map((worker: { name: string }) => worker.name) || [],
+    organisation: record.expand?.organisation?.name ?? "",
+    workers: record.expand?.workers?.map((worker: { name: string }) => worker.name) ?? [],
     start: record.startTime,
     end: record.endTime
   }));
@@ -232,6 +232,7 @@ export const createShift = async (startTime: string, pb: Client, isCreatingInBat
   }
 }
 
+// TODO: Refactor to a smaller footprint
 /// Updates a shift in the database by its ID.
 /// @param shiftId - The ID of the shift to be updated.
 /// @returns A promise that resolves to an object containing a message and optionally the updated shift.
