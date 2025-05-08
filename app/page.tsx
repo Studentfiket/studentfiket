@@ -1,91 +1,86 @@
-// import ThreeScene from "@/components/scene";
-// import { redirect } from "next/navigation";
-
+import PocketBase from "pocketbase";
 import HomeEventContent from "@/components/homeEventContent";
 import { IconWithText } from "@/components/homepageButton";
 import { Card } from "@/components/ui/card";
-import { loadClient } from "@/lib/pocketbase";
 import { getTodaysShifts } from "@/lib/scheduling";
-import { Shift } from "@/lib/types";
-import { DateTime } from "luxon";
+// import { Shift } from "@/lib/types";
+// import { DateTime } from "luxon";
 import Image from "next/image";
 import Link from "next/link";
 import { FiCoffee, FiCalendar } from "react-icons/fi";
 
 export default async function Page() {
 
-  const pb = await loadClient();
-  // const todaysShifts = await getTodaysShifts(pb);
+  const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
+  const todaysShifts = await getTodaysShifts(pb);
 
-  const mockShifts: Shift[] = [
-    {
-      id: "2",
-      organisation: "Studentfiket",
-      workers: ["Charlie", "Dave"],
-      start: DateTime.fromISO(new Date().toISOString())
-        .setZone("utc")
-        .set({ hour: 12, minute: 0, second: 0, millisecond: 0 })
-        .toFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"),
-      end: DateTime.fromISO(new Date().toISOString())
-        .setZone("utc")
-        .set({ hour: 15, minute: 0, second: 0, millisecond: 0 })
-        .toFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"),
-    },
-    {
-      id: "3",
-      organisation: "Studentfiket",
-      workers: ["Eve", "Frank"],
-      start: DateTime.fromISO(new Date().toISOString())
-        .setZone("utc")
-        .set({ hour: 17, minute: 0, second: 0, millisecond: 0 })
-        .toFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"),
-      end: DateTime.fromISO(new Date().toISOString())
-        .setZone("utc")
-        .set({ hour: 18, minute: 0, second: 0, millisecond: 0 })
-        .toFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"),
-    },
-    {
-      id: "4",
-      organisation: "Studentfiket",
-      workers: ["Grace", "Hank"],
-      start: DateTime.fromISO(new Date().toISOString())
-        .setZone("utc")
-        .set({ hour: 18, minute: 0, second: 0, millisecond: 0 })
-        .toFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"),
-      end: DateTime.fromISO(new Date().toISOString())
-        .setZone("utc")
-        .set({ hour: 20, minute: 0, second: 0, millisecond: 0 })
-        .toFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"),
-    },
-    {
-      id: "5",
-      organisation: "Studentfiket",
-      workers: ["Ivy", "Jack"],
-      start: DateTime.fromISO(new Date().toISOString())
-        .setZone("utc")
-        .set({ hour: 20, minute: 0, second: 0, millisecond: 0 })
-        .toFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"),
-      end: DateTime.fromISO(new Date().toISOString())
-        .setZone("utc")
-        .set({ hour: 22, minute: 0, second: 0, millisecond: 0 })
-        .toFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"),
-    },
-    {
-      id: "6",
-      organisation: "Studentfiket",
-      workers: ["Ivy", "Jack"],
-      start: DateTime.fromISO(new Date().toISOString())
-        .setZone("utc")
-        .set({ hour: 22, minute: 0, second: 0, millisecond: 0 })
-        .toFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"),
-      end: DateTime.fromISO(new Date().toISOString())
-        .setZone("utc")
-        .set({ hour: 23, minute: 0, second: 0, millisecond: 0 })
-        .toFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"),
-    },
-  ];
-
-  const todaysShifts = mockShifts;
+  // const mockShifts: Shift[] = [
+  //   {
+  //     id: "2",
+  //     organisation: "Studentfiket",
+  //     workers: ["Charlie", "Dave"],
+  //     start: DateTime.fromISO(new Date().toISOString())
+  //       .setZone("utc")
+  //       .set({ hour: 12, minute: 0, second: 0, millisecond: 0 })
+  //       .toFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"),
+  //     end: DateTime.fromISO(new Date().toISOString())
+  //       .setZone("utc")
+  //       .set({ hour: 15, minute: 0, second: 0, millisecond: 0 })
+  //       .toFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"),
+  //   },
+  //   {
+  //     id: "3",
+  //     organisation: "Studentfiket",
+  //     workers: ["Eve", "Frank"],
+  //     start: DateTime.fromISO(new Date().toISOString())
+  //       .setZone("utc")
+  //       .set({ hour: 17, minute: 0, second: 0, millisecond: 0 })
+  //       .toFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"),
+  //     end: DateTime.fromISO(new Date().toISOString())
+  //       .setZone("utc")
+  //       .set({ hour: 18, minute: 0, second: 0, millisecond: 0 })
+  //       .toFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"),
+  //   },
+  //   {
+  //     id: "4",
+  //     organisation: "Studentfiket",
+  //     workers: ["Grace", "Hank"],
+  //     start: DateTime.fromISO(new Date().toISOString())
+  //       .setZone("utc")
+  //       .set({ hour: 18, minute: 0, second: 0, millisecond: 0 })
+  //       .toFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"),
+  //     end: DateTime.fromISO(new Date().toISOString())
+  //       .setZone("utc")
+  //       .set({ hour: 20, minute: 0, second: 0, millisecond: 0 })
+  //       .toFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"),
+  //   },
+  //   {
+  //     id: "5",
+  //     organisation: "Studentfiket",
+  //     workers: ["Ivy", "Jack"],
+  //     start: DateTime.fromISO(new Date().toISOString())
+  //       .setZone("utc")
+  //       .set({ hour: 20, minute: 0, second: 0, millisecond: 0 })
+  //       .toFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"),
+  //     end: DateTime.fromISO(new Date().toISOString())
+  //       .setZone("utc")
+  //       .set({ hour: 22, minute: 0, second: 0, millisecond: 0 })
+  //       .toFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"),
+  //   },
+  //   {
+  //     id: "6",
+  //     organisation: "Studentfiket",
+  //     workers: ["Ivy", "Jack"],
+  //     start: DateTime.fromISO(new Date().toISOString())
+  //       .setZone("utc")
+  //       .set({ hour: 22, minute: 0, second: 0, millisecond: 0 })
+  //       .toFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"),
+  //     end: DateTime.fromISO(new Date().toISOString())
+  //       .setZone("utc")
+  //       .set({ hour: 23, minute: 0, second: 0, millisecond: 0 })
+  //       .toFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"),
+  //   },
+  // ];
 
   return (
     <div className='w-full bg-latte flex justify-center'>
@@ -151,7 +146,7 @@ export default async function Page() {
                 </p>
               </div>
               <div>
-                <h3 className="font-bold mb-3">Idéellt arbete</h3>
+                <h3 className="font-bold mb-3">Ideellt arbete</h3>
                 <p>
                   För att vi ska kunna ha öppet krävs det dock att fler vill engagera sig och jobba, då vi gör
                   detta helt ideellt. Är det något du undrar över och vill fråga om, tveka inte utan kontakta&nbsp;
@@ -167,10 +162,11 @@ export default async function Page() {
                 title="Besök oss"
                 description={
                   <p className="text-sm">
-                    Kåkenhus, Kopparhammaren 2<br />
+                    Täppan, plan 5<br />
                     Campus Norrköping, Linköpings Universitet
                   </p>
                 }
+                url={"https://maps.app.goo.gl/sg84ZARpmikJ3Sgi9"}
               />
 
               <IconWithText

@@ -1,9 +1,9 @@
 'use client'
-import { useEffect } from "react";
+
+import { useEffect, useState } from "react";
 import { Card } from "./ui/card";
 import { Shift } from "@/lib/types";
 import { DateTime } from "luxon";
-import { useState } from "react";
 import Link from "next/link";
 
 interface Props {
@@ -19,7 +19,7 @@ function formatTime(dateString: string): string {
   return date.toFormat("HH:mm");
 }
 
-export default function HomeEventContent(props: Props) {
+export default function HomeEventContent(props: Readonly<Props>) {
   const [now, setNow] = useState(getNow());
   const upcomingShiftColors = ['#b78b64', '#bf9875', '#c7a587', '#cfb298', '#d7bfa9'];
 

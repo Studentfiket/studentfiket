@@ -1,7 +1,6 @@
 'use client'
 
 import Image from 'next/image';
-import { getLoggedInUser } from '@/lib/pocketbase';
 import { User, Calendar, ShieldCheck, Menu, Home } from 'lucide-react';
 import { IoIosBug } from "react-icons/io";
 import { useEffect, useState } from 'react';
@@ -17,6 +16,7 @@ import {
 import MobileButtons from '@/components/ui/custom/mobileButton';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { getLoggedInUser } from '@/app/actions/users/getLoggedInUser';
 
 function Header() {
   const [showControlBtns, setShowControlBtns] = useState(false);

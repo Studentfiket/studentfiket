@@ -4,114 +4,115 @@ import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { signUp } from '@/lib/pocketbase'
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import { LoaderCircle } from "lucide-react"
+import { register } from '../actions/auth/register'
 
 type Props = {
   confirmationCallback: () => void
 }
 
-export const RegisterForm = (props: Props) => {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmedPassword, setConfirmedPassword] = useState('')
-  const [error, setError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+export const RegisterForm = ({ confirmationCallback }: Props) => {
+  const [error, setError] = useState('');
+  const [isPending, startTransition] = useTransition();
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const name = form.fullName.value;
+    const email = form.email.value;
+    const password = form.password.value;
+    const confirmedPassword = form.confirmedPassword.value;
+
+    setError('');
+
     if (!email.includes('@student.liu.se')) {
-      setError('Använd din LiU mail')
-      return
+      setError('Använd din LiU mail');
+      return;
     }
 
     if (password !== confirmedPassword) {
-      setError('Lösenorden matchar inte')
-      return
+      setError('Lösenorden matchar inte');
+      return;
     }
 
-    setIsLoading(true)
-    try {
-      const res = await signUp({
-        name,
-        email,
-        password
-      })
-      if (res) {
-        props.confirmationCallback()
-      } else {
-        setIsLoading(false)
-        setError('Invalid email or password')
-      }
-    } catch (error: unknown) {
-      setIsLoading(false)
-    }
+    startTransition(() => {
+      register({ name, email, password }).then((res) => {
+        if (res.status === 'success') {
+          confirmationCallback();
+        } else {
+          setError(res.message || 'Registreringen misslyckades');
+        }
+      });
+    });
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-10 w-full sm:w-[400px]">
+    <form onSubmit={handleSubmit} className="space-y-12 w-full sm:w-[400px]">
       <div className="grid w-full items-center gap-1.5">
         <Label htmlFor="name">Fulla namn</Label>
         <Input
-          placeholder='Place Holder'
-          className="w-full"
+          name="fullName"
+          id="fullName"
           required
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          id="name"
-          type="name"
+          autoComplete="name"
+          autoCapitalize="words"
+          inputMode="text"
+          autoCorrect="off"
+          spellCheck="false"
+          placeholder="Place Holder"
+          className="w-full"
+          type="text"
         />
       </div>
+
       <div className="grid w-full items-center gap-1.5">
         <Label htmlFor="email">LiU mail</Label>
         <Input
-          placeholder='abc123@student.liu.se'
-          className="w-full"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          name="email"
           id="email"
+          autoComplete="email"
+          inputMode="email"
+          required
+          placeholder="abc123@student.liu.se"
+          className="w-full"
           type="email"
         />
       </div>
+
       <div className="grid w-full items-center gap-1.5">
         <Label htmlFor="password">Lösenord</Label>
-        <div>
-          <Input
-            placeholder='Lösenord'
-            className="w-full"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            id="password"
-            type="password"
-          />
-        </div>
         <Input
-          placeholder='Bekräfta lösenord'
-          className="w-full"
+          name="password"
+          id="password"
           required
-          value={confirmedPassword}
-          onChange={(e) => setConfirmedPassword(e.target.value)}
-          id="confirmed-password"
+          placeholder="Lösenord"
+          className="w-full"
+          type="password"
+        />
+        <Input
+          name="confirmedPassword"
+          id="confirmedPassword"
+          required
+          placeholder="Bekräfta lösenord"
+          className="w-full"
           type="password"
         />
       </div>
-      {error && <Alert variant={'destructive'}>{error}</Alert>}
-      {/* Register button */}
+
+      {/* Register button and error message */}
       <div className="w-full">
-        {!isLoading ? (
+        {error && <Alert variant="destructive" className="mb-3">{error}</Alert>}
+        {!isPending ? (
           <Button className="w-full" size="lg">
             Skapa konto
           </Button>
         ) : (
-          <Button className="w-full" size="lg" disabled>
+          <Button className="w-full animate-pulse" size="lg" disabled>
             <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
-            Skapar
-          </Button>)
-        }
+            Skapar konto
+          </Button>
+        )}
       </div>
     </form>
   )

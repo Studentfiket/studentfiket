@@ -8,7 +8,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
-import { signOut } from "@/lib/pocketbase";
+import { logout } from "../actions/auth/logout";
 
 export default function LogOutCard() {
   return (
@@ -20,7 +20,7 @@ export default function LogOutCard() {
       </CardHeader>
       <CardContent>
         <CardDescription>
-          <Button variant={'destructive'} onClick={() => signOut()}>Logga ut</Button>
+          <Button variant={'destructive'} onClick={() => logout()}>Logga ut</Button>
         </CardDescription>
       </CardContent>
     </Card>
