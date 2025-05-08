@@ -25,7 +25,7 @@ const config: Config = {
 					free: '#7bae10',
 					freeLight: '#9DCB3B'
 				},
-				background: 'hsl(var(--background))',
+				background: '#fff',
 				foreground: 'hsl(var(--foreground))',
 				foregroundLight: '#2f2f2f',
 				card: {

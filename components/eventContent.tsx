@@ -4,6 +4,7 @@ import { EventApi } from "@fullcalendar/core";
 type Props = {
   event: EventApi;
   eventTime: string;
+  isNolleP: boolean;
 }
 
 const EventContent = (props: Props) => {
@@ -75,7 +76,7 @@ const EventContent = (props: Props) => {
             <h3 className="hidden sm:block">{getTitle(shift)}</h3>
           </div>
         }
-        {startHour !== 12 && (
+        {startHour !== 12 && !props.isNolleP && (
           <div>
             <p className="hidden sm:block">{shift.workers[0]}</p>
             <p className="block sm:hidden">{shortName1}</p>
