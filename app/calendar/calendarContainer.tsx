@@ -1,8 +1,9 @@
-import { getUser, getUserOrganisations } from '@/lib/pocketbase';
 import { getShifts } from '@/lib/scheduling';
 import { redirect } from "next/navigation";
 import CalendarView from './calendarView';
 import { getFlag } from '../actions/meta/getFlag';
+import { getUser } from '../actions/users/getUser';
+import { getUserOrganisations } from '../actions/organisation/getUserOrganisations';
 
 // Calendar dependencies will not work with SSR
 // https://stackoverflow.com/questions/72140065/warning-prop-id-did-not-match-server-fc-dom-171-client-fc-dom-2-when-u

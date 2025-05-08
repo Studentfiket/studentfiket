@@ -26,7 +26,6 @@ export const mapRecordsToShifts = (records: RecordModel[]): Shift[] => {
 export const generateNewPeriod = async (startDate: Date, endDate: Date): Promise<string> => {
   async function generateNewDay(date: DateTime) {
 
-    // TODO: maybe remove this check for the weekend days
     if (date.weekday !== 6 && date.weekday !== 7) {
       // Generate shifts for the day
       for (let i = 8; i <= 15; i += 2) {

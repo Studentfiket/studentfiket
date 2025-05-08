@@ -1,6 +1,7 @@
 'use server'
 
-import { getLoggedInUser, loadPocketBase } from '@/lib/pocketbase';
+import { loadPocketBase } from '@/lib/pocketbase';
+import { getLoggedInUser } from '../users/getLoggedInUser';
 
 export async function toggleFlag(name: string, newValue: boolean): Promise<boolean> {
   const pb = await loadPocketBase();
