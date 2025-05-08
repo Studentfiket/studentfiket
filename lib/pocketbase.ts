@@ -48,21 +48,24 @@ export const loadPocketBase = async (): Promise<PocketBase | undefined> => {
   return pb;
 };
 
-
-export const userIsLoggedIn = async (): Promise<boolean> => {
-  const pb = await loadPocketBase();
-  return !!pb?.authStore.model;
-}
-
-export const userIsAdmin = async (): Promise<boolean> => {
+export const getLoggedInUser = async (): Promise<User | null> => {
   const pb = await loadPocketBase();
   if (!pb?.authStore.model) {
     console.error("No user logged in");
-    return false;
+    return null;
   }
 
-  const user = pb.authStore.model;
-  return user.isAdmin;
+  // Map model to user object
+  const user: User = {
+    id: pb.authStore.model.id,
+    username: pb.authStore.model.username,
+    name: pb.authStore.model.name,
+    avatar: pb.authStore.model.avatar,
+    organisations: [],
+    isAdmin: pb.authStore.model.isAdmin
+  };
+
+  return user;
 }
 
 export const getUserOrganisations = async (): Promise<Organisation[]> => {
