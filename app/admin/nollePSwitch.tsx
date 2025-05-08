@@ -4,10 +4,14 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogCancel, AlertDialogTitle, AlertDialogDescription, AlertDialogAction } from "@/components/ui/alert-dialog"
 import { startTransition, useState } from "react"
-import { toggleFlag } from "../actions/admin/toggleFlag"
+import { toggleFlag } from "../actions/meta/toggleFlag"
 
-export default function NollePSwitch() {
-  const [value, setValue] = useState(false);
+interface Props {
+  isNolleP: boolean;
+}
+
+export default function NollePSwitch(props: Readonly<Props>) {
+  const [value, setValue] = useState(props.isNolleP);
   const [pendingValue, setPendingValue] = useState<boolean | null>(null);
 
   const handleConfirm = () => {
@@ -29,7 +33,7 @@ export default function NollePSwitch() {
 
   return (
     <div className="flex items-center space-x-2">
-      <AlertDialog open={pendingValue !== null} onOpenChange={(open) => {
+      <AlertDialog open={pendingValue !== null} onOpenChange={(open: boolean) => {
         if (!open) setPendingValue(null);
       }}>
         <AlertDialogTrigger asChild>

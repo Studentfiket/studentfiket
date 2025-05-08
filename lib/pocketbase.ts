@@ -47,21 +47,6 @@ export const loadPocketBase = async (): Promise<PocketBase> => {
   return pb;
 };
 
-export const checkNollep = async (): Promise<boolean> => {
-  const pb = await loadClient();
-
-  try {
-    const record = await pb.collection('states').getFirstListItem('name="NOLLE_P"');
-    return record.isActive;
-  } catch (error) {
-    // If the record is not found, something has gone wrong.
-    // Default to true if it happens to currently be Nolle-P
-    console.error("Error getting Nolle-P state: ", error);
-    return true;
-  }
-}
-
-
 export const userIsLoggedIn = async (): Promise<boolean> => {
   const pb = await loadPocketBase();
   return !!pb?.authStore.model;

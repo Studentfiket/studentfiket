@@ -4,9 +4,10 @@ import { loadPocketBase, userIsAdmin } from '@/lib/pocketbase';
 
 export async function toggleFlag(name: string, newValue: boolean): Promise<boolean> {
   const pb = await loadPocketBase();
+  const isAdmin = await userIsAdmin();
 
   // Check if the user is logged in and is admin
-  if (!userIsAdmin()) {
+  if (!isAdmin) {
     throw new Error("User is not logged in or is not an admin.");
   }
 
