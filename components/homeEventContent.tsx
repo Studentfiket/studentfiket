@@ -51,7 +51,7 @@ export default function HomeEventContent(props: Readonly<Props>) {
       return false;
     }
 
-    return now >= start && now < end;
+    return now >= start && now < end && shift.organisation !== "";
   });
 
   // Get upcoming shifts
