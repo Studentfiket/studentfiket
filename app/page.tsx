@@ -149,8 +149,8 @@ export default async function Page() {
                 <h3 className="font-bold mb-3">Ideellt arbete</h3>
                 <p>
                   För att vi ska kunna ha öppet krävs det dock att fler vill engagera sig och jobba, då vi gör
-                  detta helt ideellt. Är det något du undrar över och vill fråga om, tveka inte utan kontakta&nbsp;
-                  <Link className="underline" href="mailto:styrelsen@studentfiket.com">styrelsen@studentfiket.com</Link> eller besök
+                  detta helt ideellt. Är det något du undrar över och vill fråga om, tveka inte utan kontakta oss&nbsp;
+                  <Link className="underline" href="mailto:styrelsen@studentfiket.com">via mail</Link> eller besök
                   oss på plan 5 i Täppan. Passa även på att fika lite också!
                 </p>
               </div>

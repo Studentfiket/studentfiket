@@ -13,9 +13,15 @@ interface Props {
 function getNow(): string {
   return DateTime.now().setZone("Europe/Stockholm").toISO() ?? "";
 }
+function covertToISO(dateString: string): string {
+  return getDate(dateString).toISO() ?? "";
+}
+function getDate(dateString: string): DateTime {
+  return DateTime.fromFormat(dateString, "yyyy-MM-dd HH:mm:ss.SSS'Z'", { zone: 'utc' });
+}
 
 function formatTime(dateString: string): string {
-  const date = DateTime.fromISO(dateString).setZone('utc');
+  const date = getDate(dateString);
   return date.toFormat("HH:mm");
 }
 
@@ -38,8 +44,8 @@ export default function HomeEventContent(props: Readonly<Props>) {
 
   // Find current shift
   const currentShift = props.todaysShifts.find(shift => {
-    const start = new Date(shift.start).toISOString();
-    const end = new Date(shift.end).toISOString();
+    const start = covertToISO(shift.start);
+    const end = covertToISO(shift.end);
 
     if (!start || !end || !now) {
       return false;
@@ -50,8 +56,8 @@ export default function HomeEventContent(props: Readonly<Props>) {
 
   // Get upcoming shifts
   const upcomingShifts = props.todaysShifts
-    .filter(shift => shift.organisation && shift.start > now)
-    .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+    .filter(shift => shift.organisation && covertToISO(shift.start) > now)
+    .sort((a, b) => getDate(a.start).hour - getDate(b.start).hour);
 
   return (
     <Link href={"/calendar"} className="items-center md:items-start w-full flex flex-col gap-y-6">
@@ -60,8 +66,8 @@ export default function HomeEventContent(props: Readonly<Props>) {
         {currentShift ? (
           <div className="flex flex-col gap-4 sm:flex-row">
             <Card className="text-3xl md:text-5xl font-bold bg-white px-4 py-6 sm:py-8 w-full sm:w-min flex items-center">ÖPPET</Card>
-            <Card className="bg-white p-4 flex flex-col justify-center w-full">
-              <div className="text-2xl md:text-4xl font-bold">{currentShift.organisation}</div>
+            <Card className="bg-white p-4 flex flex-col justify-center w-full md:min-w-64">
+              <div className="text-2xl md:text-3xl font-bold">{currentShift.organisation}</div>
               <div className="text-xl">
                 {formatTime(currentShift.start)} - {formatTime(currentShift.end)}
               </div>
