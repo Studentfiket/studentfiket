@@ -8,17 +8,10 @@ type Props = {
   shift: Shift | null;
   user: User;
   onCancel: () => void;
+  isNolleP: boolean;
 }
 
-export default function Popup(props: Props) {
-  // Close the popup when clicking outside of the details panel
-  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    // Makes sure the onCancel() is only called when clicking the element thats bound to the onClick (the gray area).
-    if (event.target !== event.currentTarget) {
-      return;
-    }
-    closePopup();
-  }
+export default function Popup(props: Readonly<Props>) {
   const closePopup = () => {
     setShowConfirmation(false); // Reset the popup
     props.onCancel();           // Close the popup
@@ -42,14 +35,39 @@ export default function Popup(props: Props) {
   }
 
   return (
-    <div onClick={handleClick} className="absolute inset-0 w-full h-screen z-20 grid place-items-center bg-[rgba(0,0,0,0.4)]">
-      <Card className={"w-11/12 sm:w-[400px] mx-auto"}>
-        {!showConfirmation ?
-          <BookShiftPopup shift={props.shift} user={props.user} onCancel={closePopup} changePopup={changePopup} />
-          :
-          <ConfirmShiftPopup shift={props.shift} onCancel={closePopup} userIsBooking={userIsBooking} />
-        }
+    <div
+      className="absolute inset-0 w-full h-screen z-20 grid place-items-center bg-[rgba(0,0,0,0.4)]"
+      aria-hidden="true"
+    >
+      <button
+        onClick={() => closePopup()}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') {
+            e.stopPropagation();
+            closePopup();
+          }
+        }}
+        className="absolute inset-0 w-full h-full cursor-default"
+        aria-label="Close modal"
+      />
+      <Card className="w-11/12 sm:w-[400px] mx-auto relative z-10">
+        {!showConfirmation ? (
+          <BookShiftPopup
+            shift={props.shift}
+            user={props.user}
+            onCancel={closePopup}
+            changePopup={changePopup}
+            isNolleP={props.isNolleP}
+          />
+        ) : (
+          <ConfirmShiftPopup
+            shift={props.shift}
+            onCancel={closePopup}
+            userIsBooking={userIsBooking}
+          />
+        )}
       </Card>
     </div>
+
   );
 }

@@ -11,7 +11,8 @@ export default function cupScene(renderElement: HTMLDivElement) {
     labelTexture.center = new THREE.Vector2(0.5, 0.5);
     labelTexture.rotation = Math.PI;
 
-    const lidMat = new THREE.MeshToonMaterial({ color: 0x000000 });
+    const lidMat = new THREE.MeshToonMaterial({ color: 0x0e0e0e });
+
     const cupMat = new THREE.MeshToonMaterial({ map: labelTexture, fog: false, toneMapped: false });
 
     const baseMat = new THREE.MeshStandardMaterial({ color: 0xffffff });

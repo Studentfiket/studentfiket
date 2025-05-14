@@ -1,6 +1,6 @@
 'use client'
 
-import { userIsLoggedIn, userIsAdmin } from '@/lib/pocketbase';
+import Image from 'next/image';
 import { User, Calendar, ShieldCheck, Menu, Home } from 'lucide-react';
 import { IoIosBug } from "react-icons/io";
 import { useEffect, useState } from 'react';
@@ -16,6 +16,7 @@ import {
 import MobileButtons from '@/components/ui/custom/mobileButton';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { getLoggedInUser } from '@/app/actions/users/getLoggedInUser';
 
 function Header() {
   const [showControlBtns, setShowControlBtns] = useState(false);
@@ -46,33 +47,42 @@ function Header() {
 
       setPageIndex(pageMap[pathname] ?? -1);
 
-      const isLoggedIn = await userIsLoggedIn();
+      const user = await getLoggedInUser();
+      const isLoggedIn = user !== null;
+      const isAdmin = user?.isAdmin || false;
+
       setLoading(false);
-      isLoggedIn ? setShowControlBtns(true) : setShowControlBtns(false);
 
-      // If we're not in the browser, we can't check the URL (makes typescript happy)
-      if (typeof window === 'undefined')
-        return;
-
-      const isAdmin = await userIsAdmin();
-      isAdmin && setShowAdminBtn(true);
-
+      setShowControlBtns(isLoggedIn); // Show the control buttons if the user is logged in
+      setShowAdminBtn(isAdmin); // If the user is logged in, show the admin button if they are an admin
     };
 
     checkUserStatus();
   }, [pathname]);
 
   return (
-    <header className="top-0 left-0 right-0 text-white bg-primary px-4 h-[8vh]">
+    <header className={`top-0 left-0 right-0 text-white px-4 h-[8vh] z-20 ${pageIndex == 0 ? 'bg-latte' : 'bg-primary'}`}>
       <div className="flex w-full h-full justify-between items-center">
-        <Link className='flex' href={"/"}>
-          <h1 className="text-2xl">STUDENTFIKET</h1>
-          <h1 className='text-red-700 text-sm ml-1'>[BETA]</h1>
-        </Link>
+        {pageIndex != 0 ? (
+          <Link className='flex items-center h-full' href={"/"}>
+            <h1 className="text-2xl">ST</h1>
+            <Image
+              src="/images/cup.png"
+              alt="Cup"
+              width={193}
+              height={167}
+              className="h-[1.3rem] ml-[0.1rem] w-auto"
+              priority
+            />
+            <h1 className="text-2xl">DENTFIKET</h1>
+          </Link>
+        ) : (
+          <div />
+        )}
         <div className='hidden md:flex items-center gap-x-2'>
           {!loading && (
             <div className='flex items-center gap-x-2'>
-              <Button variant={pageIndex == 0 ? 'secondary' : 'outline'} onClick={() => redirect("/home")}>Hem</Button>
+              <Button variant={pageIndex == 0 ? 'secondary' : 'outline'} onClick={() => redirect("/")}>Hem</Button>
               <Button variant={pageIndex == 1 ? 'secondary' : 'outline'} onClick={() => redirect("/calendar")}>Kalender</Button>
               {showControlBtns && (
                 <div className='flex gap-x-2'>
@@ -97,7 +107,7 @@ function Header() {
                 </SheetTitle>
                 <SheetDescription className='flex flex-col'>
                   <span className='flex flex-col gap-y-2'>
-                    <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/home")} index={0}>
+                    <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/")} index={0}>
                       <Home /> Hem
                     </MobileButtons>
                     <MobileButtons pageIndex={pageIndex} onClick={() => redirect("/calendar")} index={1}>

@@ -7,8 +7,6 @@ const ThreeScene: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    console.log("Creating cup scene");
-
     if (typeof window !== 'undefined') {
       if (containerRef.current) {
         cupScene(containerRef.current);

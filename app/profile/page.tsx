@@ -7,12 +7,14 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card"
-import { loadPocketBase, getUser, getUserOrganisations } from "@/lib/pocketbase";
+import { loadPocketBase } from "@/lib/pocketbase";
 import { getUsersShifts } from "@/lib/scheduling";
 import DataTable from "./dataTable";
 import LogOutCard from "./logOutCard";
 import { getLunchShifts } from "@/utils/sharedFunctions";
 import { getCustomName } from "./customNames";
+import { getUser } from "../actions/users/getUser";
+import { getUserOrganisations } from "../actions/organisation/getUserOrganisations";
 
 
 async function ProfilePage() {
@@ -65,7 +67,6 @@ async function ProfilePage() {
         <CardHeader>
           <CardTitle className="text-4xl tabular-nums">
             {getCustomName(user)}
-            {/* {user.name} */}
           </CardTitle>
         </CardHeader>
       </Card>

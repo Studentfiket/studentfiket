@@ -15,6 +15,7 @@ import svLocale from '@fullcalendar/core/locales/sv';
 type Props = {
   loadedShifts: Shift[];
   user: User;
+  isNolleP: boolean;
 }
 
 //#region Event functions
@@ -123,8 +124,7 @@ function CalendarView(props: Readonly<Props>) {
 
   return (
     <div className="w-full h-[92vh]">
-      <Popup onCancel={closePopup} shift={selectedShift} user={props.user} />
-      {/* <BookShiftPopup shift={selectedShift} user={props.user} onCancel={closePopup} /> */}
+      <Popup onCancel={closePopup} shift={selectedShift} user={props.user} isNolleP={props.isNolleP} />
       <FullCalendar
         locale={svLocale}
         timeZone="UTC"
@@ -154,7 +154,7 @@ function CalendarView(props: Readonly<Props>) {
         navLinkDayClick={(e) => console.log(e)}
         eventClick={(e) => setSelectedShift(getShiftByIdFromCollection(e.event.id, loadedShifts))}
         eventContent={(arg) => (
-          <EventContent event={arg.event} eventTime={arg.timeText} />
+          <EventContent event={arg.event} eventTime={arg.timeText} isNolleP={props.isNolleP} />
         )}
       />
     </div>

@@ -30,6 +30,7 @@ type Props = {
   user: User;
   onCancel: () => void;
   changePopup: (isBooking: boolean) => void;
+  isNolleP: boolean;
 }
 
 export default function BookShiftPopup(props: Readonly<Props>) {
@@ -200,6 +201,7 @@ export default function BookShiftPopup(props: Readonly<Props>) {
             (!isUserInOrganisation(props.shift, props.user) && !shiftIsPrivate
             )}
           isLoading={isLoading}
+          isNolleP={props.isNolleP}
         />
         {/* If the shift is bookable and the user is in at least 1 organisation; they get to choose */}
         {(isBookable && props.user.organisations.length > 0) && (
@@ -235,11 +237,6 @@ export default function BookShiftPopup(props: Readonly<Props>) {
             <Terminal className="h-4 w-4 mr-2" />
             ID:&nbsp;<em>{props.shift?.id}</em>&nbsp;är kopierat till urklipp.
           </div>
-          {/* <AlertDescription className="mt-2">
-            <div className="mt-4 flex justify-start">
-              <Button variant="outline" onClick={() => setShowIdAlert(false)}>Stäng</Button>
-            </div>
-          </AlertDescription> */}
         </Alert>
       )}
     </div >

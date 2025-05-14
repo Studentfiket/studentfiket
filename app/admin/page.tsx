@@ -9,15 +9,18 @@ import {
 import GeneratePeriod from "./generatePeriod";
 import DataContainer from "./dataContainer";
 import NollePSwitch from "./nollePSwitch";
+import { getFlag } from "../actions/meta/getFlag";
 
 
-function AdminPage({
+async function AdminPage({
   searchParams,
 }: Readonly<{
   params: { slug: string };
   searchParams?: { [key: string]: string | string[] | undefined };
 }>) {
 
+  // Check if it is currently in Nolle-P mode
+  const isNolleP = await getFlag("NOLLE_P")
 
   return (
     <main className="flex flex-col gap-y-4 w-full" style={{ padding: '20px' }}>
@@ -37,11 +40,11 @@ function AdminPage({
       <Card>
         <CardHeader>
           <CardTitle>
-            NolleP mode - [UNDER UTVECKLING]
+            Nolle-P mode
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <NollePSwitch />
+          <NollePSwitch isNolleP={isNolleP} />
         </CardContent>
       </Card>
       <Card>

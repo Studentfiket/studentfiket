@@ -12,8 +12,8 @@ import { isCancellationAllowed } from '@/utils/sharedFunctions';
 export const mapRecordsToShifts = (records: RecordModel[]): Shift[] => {
   return records.map((record: RecordModel): Shift => ({
     id: record.id,
-    organisation: record.expand?.organisation?.name || "",
-    workers: record.expand?.workers?.map((worker: { name: string }) => worker.name) || [],
+    organisation: record.expand?.organisation?.name ?? "",
+    workers: record.expand?.workers?.map((worker: { name: string }) => worker.name) ?? [],
     start: record.startTime,
     end: record.endTime
   }));
@@ -26,7 +26,6 @@ export const mapRecordsToShifts = (records: RecordModel[]): Shift[] => {
 export const generateNewPeriod = async (startDate: Date, endDate: Date): Promise<string> => {
   async function generateNewDay(date: DateTime) {
 
-    // TODO: maybe remove this check for the weekend days
     if (date.weekday !== 6 && date.weekday !== 7) {
       // Generate shifts for the day
       for (let i = 8; i <= 15; i += 2) {
@@ -80,6 +79,30 @@ export const getShifts = async (pbClient?: Client): Promise<Shift[] | undefined>
   // Get the date from the start of this week to the end of 3 weeks ahead
   const periodStart = DateTime.now().startOf('week').toISODate();
   const periodEnd = DateTime.now().plus({ weeks: 3 }).endOf('week').toISODate();
+
+  try {
+    const resultList = await pb.collection('shifts').getList(1, 100, {
+      sort: 'startTime',
+      filter: `startTime >= "${periodStart} 00:00:00" && startTime <= "${periodEnd} 00:00:00"`,
+      expand: 'workers,organisation',
+    });
+
+    return mapRecordsToShifts(resultList.items);
+  } catch (error) {
+    console.error("Error getting shifts: ", error);
+    return [];
+  }
+}
+
+export const getTodaysShifts = async (pbClient: Client): Promise<Shift[] | undefined> => {
+  const pb = pbClient;
+
+  // Get the date from the start of the day until start of day tomorrow
+  const periodStart = DateTime.now().startOf('day').toISODate();
+  const periodEnd = DateTime.now().plus({ days: 1 }).endOf('day').toISODate();
+
+  console.log(periodStart, periodEnd);
+
 
   try {
     const resultList = await pb.collection('shifts').getList(1, 100, {
@@ -209,6 +232,7 @@ export const createShift = async (startTime: string, pb: Client, isCreatingInBat
   }
 }
 
+// TODO: Refactor to a smaller footprint
 /// Updates a shift in the database by its ID.
 /// @param shiftId - The ID of the shift to be updated.
 /// @returns A promise that resolves to an object containing a message and optionally the updated shift.
@@ -292,8 +316,6 @@ export const updateShift = async (shiftId: string, user: User, bookedOrganisatio
 
 
   try {
-    console.log('shift: ', shift);
-
     // TODO: Maybe dont need to return the updated shift. Should be taken care of by the subscription
     const updatedShift = await pb.collection('shifts').update(shift.id, shift);
     return { message: "Shift updated successfully", shift: mapRecordsToShifts([updatedShift])[0] };

@@ -7,8 +7,10 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs"
 import DataTable from "./dataTable"
-import { getMultipleUsers, getOrganisations, loadPocketBase } from "@/lib/pocketbase"
+import { loadPocketBase } from "@/lib/pocketbase"
 import SearchDB from "./searchDB";
+import { getMultipleUsers } from "../actions/users/getMultipleUsers";
+import { getOrganisations } from "../actions/organisation/getOrganisations";
 
 type Props = {
   searchParam: string;
