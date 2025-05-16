@@ -48,7 +48,7 @@ export default function HomeEventContent(props: Readonly<Props>) {
     const end = covertToISO(shift.end);
 
     //TODO: Secure better
-    if (shift.organisation == "" && shift.worker[0] != null) {
+    if (shift.organisation == "" && shift.workers[0] != null) {
       shift.organisation = "Privat";
     }
 
