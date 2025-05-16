@@ -42,15 +42,17 @@ export default function HomeEventContent(props: Readonly<Props>) {
     return () => clearInterval(interval);
   }, []);
 
+  //TODO: Fix better
+  for (Shift shift : todaysShifts) {
+    if (shift.organisation == "" && shift.workers[0] != null) {
+      shift.organisation = "Privat";
+    }
+  }
+
   // Find current shift
   const currentShift = props.todaysShifts.find(shift => {
     const start = covertToISO(shift.start);
     const end = covertToISO(shift.end);
-
-    //TODO: Secure better
-    if (shift.organisation == "" && shift.workers[0] != null) {
-      shift.organisation = "Privat";
-    }
 
     if (!start || !end || !now) {
       return false;
