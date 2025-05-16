@@ -43,11 +43,11 @@ export default function HomeEventContent(props: Readonly<Props>) {
   }, []);
 
   //TODO: Fix better
-  for (Shift shift : todaysShifts) {
-    if (shift.organisation == "" && shift.workers[0] != null) {
+  todaysShifts.forEach(shift => {
+    if (shift.organisation === "" && shift.workers[0] != null) {
       shift.organisation = "Privat";
     }
-  }
+  });
 
   // Find current shift
   const currentShift = props.todaysShifts.find(shift => {
