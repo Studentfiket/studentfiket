@@ -1,6 +1,6 @@
 import PocketBase from "pocketbase";
 import HomeEventContent from "@/components/homeEventContent";
-import { IconWithText } from "@/components/homepageButton";
+import { IconWithText } from "@/components/ui/custom/homepageButton";
 import { Card } from "@/components/ui/card";
 import { getTodaysShifts } from "@/lib/scheduling";
 // import { Shift } from "@/lib/types";

@@ -6,7 +6,7 @@ import { DateRange } from 'react-day-picker';
 import { addDays } from 'date-fns';
 import { Button } from '@/components/ui/button';
 
-import { DatePickerWithRange } from '@/components/datePickerWithRange';
+import { DatePickerWithRange } from '@/app/admin/datePickerWithRange';
 import { generateNewPeriod } from '@/lib/scheduling';
 import { Progress } from '@/components/ui/progress';
 import { Alert } from '@/components/ui/alert';

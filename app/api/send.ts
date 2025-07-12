@@ -1,6 +1,10 @@
+/*
+  Template for sending feedback emails using Resend API.
+*/
+
 'use server'
 
-import { EmailTemplate } from '@/components/emailTemplate';
+import { EmailTemplate } from '@/lib/Templates/emailTemplate';
 import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);

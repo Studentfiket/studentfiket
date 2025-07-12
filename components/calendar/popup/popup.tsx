@@ -1,5 +1,5 @@
 import { Shift, User } from "@/lib/types";
-import { Card } from "../ui/card";
+import { Card } from "../../ui/card";
 import BookShiftPopup from "./bookShiftPopup";
 import { useState } from "react";
 import ConfirmShiftPopup from "./confirmShiftPopup";

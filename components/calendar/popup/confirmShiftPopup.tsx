@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card"
 import { Heart, CalendarMinus, CircleAlert } from "lucide-react"
 import ShiftInformation from "../shiftInformation";
-import { Alert } from "../ui/alert";
+import { Alert } from "../../ui/alert";
 
 type Props = {
   shift: Shift | null;

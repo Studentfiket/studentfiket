@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { User, Calendar, ShieldCheck, Menu, Home } from 'lucide-react';
 import { IoIosBug } from "react-icons/io";
 import { useEffect, useState } from 'react';
-import { Button } from './ui/button';
+import { Button } from '@/components/ui/button';
 import {
   Sheet,
   SheetContent,

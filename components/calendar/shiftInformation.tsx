@@ -1,7 +1,7 @@
 import { Shift } from "@/lib/types";
 import { getDateDay, getMonth, getWeekday } from "@/functions/shiftFunctions"
-import { Card } from "./ui/card";
-import { Separator } from "./ui/separator";
+import { Card } from "../ui/card";
+import { Separator } from "../ui/separator";
 
 type Props = {
   shift: Shift;

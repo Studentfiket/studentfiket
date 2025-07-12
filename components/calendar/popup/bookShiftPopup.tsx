@@ -23,7 +23,7 @@ import { CalendarHeart, Terminal } from "lucide-react"
 import { useState } from "react";
 import { updateShift } from "@/lib/scheduling";
 import { isCancellationAllowed } from "@/utils/sharedFunctions";
-import { NotCancellableAlert } from "../ui/custom/notCancellableAlert";
+import { NotCancellableAlert } from "../../ui/custom/notCancellableAlert";
 
 type Props = {
   shift: Shift | null;
