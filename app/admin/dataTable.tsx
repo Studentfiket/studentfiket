@@ -64,6 +64,9 @@ export default async function DataTable(props: Readonly<Props>) {
   const isUserData = (dataContent as User[])[0]?.username !== undefined;
   const tableData = await assignData(dataContent);
 
+  // Sort by number of shifts in descending order
+  tableData.sort((a, b) => b.nrOfShifts - a.nrOfShifts);
+
   return (
     <Table>
       <TableHeader>
