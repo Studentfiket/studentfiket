@@ -33,7 +33,7 @@ export const generateNewPeriod = async (startDate: Date, endDate: Date): Promise
         i === 14 && i--;    // It's alright to modify the loop variable here, since it's only used for the shift hour
         const shiftHour = i
         // Create the shift, using the Swedish timezone
-        const shiftStartTime = DateTime.fromObject({ ...date.toObject(), hour: shiftHour, minute: 0, second: 0, millisecond: 0 }, { zone: "utc" }).toISO();
+        const shiftStartTime = DateTime.fromObject({ ...date.toObject(), hour: shiftHour, minute: 0, second: 0, millisecond: 0 }, { zone: "Europe/Stockholm" }).toUTC().toISO();
         if (!shiftStartTime) {
           console.error("Error creating shift start time");
           return;
@@ -52,8 +52,11 @@ export const generateNewPeriod = async (startDate: Date, endDate: Date): Promise
     return "No user logged in";
   }
 
+  const start = DateTime.fromJSDate(startDate, { zone: "Europe/Stockholm" }).startOf("day");
+  const end = DateTime.fromJSDate(endDate, { zone: "Europe/Stockholm" }).endOf("day");
+
   // Generate new shifts for the period
-  for (let d = DateTime.fromJSDate(startDate, { zone: "utc" }); d <= DateTime.fromJSDate(endDate, { zone: "utc" }); d = d.plus({ days: 1 })) {
+  for (let d = start; d <= end; d = d.plus({ days: 1 })) {
     // Check if the day is a weekend day
     if (d.weekday !== 6 && d.weekday !== 7) {
       console.log("Generating shifts for: ", d.toFormat('dd-MM-yyyy'));
@@ -154,16 +157,24 @@ export const getNameFromId = async (id: string, collection: string): Promise<str
 
 export const getOrganisationShifts = async (pb: Client, orgId: string) => {
 
+  const currentMonth = DateTime.now().month;
+  const currentYear = DateTime.now().year;
+  const periodStart = currentMonth <= 6 ? `${currentYear}-01-01 00:00:00` : `${currentYear}-07-01 00:00:00`;
+
   const records = await pb.collection('shifts').getFullList({
-    filter: `organisation = "${orgId}" && startTime <= "${DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss')}"`,
+    filter: `organisation = "${orgId}" && startTime >= "${periodStart}" && startTime <= "${DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss')}"`,
   });
 
   return mapRecordsToShifts(records);
 }
 
 export const getUsersShifts = async (pb: Client, user: User) => {
+  const currentMonth = DateTime.now().month;
+  const currentYear = DateTime.now().year;
+  const periodStart = currentMonth <= 6 ? `${currentYear}-01-01 00:00:00` : `${currentYear}-07-01 00:00:00`;
+
   const records = await pb.collection('shifts').getFullList({
-    filter: `workers ~ "${user.id}" && startTime <= "${DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss')}"`,
+    filter: `workers ~ "${user.id}" && startTime >= "${periodStart}" && startTime <= "${DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss')}"`,
     expand: 'organisation',
   });
   console.log('records: ', records);
