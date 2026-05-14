@@ -163,6 +163,7 @@ export const getOrganisationShifts = async (pb: Client, orgId: string) => {
 
   const records = await pb.collection('shifts').getFullList({
     filter: `organisation = "${orgId}" && startTime >= "${periodStart}" && startTime <= "${DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss')}"`,
+    requestKey: null,
   });
 
   return mapRecordsToShifts(records);
