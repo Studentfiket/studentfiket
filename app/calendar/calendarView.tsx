@@ -127,6 +127,7 @@ function CalendarView(props: Readonly<Props>) {
       <Popup onCancel={closePopup} shift={selectedShift} user={props.user} isNolleP={props.isNolleP} />
       <FullCalendar
         locale={svLocale}
+        //passen sparas som väggklocka i UTC (08:00 = 08-10), så kalendern ska också vara UTC
         timeZone="UTC"
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="timeGridWeek"

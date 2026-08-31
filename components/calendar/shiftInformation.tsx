@@ -36,6 +36,7 @@ export default function ShiftInformation(props: Readonly<Props>) {
         <div className="flex flex-col w-full">
           <p className="text-md text-muted-foreground">{getWeekday(shiftDateStart)} {getDateDay(shiftDateStart)} {getMonth(shiftDateStart, false)}</p>
           <p className="sm:text-4xl text-3xl font-light">
+            {/* passen är väggklocka i UTC, toISOString visar rätt 08-10 osv */}
             {shiftDateStart.toISOString().substring(11, 16)}
             &nbsp;-&nbsp;
             {shiftDateEnd.toISOString().substring(11, 16)}

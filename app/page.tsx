@@ -109,9 +109,7 @@ export default async function Page() {
             </Card>
 
           </div>
-          {todaysShifts && todaysShifts.length > 0 && (
-            <HomeEventContent todaysShifts={todaysShifts} />
-          )}
+          <HomeEventContent todaysShifts={todaysShifts ?? []} />
         </div>
         {/* Info */}
         <div className="relative rounded-2xl bg-white shadow-lg">

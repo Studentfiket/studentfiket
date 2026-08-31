@@ -53,6 +53,7 @@ export function DatePickerWithRange({
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
+          {/* Fixade så kalendern för välja generera skift startar på en måndag och inte söndag */}
           <Calendar
             initialFocus
             mode="range"
@@ -60,6 +61,7 @@ export function DatePickerWithRange({
             selected={date}
             onSelect={setDate}
             numberOfMonths={1}
+            weekStartsOn={1}
           />
         </PopoverContent>
       </Popover>

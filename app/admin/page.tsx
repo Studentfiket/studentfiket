@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import GeneratePeriod from "./generatePeriod";
+import ClearShifts from "./clearShifts";
 import DataContainer from "./dataContainer";
 import NollePSwitch from "./nollePSwitch";
 import { getFlag } from "../actions/meta/getFlag";
@@ -35,6 +36,16 @@ async function AdminPage({
         </CardHeader>
         <CardContent>
           <GeneratePeriod />
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            Hantera bokade pass
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ClearShifts />
         </CardContent>
       </Card>
       <Card>

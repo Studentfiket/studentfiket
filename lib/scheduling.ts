@@ -22,18 +22,29 @@ export const mapRecordsToShifts = (records: RecordModel[]): Shift[] => {
 /// Generates new shifts for a given period.
 /// @param startDate - The start date of the period.
 /// @param endDate - The end date of the period.
+/// @param selectedHours - Which start hours to generate (8, 10, 12, 13, 15). Default = alla.
 /// @returns A promise that resolves to a message when the shifts have been generated.
-export const generateNewPeriod = async (startDate: Date, endDate: Date): Promise<string> => {
+export const generateNewPeriod = async (
+  startDate: Date,
+  endDate: Date,
+  selectedHours: number[] = [8, 10, 12, 13, 15]
+): Promise<string> => {
   async function generateNewDay(date: DateTime) {
 
     if (date.weekday !== 6 && date.weekday !== 7) {
-      // Generate shifts for the day
-      for (let i = 8; i <= 15; i += 2) {
-        // Adjust the time for the lunch shift
-        i === 14 && i--;    // It's alright to modify the loop variable here, since it's only used for the shift hour
-        const shiftHour = i
-        // Create the shift, using the Swedish timezone
-        const shiftStartTime = DateTime.fromObject({ ...date.toObject(), hour: shiftHour, minute: 0, second: 0, millisecond: 0 }, { zone: "Europe/Stockholm" }).toUTC().toISO();
+      // skapa bara de tider som är ikryssade (08-10, 10-12, osv)
+      for (const shiftHour of selectedHours) {
+        // Spara som väggklocka i UTC (08:00 UTC = pass 08-10), som i PocketBase
+        // plus nu ingen Stockholm→UTC-omvandling som flyttar timmen :,)
+        const shiftStartTime = DateTime.utc(
+          date.year,
+          date.month,
+          date.day,
+          shiftHour,
+          0,
+          0,
+          0
+        ).toISO();
         if (!shiftStartTime) {
           console.error("Error creating shift start time");
           return;
@@ -52,14 +63,20 @@ export const generateNewPeriod = async (startDate: Date, endDate: Date): Promise
     return "No user logged in";
   }
 
-  const start = DateTime.fromJSDate(startDate, { zone: "Europe/Stockholm" }).startOf("day");
-  const end = DateTime.fromJSDate(endDate, { zone: "Europe/Stockholm" }).endOf("day");
+  if (selectedHours.length === 0) {
+    console.error("No shifts selected");
+    return "No shifts selected";
+  }
+
+  // Ta kalenderdagen (år/månad/dag) så vi inte råkar hamna fel pga timezone
+  const start = DateTime.fromJSDate(new Date(startDate)).setZone("Europe/Stockholm").startOf("day");
+  const end = DateTime.fromJSDate(new Date(endDate)).setZone("Europe/Stockholm").endOf("day");
 
   // Generate new shifts for the period
   for (let d = start; d <= end; d = d.plus({ days: 1 })) {
     // Check if the day is a weekend day
     if (d.weekday !== 6 && d.weekday !== 7) {
-      console.log("Generating shifts for: ", d.toFormat('dd-MM-yyyy'));
+      console.log("Generating shifts for: ", d.toFormat('dd-MM-yyyy'), "hours:", selectedHours);
       await generateNewDay(d);
     }
     else {
@@ -79,12 +96,13 @@ export const getShifts = async (pbClient?: Client): Promise<Shift[] | undefined>
     return;
   }
 
-  // Get the date from the start of this week to the end of 3 weeks ahead
+  // Get the date from the start of this week to the end of 8 weeks ahead
+  // 3 veckor var för kort när man genererar längre fram
   const periodStart = DateTime.now().startOf('week').toISODate();
-  const periodEnd = DateTime.now().plus({ weeks: 3 }).endOf('week').toISODate();
+  const periodEnd = DateTime.now().plus({ weeks: 8 }).endOf('week').toISODate();
 
   try {
-    const resultList = await pb.collection('shifts').getList(1, 100, {
+    const resultList = await pb.collection('shifts').getList(1, 500, {
       sort: 'startTime',
       filter: `startTime >= "${periodStart} 00:00:00" && startTime <= "${periodEnd} 00:00:00"`,
       expand: 'workers,organisation',
@@ -100,9 +118,11 @@ export const getShifts = async (pbClient?: Client): Promise<Shift[] | undefined>
 export const getTodaysShifts = async (pbClient: Client): Promise<Shift[] | undefined> => {
   const pb = pbClient;
 
-  // Get the date from the start of the day until start of day tomorrow
-  const periodStart = DateTime.now().startOf('day').toISODate();
-  const periodEnd = DateTime.now().plus({ days: 1 }).endOf('day').toISODate();
+  // Hämta idag + nästa öppningsdag (imorgon, eller måndag om det är helg)
+  const now = DateTime.now().setZone("Europe/Stockholm");
+  const periodStart = now.startOf('day').toISODate();
+  const daysAhead = now.weekday === 6 ? 2 : 1; // lördag → måndag, annars imorgon
+  const periodEnd = now.plus({ days: daysAhead }).endOf('day').toISODate();
 
   console.log(periodStart, periodEnd);
 
@@ -117,6 +137,37 @@ export const getTodaysShifts = async (pbClient: Client): Promise<Shift[] | undef
     return mapRecordsToShifts(resultList.items);
   } catch (error) {
     console.error("Error getting shifts: ", error);
+    return [];
+  }
+}
+
+/// Hämtar bokade pass för ett datum (väggklocka, t.ex. "2026-09-04").
+/// dateStr skickas som YYYY-MM-DD så timezone-serialisering inte flyttar dagen.
+export const getBookedShiftsForDate = async (dateStr: string): Promise<Shift[]> => {
+  const pb = await loadPocketBase();
+  if (!pb?.authStore.model?.isAdmin) {
+    console.error("User is not admin");
+    return [];
+  }
+
+  try {
+    const resultList = await pb.collection('shifts').getList(1, 100, {
+      sort: 'startTime',
+      // Pass sparas som väggklocka UTC (08:00 = pass 08-10), filtrera på samma format
+      filter: `startTime >= "${dateStr} 00:00:00.000Z" && startTime <= "${dateStr} 23:59:59.999Z"`,
+      expand: 'workers,organisation',
+    });
+
+    // Kolla rådata (workers/org-id), inte bara expand – privat pass har org="" men workers ifyllda
+    const bookedRecords = resultList.items.filter((record) => {
+      const hasWorkers = Array.isArray(record.workers) && record.workers.length > 0;
+      const hasOrganisation = typeof record.organisation === 'string' && record.organisation.length > 0;
+      return hasWorkers || hasOrganisation;
+    });
+
+    return mapRecordsToShifts(bookedRecords);
+  } catch (error) {
+    console.error("Error getting booked shifts: ", error);
     return [];
   }
 }
@@ -190,22 +241,23 @@ export const createShift = async (startTime: string, pb: Client, isCreatingInBat
     return;
   }
 
-  // Check if the shift is created between 08:00 and 16:00
-  const startTimeDate = DateTime.fromISO(startTime).setZone('utc')
-  console.log('startTimeDate: ', startTime, startTimeDate);
+  // tiderna sparas som väggklocka (08:00 UTC = pass 08-10)
+  const startTimeDate = DateTime.fromISO(startTime, { zone: "utc" })
   const startHour = startTimeDate.hour
+  console.log('startTimeDate: ', startTime, startTimeDate, 'hour:', startHour);
   if (startHour < 8 || startHour > 16) {
     console.error("Shifts can only be created between 08:00 and 16:00");
     return;
   }
 
-  // Calculate the end time of the shift (lunch shift is 1 hour, other shifts are 2 hours)
+  // Lunch 12-13 är 1h, övriga 2h
   const shiftLength = startHour === 12 ? 1 : 2;
-  const endTimeDate = DateTime.fromISO(startTime, { zone: "utc" }).plus({ hours: shiftLength }).toISO();
+  const endTimeDate = startTimeDate.plus({ hours: shiftLength });
 
+  // Spara som sträng i samma format som PocketBase visar
   const shift = {
-    startTime: startTimeDate,
-    endTime: endTimeDate,
+    startTime: startTimeDate.toFormat("yyyy-MM-dd HH:mm:ss.SSS'Z'"),
+    endTime: endTimeDate.toFormat("yyyy-MM-dd HH:mm:ss.SSS'Z'"),
     workers: [],
     organisation: ""
   }
@@ -216,11 +268,11 @@ export const createShift = async (startTime: string, pb: Client, isCreatingInBat
   try {
     // Check if the shift already exists
     const startDate = startTimeDate.toFormat('yyyy-MM-dd');
-    const startTime = startTimeDate.toFormat("HH:mm:ss.SSS'Z'");
-    console.log('      Start time: ', startDate, startTime);
+    const startTimeFmt = startTimeDate.toFormat("HH:mm:ss.SSS'Z'");
+    console.log('      Start time: ', startDate, startTimeFmt);
 
     const resultList = await pb.collection('shifts').getList(1, 5, {
-      filter: `startTime = "${startDate} ${startTime}"`,
+      filter: `startTime = "${startDate} ${startTimeFmt}"`,
     });
 
     if (resultList.items.length > 0) {
