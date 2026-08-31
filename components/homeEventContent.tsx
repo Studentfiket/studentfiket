@@ -25,6 +25,29 @@ function formatTime(dateString: string): string {
   return date.toFormat("HH:mm");
 }
 
+function getClosedMessage(shifts: Shift[]): string {
+  const fallback = "Just nu är det stängt, engagera dig för att det ska vara öppet mer ofta :)";
+  const now = DateTime.now().setZone("Europe/Stockholm");
+  const isWeekend = now.weekday === 6 || now.weekday === 7;
+  const nextOpenDay = isWeekend
+    ? now.plus({ days: now.weekday === 6 ? 2 : 1 }).startOf("day")
+    : now.plus({ days: 1 }).startOf("day");
+
+  const nextDayShifts = shifts
+    .filter((shift) => getDate(shift.start).hasSame(nextOpenDay, "day"))
+    .sort((a, b) => getDate(a.start).toMillis() - getDate(b.start).toMillis());
+
+  if (nextDayShifts[0]) {
+    const time = formatTime(nextDayShifts[0].start);
+    // Helg → måndag, vardag → imorgon
+    return isWeekend
+      ? `Just nu är det stängt, men öppnar igen på måndag kl ${time}`
+      : `Just nu är det stängt, men öppnar igen imorgon kl ${time}`;
+  }
+
+  return fallback;
+}
+
 export default function HomeEventContent(props: Readonly<Props>) {
   const [now, setNow] = useState(getNow());
   const upcomingShiftColors = ['#b78b64', '#bf9875', '#c7a587', '#cfb298', '#d7bfa9'];
@@ -63,7 +86,7 @@ export default function HomeEventContent(props: Readonly<Props>) {
 
   // Get upcoming shifts
   const upcomingShifts = props.todaysShifts
-    .filter(shift => shift.organisation && covertToISO(shift.start) > now)
+    .filter(shift => shift.organisation && covertToISO(shift.start) > now && getDate(shift.start).hasSame(DateTime.now().setZone("Europe/Stockholm"), "day"))
     .sort((a, b) => getDate(a.start).hour - getDate(b.start).hour);
 
   return (
@@ -83,8 +106,7 @@ export default function HomeEventContent(props: Readonly<Props>) {
         ) : (
           <div className="flex flex-row gap-4 h-full">
             <Card className="p-4 flex items-center w-full text-xl">
-              Vi har just nu stängt. <br className="lg:hidden" />
-              Kom gärna tillbaka senare!
+              {getClosedMessage(props.todaysShifts)}
             </Card>
           </div>
         )}

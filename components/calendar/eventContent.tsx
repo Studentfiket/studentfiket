@@ -56,6 +56,7 @@ const EventContent = (props: Props) => {
   const shortName2 = shift.workers[1] !== "" ? shift.workers[1].split(" ")[0] : "";
 
 
+  // kör väggklocka i UTC – lunch är startHour === 12
   const startHour = new Date(props.event.startStr).getUTCHours();
   const shiftHasPassed = new Date(props.event.startStr) < new Date();
 
